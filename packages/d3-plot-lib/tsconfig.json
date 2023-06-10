@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist", // Needed so that declaration files are placed in dist
+    "rootDir": "./src"
+  },
+  "exclude": ["./dist", "./test", "./webpack.config.js"]
+}

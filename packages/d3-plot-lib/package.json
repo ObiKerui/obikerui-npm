@@ -1,0 +1,16 @@
+{
+  "name": "d3-plot-lib",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "devDependencies": {
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack --config webpack.config.js",
+    "build": "cross-env NODE_ENV=development webpack --config webpack.config.js",
+    "build:prod": "rimraf dist && cross-env NODE_ENV=production webpack --config webpack.config.js",
+    "test": "vitest --globals"
+  },
+  "dependencies": {}
+}

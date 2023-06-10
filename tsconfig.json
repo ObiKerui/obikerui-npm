@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", // Specify the ECMAScript target version
+    "module": "es2020", // Specify the module code generation
+    "strict": true, // Enable strict type-checking
+    "sourceMap": true, // Generate source maps for easier debugging
+    "declaration": true, // Generate declaration files (.d.ts)
+    "resolveJsonModule": true, // Enable importing JSON files as modules
+    "allowSyntheticDefaultImports": true, // Allow importing modules with a default export from module types that don't explicitly define one
+    "strictNullChecks": true, // Enable strict null checks
+    "noImplicitAny": true, // Raise error on expressions and declarations with an implied 'any' type
+    "noUnusedLocals": true, // Report errors on unused local variables
+    "noUnusedParameters": true, // Report errors on unused parameters
+    "noImplicitReturns": true, // Report error when not all code paths return a value
+    "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements
+    "esModuleInterop": true, // Enable compatibility with CommonJS modules
+    "experimentalDecorators": true, // Enable support for experimental decorators
+    "emitDecoratorMetadata": true, // Emit design-type metadata for decorated declarations
+    "moduleResolution": "node"
+  }
+  // "exclude": [
+  //   "node_modules" // Exclude files from compilation
+  // ]
+}
