@@ -1,5 +1,7 @@
 const path = require('path');
 const WebpackWatchPlugin = require('webpack-watch-files-plugin').default;
+const HtmlPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
     plugins: [
@@ -9,7 +11,18 @@ module.exports = {
                 '!./src/*.test.js',
                 '../d3-plot-lib/dist/**/*'
             ]
-        })
+        }),
+        // new HtmlPlugin({
+        //     hash: true,
+        //     filename: 'index.html',
+        //     template: path.resolve(rootDir, 'userApp/index.html'),
+        //     inject: 'body'
+        // }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: "src/assets", to: "assets" },
+            ],
+        }),
     ],
     entry: './src/index.tsx', // Specify the entry point of your compiled TypeScript code
     output: {

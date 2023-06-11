@@ -20,7 +20,9 @@
     "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "func-names": "off",
     "import/extensions": "off",
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/no-extraneous-dependencies": "off"
   },
   "root": true,
   "ignorePatterns": ["**/webpack.*", "**/buildtools/*", "tsconfig.*", "**/node_modules/*.js"]

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "declaration": false,
     "outDir": "./public" // Needed so that declaration files are placed in dist
   },
   "exclude": ["./public"]

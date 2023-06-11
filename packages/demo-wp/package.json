@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@obikerui/d3-plot-lib": "*"
+    "d3-plot-lib": "*",
+    "d3-map-lib": "*",
+    "d3-solar-lib": "*"
   }
 }

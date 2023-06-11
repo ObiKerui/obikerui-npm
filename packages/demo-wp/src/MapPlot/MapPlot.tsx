@@ -1,20 +1,18 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable import/no-extraneous-dependencies */
 import { useEffect, useRef, useState, useLayoutEffect } from 'react';
-import createChart from './createChart';
+import createMap from './createMap';
 
 interface Props {
   data?: unknown[];
 }
 
-function Chart({ data }: Props): JSX.Element {
+function MapPlot({ data }: Props): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
   const plotCreated = useRef(false);
 
   useLayoutEffect(() => {
     if (plotCreated.current === false && ref.current && data) {
       // eslint-disable-next-line no-console
-      createChart(ref.current, data).catch(console.error);
+      createMap(ref.current, data).catch(console.error);
     }
     return () => {
       plotCreated.current = true;
@@ -24,11 +22,11 @@ function Chart({ data }: Props): JSX.Element {
   return (
     <div className="plot">
       <div className="plot plot--container">
-        <h3 id="bar-plot">Bar Plot</h3>
+        <h3 id="bar-plot">Map Plot</h3>
         <div className="plot plot--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Bar plot is for rendering such n such. Good for which types of visual, bad for these
+            Map plot is for rendering such n such. Good for which types of visual, bad for these
             others..etc.
           </p>
         </div>
@@ -40,11 +38,11 @@ function Chart({ data }: Props): JSX.Element {
   );
 }
 
-Chart.defaultProps = {
+MapPlot.defaultProps = {
   data: [],
 };
 
-function ChartContainer(): JSX.Element {
+function MapPlotContainer(): JSX.Element {
   const [data, setData] = useState<number[][]>([]);
 
   useEffect(() => {
@@ -63,9 +61,9 @@ function ChartContainer(): JSX.Element {
   }, []);
 
   if (data.length > 0) {
-    return <Chart data={data} />;
+    return <MapPlot data={data} />;
   }
   return <div>loading...</div>;
 }
 
-export { createChart, Chart, ChartContainer };
+export { createMap, MapPlot, MapPlotContainer };

@@ -1,14 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as d3 from 'd3';
-import * as demoChart from 'd3-plot-lib';
+import * as d3SolarLib from 'd3-solar-lib';
 
-export default async function createChart(ref: HTMLDivElement, data: unknown[]) {
+export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
   const [xs, bars, _yLineData] = data;
 
-  const scaler = demoChart
+  const scaler = d3SolarLib
     .Scaler()
     .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      console.log('what is xs? ', _xs);
       const flatXs = _xs.flat() as string[];
 
       return d3
@@ -31,7 +30,7 @@ export default async function createChart(ref: HTMLDivElement, data: unknown[]) 
         .rangeRound([chartHeight, 0]);
     });
 
-  const hist = demoChart //
+  const hist = d3SolarLib //
     .BarPlot()
     .xs(xs)
     .alpha([0.8])
@@ -40,9 +39,9 @@ export default async function createChart(ref: HTMLDivElement, data: unknown[]) 
 
   //   const yLines = demoChart.AyLine().ys(yLineData)
 
-  const legend = demoChart.Legend();
+  const legend = d3SolarLib.Legend();
 
-  const container = demoChart
+  const container = d3SolarLib
     .Container()
     .xAxisLabel('X Axis')
     .yAxisLabel('Y Axis')
