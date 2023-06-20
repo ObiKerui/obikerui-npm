@@ -17,7 +17,7 @@ function plotSvgGenerator() {
       return;
     }
 
-    const chartGroup = svg.select('g.chart-group');
+    const chartGroup = svg.select('g.map-group');
     const children = chartGroup.selectAll('*');
     const existingElements = children.filter(`g.${obj.plotID}`);
 
@@ -30,17 +30,17 @@ function plotSvgGenerator() {
     chartGroup.append('g').classed(`${obj.plotID}`, true);
   }
 
-  toExport.plot = function (_x: any) {
+  toExport.plot = function (x: any) {
     if (arguments.length > 0) {
-      obj = _x;
+      obj = x;
       return toExport;
     }
     return obj;
   };
 
-  toExport.container = function (_x: any) {
+  toExport.container = function (x: any) {
     if (arguments.length > 0) {
-      container = _x;
+      container = x;
       return toExport;
     }
     return container;

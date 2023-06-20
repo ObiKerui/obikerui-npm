@@ -18,11 +18,8 @@ export type tPlottable = {
   ys: () => d3.AxisDomain[] | d3.AxisDomain[][];
 };
 
-type tXScaleCallback = (xs: d3.AxisDomain[][], chartWidth: number) => d3.AxisScale<d3.AxisDomain>;
-type tYScaleCallback = (ys: d3.AxisDomain[][], chartHeight: number) => d3.AxisScale<d3.AxisDomain>;
-
-// type tXScaleCallback<D, R> = (xs: d3.AxisDomain[][], chartWidth: number) => tGenericScale<D, R>;
-// type tYScaleCallback<D, R> = (ys: d3.AxisDomain[][], chartHeight: number) => tGenericScale<D, R>;
+type tXScaleCallback = (xs: d3.AxisDomain[][], mapWidth: number) => d3.AxisScale<d3.AxisDomain>;
+type tYScaleCallback = (ys: d3.AxisDomain[][], mapHeight: number) => d3.AxisScale<d3.AxisDomain>;
 
 function Scaler() {
   let xScalerCallback = null as tXScaleCallback | null;
@@ -63,14 +60,14 @@ function Scaler() {
     });
 
     // get/compute the chart width/height (may add padding to this in future)
-    const { chartWidth, chartHeight } = containerAttrs;
+    const { mapWidth, mapHeight } = containerAttrs;
 
     if (xScalerCallback) {
-      containerAttrs.xScale = xScalerCallback(xs, chartWidth);
+      containerAttrs.xScale = xScalerCallback(xs, mapWidth);
     }
 
     if (yScalerCallback) {
-      containerAttrs.yScale = yScalerCallback(ys, chartHeight);
+      containerAttrs.yScale = yScalerCallback(ys, mapHeight);
     }
   }
 

@@ -56,8 +56,8 @@ function Legend() {
 
   function repositionAnchorPoint(
     position: string,
-    chartWidth: number,
-    chartHeight: number
+    mapWidth: number,
+    mapHeight: number
   ): [number, number] {
     let xPos = 0;
     let yPos = 0;
@@ -68,24 +68,24 @@ function Legend() {
         yPos = 0;
         break;
       case 'topright':
-        xPos = chartWidth * 0.6;
+        xPos = mapWidth * 0.6;
         yPos = 0;
         break;
       case 'middleleft':
         xPos = 0;
-        yPos = chartHeight * 0.5;
+        yPos = mapHeight * 0.5;
         break;
       case 'middleright':
-        xPos = chartWidth * 0.6;
-        yPos = chartHeight * 0.5;
+        xPos = mapWidth * 0.6;
+        yPos = mapHeight * 0.5;
         break;
       case 'bottomleft':
         xPos = 0;
-        yPos = chartHeight * 0.6;
+        yPos = mapHeight * 0.6;
         break;
       case 'bottomright':
-        xPos = chartWidth * 0.6;
-        yPos = chartHeight * 0.6;
+        xPos = mapWidth * 0.6;
+        yPos = mapHeight * 0.6;
         break;
       default:
         break;
@@ -106,12 +106,12 @@ function Legend() {
     const keys = obj.legendData;
     const size = 10;
     const position = obj.position ?? 'topleft';
-    const { chartWidth, chartHeight } = container;
+    const { mapWidth, mapHeight } = container;
     const margin = 5;
 
-    let [xOffset, yOffset] = repositionAnchorPoint(position, chartWidth, chartHeight);
-    xOffset += chartWidth * 0.05;
-    yOffset += chartHeight * 0.05;
+    let [xOffset, yOffset] = repositionAnchorPoint(position, mapWidth, mapHeight);
+    xOffset += mapWidth * 0.05;
+    yOffset += mapHeight * 0.05;
 
     // position the anchor point
     anchorPoint.attr('transform', `translate(${xOffset},${yOffset})`);

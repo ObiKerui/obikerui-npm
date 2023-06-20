@@ -2,78 +2,84 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-extraneous-dependencies */
 import * as d3 from 'd3';
+import * as L from 'leaflet';
 import rfdc from 'rfdc';
 import ContainerAttrs from './attributes/container';
-import AxisGenerator from './generators/axisGenerator';
-import LabelGenerator from './generators/labelGenerator';
-import GridGenerator from './generators/gridGenerator';
 import AttrsGenerator from './generators/attributeGenerator';
 
 function Container() {
   const obj = rfdc()(ContainerAttrs);
   const plots: CallableFunction[] = [];
-  const axisGenerator = AxisGenerator();
-  const labelGenerator = LabelGenerator();
-  const gridGenerator = GridGenerator();
 
-  function buildScales() {
-    const scaler = obj.scale === null ? null : obj.scale;
-    if (scaler) {
-      scaler(obj, plots);
+  function buildMap(container: HTMLElement) {
+    const { zoom, position } = obj;
+
+    // Important! If you copy this code to another project you need to make
+    // sure that you include the leaflet css file in your index.html (see leaflet website)
+    // and the div called container here has a css height value and the
+    // height of 100% being added to the custom-map-element child div here
+    // is mandatory or the map won't appear - it might have a height when you
+    // inspect it but it won't have a width!
+    const mapContainer = d3
+      .select(container)
+      .append('div')
+      .classed('custom-map-element', true)
+      .style('height', '100%')
+      .node();
+
+    if (!mapContainer) {
+      throw new Error('Map container should not be null here!');
     }
+
+    obj.map = L.map(mapContainer).setView(position, zoom);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18,
+      // id: viewType,
+      tileSize: 512,
+      zoomOffset: -1,
+    }).addTo(obj.map);
+
+    L.svg().addTo(obj.map);
   }
 
-  // Building Blocks
-  function buildContainerGroups(svg: d3.Selection<SVGSVGElement, unknown, null, undefined>) {
-    const marginLeft = obj.margins.left;
-    const marginTop = obj.margins.top;
+  function buildSVG() {
+    const { map } = obj;
 
-    const container = svg
-      .append('g')
-      .classed('container-group', true)
-      .attr('transform', `translate(${marginLeft},${marginTop})`);
-
-    container.append('g').classed('x-axis-group grid', true);
-    container.append('g').classed('y-axis-group grid', true);
-
-    container.append('g').classed('chart-group', true);
-
-    container.append('g').classed('x-axis-group axis', true);
-    container.append('g').classed('x-axis-label', true);
-
-    container.append('g').classed('y-axis-group axis', true);
-    container.append('g').classed('y-axis-label', true);
-
-    container.append('g').classed('metadata-group', true);
-  }
-
-  function buildSVG(container: HTMLElement) {
-    if (!obj.svg) {
-      obj.svg = d3.select(container).append('svg').classed('jschart-container', true);
-      buildContainerGroups(obj.svg);
+    if (!map) {
+      throw new Error('Error! map should not be null');
     }
-    obj.svg.attr('width', obj.width).attr('height', obj.height);
-  }
 
+    const overlay = d3.select(map.getPanes().overlayPane);
+    obj.svg = overlay.select('svg');
+    obj.svg.append('g').classed('map-group', true);
+  }
   function toExport(htmlSelection: d3.Selection<HTMLElement, unknown, null, undefined>) {
-    obj.chartWidth = +(obj.width - obj.margins.left - obj.margins.right);
-    obj.chartHeight = +(obj.height - obj.margins.top - obj.margins.bottom);
-
     const node = htmlSelection.node();
     if (!node) {
       return;
     }
 
-    buildSVG(node);
-    buildScales();
+    if (!obj.map) {
+      buildMap(node);
+    }
+
+    if (!obj.svg) {
+      buildSVG();
+    }
+
+    if (obj.map) {
+      obj.map.on('zoomend', () => {
+        plots.forEach((plot: CallableFunction) => {
+          plot(obj);
+        });
+      });
+    }
 
     plots.forEach((plot: CallableFunction) => {
       plot(obj);
     });
-
-    axisGenerator(obj);
-    labelGenerator(obj);
-    gridGenerator(obj);
 
     if (obj.legend) obj.legend(obj, plots);
 
@@ -102,6 +108,9 @@ function Container() {
   generateAccessor.attachTo(obj);
   generateAccessor.setterReturnValue(toExport);
 
+  toExport.position = generateAccessor('position');
+  toExport.viewType = generateAccessor('viewType');
+  toExport.zoom = generateAccessor('zoom');
   toExport.scale = generateAccessor('scale');
   toExport.legend = generateAccessor('legend');
   toExport.showMargins = generateAccessor('showMargins');

@@ -12,7 +12,7 @@ function MapPlot({ data }: Props): JSX.Element {
   useLayoutEffect(() => {
     if (plotCreated.current === false && ref.current && data) {
       // eslint-disable-next-line no-console
-      createMap(ref.current, data).catch(console.error);
+      createMap(ref.current).catch(console.error);
     }
     return () => {
       plotCreated.current = true;
@@ -23,7 +23,7 @@ function MapPlot({ data }: Props): JSX.Element {
     <div className="plot">
       <div className="plot plot--container">
         <h3 id="bar-plot">Map Plot</h3>
-        <div className="plot plot--area" ref={ref} />
+        <div className="plot map--area" ref={ref} />
         <div className="plot plot--description">
           <p>
             Map plot is for rendering such n such. Good for which types of visual, bad for these

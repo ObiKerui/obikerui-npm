@@ -6,6 +6,12 @@ const plotAttributes = {
   alpha: 0,
   labels: [] as string[],
   colours: [] as string[],
+
+  tag: null as string | null,
+  geojson: [] as unknown[],
+  data: [] as unknown[],
+  styles: [] as string[],
+  curve: null as unknown,
 };
 
 export default plotAttributes;

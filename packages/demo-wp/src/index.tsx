@@ -34,7 +34,6 @@ function Plots() {
 function Maps() {
   return (
     <div>
-      <div>hello there!</div>
       <MapPlotContainer />
     </div>
   );
@@ -43,7 +42,6 @@ function Maps() {
 function Solar() {
   return (
     <div>
-      <div>hello there!</div>
       <ShadePlotContainer />
     </div>
   );
