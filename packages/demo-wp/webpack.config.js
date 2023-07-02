@@ -60,6 +60,7 @@ module.exports = {
                 use: [
                     'style-loader',
                     { loader: 'css-loader', options: { sourceMap: true } },
+                    { loader: 'postcss-loader' },
                 ],
                 exclude: /node_modules/
             }
