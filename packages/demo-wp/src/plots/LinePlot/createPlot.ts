@@ -1,23 +1,22 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import * as d3 from 'd3';
-import * as d3SolarLib from 'd3-solar-lib';
+import * as d3PlotLib from 'd3-plot-lib';
 
 export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
-  const [xs, bars, _yLineData] = data;
+  const [xs, ys] = data;
 
-  const scaler = d3SolarLib
+  const scaler = d3PlotLib
     .Scaler()
     .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      const flatXs = _xs.flat() as string[];
+      const flatXs = _xs.flat();
+      const extent = d3.extent(flatXs as number[]);
 
       return d3
-        .scaleBand()
-        .domain(flatXs)
-        .padding(0.1)
+        .scaleLinear()
+        .domain(extent[0] ? extent : [0, 0])
         .rangeRound([0, chartWidth]) as d3.AxisScale<d3.AxisDomain>;
     })
-    .yScaleCallback((ys: d3.AxisDomain[][], chartHeight: number) => {
-      const flatYs = ys.flat() as number[];
+    .yScaleCallback((_ys: d3.AxisDomain[][], chartHeight: number) => {
+      const flatYs = _ys.flat() as number[];
       const extent = d3.extent(flatYs);
 
       if (!extent[0]) {
@@ -30,24 +29,23 @@ export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
         .rangeRound([chartHeight, 0]);
     });
 
-  const hist = d3SolarLib //
-    .BarPlot()
+  const lines = d3PlotLib //
+    .Line()
     .xs(xs)
-    .alpha([0.8])
-    .ys(bars)
-    .labels(['Profit']);
+    // .alpha([0.8])
+    .ys(ys)
+    .labels(['Alpha', 'Beta', 'Charlie']);
 
   //   const yLines = demoChart.AyLine().ys(yLineData)
 
-  const legend = d3SolarLib.Legend();
+  const legend = d3PlotLib.Legend();
 
-  const container = d3SolarLib
+  const container = d3PlotLib
     .Container()
     .xAxisLabel('X Axis')
     .yAxisLabel('Y Axis')
     .scale(scaler)
-    .plot(hist)
-    // .plot(yLines)
+    .plot(lines)
     .legend(legend);
 
   d3.select(ref).call(container);
