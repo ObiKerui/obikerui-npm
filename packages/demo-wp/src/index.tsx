@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createHashRouter, Outlet } from 'react-router-dom';
-import { BarPlotContainer } from './BarPlot/BarPlot';
-import { MapPlotContainer } from './MapPlot/MapPlot';
-import { ShadePlotContainer } from './ShadePlot/ShadePlot';
-import { AnalemmaPlotContainer } from './AnalemmaPlot/AnalemmaPlot';
+import { Outlet, RouterProvider, createHashRouter } from 'react-router-dom';
 import ErrorPage from './ErrorPage';
-import { ScatterPlotContainer } from './ScatterPlot/ScatterPlot';
 import Sidebar from './Sidebar';
 import './index.css';
+import { MapPlotContainer } from './maps/MapPlot/MapPlot';
+import { BarPlotContainer } from './plots/BarPlot/BarPlot';
+import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
+import { LinePlotContainer } from './plots/LinePlot/LinePlot';
+import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
+import { ScatterPlotContainer } from './plots/ScatterPlot/ScatterPlot';
+// import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
+import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
+import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
 import './style.css';
 
 function Root() {
@@ -33,6 +37,9 @@ function Plots() {
     <div>
       <BarPlotContainer />
       <ScatterPlotContainer />
+      <LinePlotContainer />
+      <LinePlotContainerB />
+      <DynamicPlotContainer />
     </div>
   );
 }

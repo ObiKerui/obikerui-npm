@@ -1,7 +1,8 @@
 /* eslint-disable no-plusplus */
 import * as d3 from 'd3';
-import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import * as SolarLib from 'd3-solar-lib';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+// import createPlot from './createPlot';
 import createPlot from './createPlot';
 
 function generateTimestamps() {
@@ -33,8 +34,8 @@ function generateTimestamps() {
 
   for (let i = 0; i < data.length; i++) {
     const elem = data[i] as tData;
-    result[0].push(elem.azimuth);
-    result[1].push(elem.altitude);
+    result[0].push(SolarLib.radiansToDegrees(elem.azimuth));
+    result[1].push(SolarLib.radiansToDegrees(elem.altitude));
   }
 
   return result;
@@ -107,4 +108,4 @@ function AnalemmaPlotContainer(): JSX.Element {
   return <div>loading...</div>;
 }
 
-export { createPlot, AnalemmaPlot, AnalemmaPlotContainer };
+export { AnalemmaPlot, AnalemmaPlotContainer, createPlot };

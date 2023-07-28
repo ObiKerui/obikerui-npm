@@ -9,7 +9,6 @@ export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
     .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
       const flatXs = _xs.flat() as number[];
       const extent = d3.extent(flatXs);
-      console.log('what is x xtent: ', extent);
 
       // if (!extent[0]) {
       //   return null;

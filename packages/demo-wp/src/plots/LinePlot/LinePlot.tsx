@@ -1,3 +1,4 @@
+// import * as d3 from 'd3';
 import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import createPlot from './createPlot';
 
@@ -5,7 +6,7 @@ interface Props {
   data?: unknown[];
 }
 
-function ShadePlot({ data }: Props): JSX.Element {
+function LinePlot({ data }: Props): JSX.Element {
   const ref = useRef<HTMLDivElement | null>(null);
   const plotCreated = useRef(false);
 
@@ -22,11 +23,11 @@ function ShadePlot({ data }: Props): JSX.Element {
   return (
     <div className="plot">
       <div className="plot plot--container">
-        <h3 id="bar-plot">Map Plot</h3>
+        <h3 id="bar-plot">Scatter Plot</h3>
         <div className="plot plot--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Map plot is for rendering such n such. Good for which types of visual, bad for these
+            Scatter plot is for rendering such n such. Good for which types of visual, bad for these
             others..etc.
           </p>
         </div>
@@ -38,21 +39,20 @@ function ShadePlot({ data }: Props): JSX.Element {
   );
 }
 
-ShadePlot.defaultProps = {
+LinePlot.defaultProps = {
   data: [],
 };
 
-function ShadePlotContainer(): JSX.Element {
-  const [data, setData] = useState<number[][]>([]);
+function LinePlotContainer(): JSX.Element {
+  const [data, setData] = useState<unknown[]>([]);
+  const xs = [1, 2, 4, 4.1, 5];
+  const ys1 = [4, 5, 6, 6, 8];
+  const ys2 = [2, 3, 1, 2, 3];
+  const ys3 = [4, 5, 2, 1, 1];
 
   useEffect(() => {
-    const xs = [1, 2, 3, 4, 5, 6, 7, 8];
-    const bars = [4, 5, 6, 6, 6, 7, 8, 9];
-    const yLineData = [2, 5];
-
     const fetchData = async () => {
-      console.log('fetching chart container data...');
-      const receivedData = [xs, bars, yLineData];
+      const receivedData = [xs, [ys1, ys2, ys3]];
       setData(receivedData);
     };
 
@@ -61,9 +61,9 @@ function ShadePlotContainer(): JSX.Element {
   }, []);
 
   if (data.length > 0) {
-    return <ShadePlot data={data} />;
+    return <LinePlot data={data} />;
   }
   return <div>loading...</div>;
 }
 
-export { createPlot, ShadePlot, ShadePlotContainer };
+export { createPlot, LinePlot, LinePlotContainer };

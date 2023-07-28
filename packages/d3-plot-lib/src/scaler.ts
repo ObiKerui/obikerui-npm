@@ -67,10 +67,20 @@ function Scaler() {
 
     if (xScalerCallback) {
       containerAttrs.xScale = xScalerCallback(xs, chartWidth);
+      if (!containerAttrs.xScale) {
+        throw Error(
+          'Error, xScalerCallback did not return an object! Did you forget to return a value?'
+        );
+      }
     }
 
     if (yScalerCallback) {
       containerAttrs.yScale = yScalerCallback(ys, chartHeight);
+      if (!containerAttrs.yScale) {
+        throw Error(
+          'Error, yScalerCallback did not return an object! Did you forget to return a value?'
+        );
+      }
     }
   }
 

@@ -2,39 +2,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import rfdc from 'rfdc';
 import AttrsGenerator from './generators/attributeGenerator';
+import metadataSvgGenerator from './generators/metadataSvgGenerator';
 
 import { tContainerAttrs } from './attributes/container';
+import metadataAttributes from './attributes/metadata';
 
 const legendAttributes = {
+  ...metadataAttributes,
   legendData: null as any,
-  legendID: null as string | null,
   position: 'topleft',
-  index: 0,
-  data: null as any,
 };
 
 function Legend() {
   const obj = rfdc()(legendAttributes);
 
   function buildContainerGroups(container: tContainerAttrs) {
-    const { svg } = container;
-    if (!svg) {
+    if (!obj) {
       return;
     }
-
-    const metadataGroup = svg.select('g.metadata-group');
-    const children = metadataGroup.selectAll('*');
-    const existingElements = children.filter(`g.${obj.legendID}`);
-
-    if (existingElements.size() > 0) {
+    const mdsvg = metadataSvgGenerator() as any;
+    mdsvg.metadata(obj).container(container)();
+    const legendAP = mdsvg.anchor();
+    if (!legendAP) {
       return;
     }
-
-    obj.index = children.size();
-    obj.legendID = `legend-${obj.index}`;
-
-    const legendId = metadataGroup.append('g').classed(`${obj.legendID}`, true);
-    const legendIdAp = legendId.append('g').classed('anchorpoint', true);
+    const legendIdAp = legendAP.append('g').classed('anchorpoint', true);
     legendIdAp.append('rect').classed('background', true);
     legendIdAp.append('g').classed('innermargin', true);
   }
@@ -99,7 +91,7 @@ function Legend() {
       return;
     }
 
-    const metadataGroup = svg.select(`.${obj.legendID}`);
+    const metadataGroup = svg.select(`.${obj.metadataID}`);
     const anchorPoint = metadataGroup.select('g.anchorpoint');
     const rectBackground = anchorPoint.select('rect.background');
     const innerMargin = anchorPoint.select('g.innermargin');
