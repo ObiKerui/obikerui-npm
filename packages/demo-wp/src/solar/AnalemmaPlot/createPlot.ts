@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import * as d3SolarLib from 'd3-solar-lib';
+import * as d3SolarLib from '@obikerui/d3-solar-lib';
 
 export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
   const [xs, ys] = data;
@@ -27,7 +27,10 @@ export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
         return null;
       }
 
-      return d3.scaleLinear().domain([0, +extent[1]]).rangeRound([chartHeight, 0]);
+      return d3
+        .scaleLinear()
+        .domain([0, +extent[1]])
+        .rangeRound([chartHeight, 0]);
     });
 
   const hist = d3SolarLib //

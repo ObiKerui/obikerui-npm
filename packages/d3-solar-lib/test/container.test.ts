@@ -23,7 +23,9 @@ describe('Test the container setup etc', () => {
 
     expect(divContainer).not.toBeEmptyDOMElement();
 
-    const svgEl = divContainer?.querySelector("[class='jschart-container']") as SVGElement;
+    const svgEl = divContainer?.querySelector(
+      "[class='jschart-container']"
+    ) as SVGElement;
     expect(svgEl).toBeDefined();
     expect(svgEl).toHaveAttribute('width', '800');
     expect(svgEl).toHaveAttribute('height', '500');

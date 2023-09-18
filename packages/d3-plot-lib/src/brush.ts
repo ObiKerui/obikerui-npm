@@ -76,8 +76,10 @@ function Brush() {
           let newXvalue = (cScale(posOnChartX) as number) - xDragOffset;
 
           // get min/max domain bounds
-          const minX = cScale.domain()[0];
-          const maxX = cScale.domain()[1];
+          let minX = cScale.domain()[0];
+          minX = minX ?? 0;
+          let maxX = cScale.domain()[1];
+          maxX = maxX ?? 0;
 
           // check for values outside bounds of domain
           const lessThanXLimit = newXvalue < (cScale(minX) as number);

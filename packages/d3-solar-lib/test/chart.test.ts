@@ -6,7 +6,8 @@ import { Container } from '../src/container';
 
 describe('Unit tests for the chart component', () => {
   beforeEach(() => {
-    document.body.innerHTML = '<div data-testid="not-empty" id="container"><p>something</p></div>';
+    document.body.innerHTML =
+      '<div data-testid="not-empty" id="container"><p>something</p></div>';
   });
 
   it('should create the correct svg elements', () => {

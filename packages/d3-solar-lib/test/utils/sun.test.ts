@@ -34,8 +34,12 @@ describe('Tests for Utils', () => {
     const winterSolstice = new Date('2023-12-22T12:00:00Z');
 
     expect(+utils.getSolarDeclination(vernalEquinox).toFixed(2)).toEqual(-1.31);
-    expect(+utils.getSolarDeclination(summerSolstice).toFixed(2)).toEqual(23.44);
+    expect(+utils.getSolarDeclination(summerSolstice).toFixed(2)).toEqual(
+      23.44
+    );
     expect(+utils.getSolarDeclination(autumnEquinox).toFixed(2)).toEqual(-0.1);
-    expect(+utils.getSolarDeclination(winterSolstice).toFixed(2)).toEqual(-23.45);
+    expect(+utils.getSolarDeclination(winterSolstice).toFixed(2)).toEqual(
+      -23.45
+    );
   });
 });

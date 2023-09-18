@@ -13,6 +13,7 @@ import { ScatterPlotContainer } from './plots/ScatterPlot/ScatterPlot';
 // import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
+import { ShapePlotContainer } from './shapes';
 import './style.css';
 
 function Root() {
@@ -61,6 +62,14 @@ function Solar() {
   );
 }
 
+function Shapes() {
+  return (
+    <div>
+      <ShapePlotContainer />
+    </div>
+  );
+}
+
 const router = createHashRouter([
   {
     path: '/',
@@ -79,11 +88,17 @@ const router = createHashRouter([
         path: '/solar',
         element: <Solar />,
       },
+      {
+        path: '/shapes',
+        element: <Shapes />,
+      },
     ],
   },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 root.render(
   <React.StrictMode>
     <RouterProvider router={router} />

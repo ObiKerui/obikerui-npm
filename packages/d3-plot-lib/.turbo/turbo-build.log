@@ -1,0 +1,26 @@
+
+> @obikerui/d3-plot-lib@0.0.0 build /Users/craigsharp/Coding/obikerui/packages/d3-plot-lib
+> cross-env NODE_ENV=development webpack --config webpack.config.js
+
+(node:10136) [DEP_WEBPACK_COMPILATION_ASSETS] DeprecationWarning: Compilation.assets will be frozen in future, all modifications are deprecated.
+BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
+	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
+	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+asset index.js 1.45 MiB [compared for emit] (name: main)
+asset index.d.ts 9.82 KiB [compared for emit]
+orphan modules 16.1 KiB [orphan] 10 modules
+runtime modules 937 bytes 4 modules
+modules by path ../../node_modules/.pnpm/ 553 KiB 529 modules
+modules by path ./src/ 51.8 KiB
+  modules by path ./src/*.ts 19.6 KiB 6 modules
+  modules by path ./src/generators/*.ts 10.2 KiB
+    ./src/generators/axisGenerator.ts 3.23 KiB [built] [code generated]
+    + 5 modules
+  modules by path ./src/plots/*.ts 20.5 KiB
+    ./src/plots/bar.ts 3.75 KiB [built] [code generated]
+    + 4 modules
+  modules by path ./src/attributes/*.ts 1.41 KiB
+    ./src/attributes/container.ts 812 bytes [built] [code generated]
+    + 2 modules
+webpack 5.84.1 compiled successfully in 8763 ms

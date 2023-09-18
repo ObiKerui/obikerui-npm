@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
-import * as d3SolarLib from 'd3-solar-lib';
-import * as d3PlotLib from 'd3-plot-lib';
+import * as d3SolarLib from '@obikerui/d3-solar-lib';
+import * as d3PlotLib from '@obikerui/d3-plot-lib';
 
 function createTimeLine(timeData: number[][], label: string, colour: string) {
   const timeLine = d3PlotLib
@@ -14,7 +14,12 @@ function createTimeLine(timeData: number[][], label: string, colour: string) {
 }
 
 function createDateLine(dateData: number[][], label: string, colour: string) {
-  const line = d3PlotLib.Line().xs(dateData[0]).ys([dateData[1]]).labels([label]).colours([colour]);
+  const line = d3PlotLib
+    .Line()
+    .xs(dateData[0])
+    .ys([dateData[1]])
+    .labels([label])
+    .colours([colour]);
   return line;
 }
 

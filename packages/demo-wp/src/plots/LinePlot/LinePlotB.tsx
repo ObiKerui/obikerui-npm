@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import * as d3 from 'd3';
-import * as d3PlotLib from 'd3-plot-lib';
+import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 function LinePlotContainer(): JSX.Element {

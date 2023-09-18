@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-extraneous-dependencies */
 import * as d3 from 'd3';
-import * as d3MapLib from 'd3-map-lib';
+import * as d3MapLib from '@obikerui/d3-map-lib';
 
 export default async function createMap(ref: HTMLDivElement) {
   const geojson = await d3.json('assets/NE.geojson');

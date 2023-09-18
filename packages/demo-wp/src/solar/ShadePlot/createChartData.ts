@@ -1,12 +1,14 @@
 /* eslint-disable no-plusplus */
 import * as d3 from 'd3';
-import * as SolarLib from 'd3-solar-lib';
+import * as SolarLib from '@obikerui/d3-solar-lib';
 
 type tMonthData = [number[], number[]];
 
 function generate(start: Date, end: Date, location: number[]) {
   const days = d3.utcDays(start, end, 1);
-  const hours = days.flatMap((day) => d3.utcHours(day, new Date(+day + 24 * 3600 * 1000), 1));
+  const hours = days.flatMap((day) =>
+    d3.utcHours(day, new Date(+day + 24 * 3600 * 1000), 1)
+  );
 
   const data = hours.map((date) => ({
     date,
@@ -102,7 +104,20 @@ export default function generateData() {
 
   // create monthly data array
   const months = [dec, janNov, febOct, marSept, aprAug, mayJuly, june];
-  const allMonths = [dec, jan, feb, mar, apr, may, june, jul, aug, sept, oct, nov];
+  const allMonths = [
+    dec,
+    jan,
+    feb,
+    mar,
+    apr,
+    may,
+    june,
+    jul,
+    aug,
+    sept,
+    oct,
+    nov,
+  ];
 
   // generate each time of the day
   // need to calculate one half then the other then interpolate the results

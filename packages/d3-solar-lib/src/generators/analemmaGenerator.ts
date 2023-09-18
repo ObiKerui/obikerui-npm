@@ -1,5 +1,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
+// This file will not be type-checked by TypeScript
 import rfdc from 'rfdc';
 import AttrsGenerator from './attributeGenerator';
 
@@ -19,6 +21,13 @@ function interpolate(dataX: number, dataY: number) {
 function mergePeriods(periodA: number[][], periodB: number[][], hour: number) {
   const [aXs, aYs] = periodA;
   const [bXs, bYs] = periodB;
+
+  const xAccessError = !aXs || !aXs[hour] || !bXs || !bXs[hour];
+  const yAccessError = !aYs || !aYs[hour] || !bYs || !bYs[hour];  
+  if(xAccessError || yAccessError) {
+    throw new Error('periods not defined');
+  }
+
   const mergedXs = interpolate(aXs[hour], bXs[hour]);
   const mergedYs = interpolate(aYs[hour], bYs[hour]);
 
@@ -50,7 +59,6 @@ function AnalemmaGenerator() {
     }
 
     // do interpolation of overlapping months
-
     const [janNovXs, janNovYs] = mergePeriods(mdata[0], mdata[10], hour);
     const [febOctXs, febOctYs] = mergePeriods(mdata[1], mdata[9], hour);
     const [marSeptXs, marSeptYs] = mergePeriods(mdata[2], mdata[8], hour);

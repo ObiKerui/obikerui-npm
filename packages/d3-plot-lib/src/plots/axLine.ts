@@ -131,8 +131,8 @@ export default function () {
     lines
       .attr('x1', (d: any) => xScale(d) || 0)
       .attr('x2', (d: any) => xScale(d) || 0)
-      .attr('y1', () => yScale(yStart) || 0)
-      .attr('y2', () => yScale(yEnd) || 0)
+      .attr('y1', () => yScale(yStart ?? 0) || 0)
+      .attr('y2', () => yScale(yEnd ?? 0) || 0)
       //   .attr('clip-path', `url(#${obj.clipPathId})`)
       //   .attr('stroke', strokeColour)
       .style('opacity', alpha)

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
-import * as d3PlotLib from 'd3-plot-lib';
+import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
 import NumpyClone from '../../Utils/NumpyClone';
@@ -52,7 +52,10 @@ async function createPrimaryLinePlot(ref: HTMLDivElement) {
     })
     .yScaleCallback((_ys: d3.AxisDomain[][], chartHeight: number) => {
       const extent = verifyExtent(d3.extent(ys));
-      return d3.scaleLinear().domain([extent[0], 1]).rangeRound([chartHeight, 0]);
+      return d3
+        .scaleLinear()
+        .domain([extent[0], 1])
+        .rangeRound([chartHeight, 0]);
     });
 
   const plot1 = d3PlotLib.Line().xs(xs).ys([ys]).tag('plot1').labels(['Norm']);
@@ -75,7 +78,11 @@ async function createPrimaryLinePlot(ref: HTMLDivElement) {
   return container;
 }
 
-async function createSecondaryLinePlot(ref: HTMLDivElement, primaryPlot: any, primRef: any) {
+async function createSecondaryLinePlot(
+  ref: HTMLDivElement,
+  primaryPlot: any,
+  primRef: any
+) {
   const scaler = d3PlotLib
     .Scaler()
     .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
@@ -158,7 +165,11 @@ export default function () {
 
     const sCurrRef = sRef.current;
     if (sCurrRef) {
-      const sObj = await createSecondaryLinePlot(sCurrRef, primaryPlotObj, pCurrRef);
+      const sObj = await createSecondaryLinePlot(
+        sCurrRef,
+        primaryPlotObj,
+        pCurrRef
+      );
       secondaryPlotObj = sObj;
     }
   });
@@ -196,16 +207,24 @@ export default function () {
       <div className="plot plot--container">
         <h3 id="dynamic-line-plot">Dynamic Line Plot</h3>
         <div className="plot--controls">
-          <button type="button" className="btn btn-primary" onClick={() => updatePlot()}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => updatePlot()}
+          >
             Update Me!
           </button>
         </div>
-        <div className="plot plot--area" style={{ paddingBottom: 0 }} ref={pRef} />
+        <div
+          className="plot plot--area"
+          style={{ paddingBottom: 0 }}
+          ref={pRef}
+        />
         <div className="plot plot--area" style={{ paddingTop: 0 }} ref={sRef} />
         <div className="plot plot--description">
           <p>
-            Dynamic Line plot is for rendering such n such. Good for which types of visual, bad for
-            these others..etc.
+            Dynamic Line plot is for rendering such n such. Good for which types
+            of visual, bad for these others..etc.
           </p>
         </div>
       </div>

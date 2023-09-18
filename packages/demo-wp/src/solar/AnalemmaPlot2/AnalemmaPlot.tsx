@@ -2,8 +2,8 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-plusplus */
 import * as d3 from 'd3';
-import * as SolarLib from 'd3-solar-lib';
-import * as d3PlotLib from 'd3-plot-lib';
+import * as SolarLib from '@obikerui/d3-solar-lib';
+import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import { useLayoutEffect, useRef } from 'react';
 
 /**
@@ -37,8 +37,8 @@ function AnalemmaPlot(): JSX.Element {
         <div className="plot plot--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Scatter plot is for rendering such n such. Good for which types of visual, bad for these
-            others..etc.
+            Scatter plot is for rendering such n such. Good for which types of
+            visual, bad for these others..etc.
           </p>
         </div>
       </div>
@@ -112,7 +112,9 @@ async function createPlot(ref: HTMLDivElement) {
   const analemmaXs = [];
   const analemmaYs = [];
 
-  const analemma = SolarLib.AnalemmaGenerator().yearData(yearDataGen.data()).hour(4);
+  const analemma = SolarLib.AnalemmaGenerator()
+    .yearData(yearDataGen.data())
+    .hour(4);
   analemma();
   analemmaXs.push(analemma.xsMerged());
   analemmaYs.push(analemma.ysMerged());
