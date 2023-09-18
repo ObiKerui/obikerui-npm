@@ -58,7 +58,6 @@ function SunPathGenerator() {
   const obj = rfdc()(sunPathGenAttrs);
 
   function generate(ydata: any, period: AllPeriods) {
-    console.log('period is : ', period);
     // year data is a 12 element array where each element contains:
     // [ xs[24], ys[24] ] 24 for each hour of the day
 

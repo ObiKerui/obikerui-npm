@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-plusplus */
 import * as d3 from 'd3';
@@ -22,7 +23,6 @@ function AnalemmaPlot(): JSX.Element {
   useLayoutEffect(() => {
     if (plotCreated.current === false && ref.current) {
       // eslint-disable-next-line no-console
-      console.log('create da plot...');
       createPlot(ref.current).catch(console.error);
     }
     return () => {
@@ -62,24 +62,25 @@ AnalemmaPlot.defaultProps = {
 async function createPlot(ref: HTMLDivElement) {
   const location = [1, 51.49];
 
-  // const sunPathGen = SolarLib.SunPathGenerator()
+  // const solarDataGen = SolarLib.SolarDataGenerator()
   // .location(location)
   // .positionGenerator(SolarLib.SunPos900)
   // .yearDataGenerator(SolarLib.YearDataGenerator)
   // .analemmaGenerator(SolarLib.AnalemmaGenerator)
+  // .sunpathGenerator(SolarLib.SunPathGenerator)
+  // .shadeRegionGenerator(SolarLib.ShadeRegionGenerator)
 
-  // sunPathGen();
+  // solarDataGen();
 
-  // sunPathGen.analemma(8).xs().ys();
-  // sunPathGen.analemma(9).merged().xs().ys();
-  // sunPathGen.analemma(10).merged().xs().ys();
+  // const analemmaData = solarDataGen.analemma(4, 20)
+  // analemmaData.xs();
+  // analemmaData.ys();
 
-  // sunPathGen.sunPath(WinterSolstice).xs().ys();
-  // sunPathGen.sunPath(SolarTwin.JanNov).xs().ys();
-  // sunPathGen.sunPath(SolarTwin.FebOct).xs().ys();
-  // sunPathGen.sunPath(SummerSolstice).xs().ys();
-  // sunPathGen.sunPath(SolarTwin.JanNov).xs().ys();
-  // sunPathGen.sunPath(SolarTwin.FebOct).xs().ys();
+  // const sunPathGen = solarDataGen.sunpath()
+  // sunPathGen(WinterSolstice).xs().ys();
+  // sunPathGen(SolarTwin).xs();
+  // sunPathGen(SolarTwin).ys();
+  // sunPathGen(SummerSolstice).xs().ys();
 
   const yearDataGen = SolarLib.YearDataGenerator()
     .location(location)
@@ -249,7 +250,57 @@ async function createPlot(ref: HTMLDivElement) {
     .ys(sunPathsYs)
     .labels(['december', 'january', 'feb', 'mar']);
 
+  const shadeRegionGenerator = SolarLib.ShadeRegionGenerator()
+    .sunpathXs(sunPathsXs)
+    .sunpathYs(sunPathsYs);
+
+  shadeRegionGenerator();
+
   const legend = SolarLib.Legend();
+
+  let mouseDown = false;
+
+  function toggleColour(polygon: any) {
+    const currColour = polygon.attr('fill');
+    let newColour = 'white';
+    if (currColour === 'white') {
+      newColour = 'red';
+    } else {
+      newColour = 'white';
+    }
+    polygon.attr('fill', newColour);
+  }
+
+  const shadeRegions = d3PlotLib
+    .Interactor()
+    .data(shadeRegionGenerator.data())
+    .onClick(() => {})
+    .onEnter((_d: unknown, i: number, node: any) => {
+      if (mouseDown) {
+        const polygon = d3.select(node[i]);
+        toggleColour(polygon);
+      }
+    })
+    .onMove((_d: unknown, i: number, node: any) => {
+      const polygon = d3.select(node[i]);
+      // let colour = polygon.attr('fill');
+
+      // if (mouseDown) {
+      //   colour = colour === 'white' ? 'red' : 'white';
+      // }
+
+      // polygon.attr('fill', colour);
+    })
+    .onMouseDown((_d: unknown, i: number, node: any) => {
+      mouseDown = true;
+      const polygon = d3.select(node[i]);
+      toggleColour(polygon);
+    })
+    .onMouseUp(() => {
+      mouseDown = false;
+      // const polygon = d3.select(node[i]);
+      // polygon.attr('fill', 'black');
+    });
 
   const container = d3PlotLib
     .Container()
@@ -258,6 +309,7 @@ async function createPlot(ref: HTMLDivElement) {
     .scale(scaler)
     .plot(analemmaLines)
     .plot(sunpathLines)
+    .plot(shadeRegions)
     .legend(legend);
 
   d3.select(ref).call(container);

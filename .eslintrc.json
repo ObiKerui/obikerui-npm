@@ -22,7 +22,9 @@
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "react/react-in-jsx-scope": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"]
   },
   "root": true,
   "ignorePatterns": ["**/webpack.*", "**/buildtools/*", "tsconfig.*", "**/node_modules/*.js"]

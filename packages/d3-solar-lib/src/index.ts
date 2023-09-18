@@ -8,6 +8,7 @@ import Analemma from './plots/analemma';
 import AnalemmaGenerator from './generators/analemmaGenerator';
 import YearDataGenerator from './generators/yearDataGenerator';
 import SunPathGenerator from './generators/sunPathGenerator';
+import ShadeRegionGenerator from './generators/shadeRegionGenerator';
 import ShadePlot from './plots/shade';
 import { Months, SolarTwin, AllPeriods } from './periods';
 import { radiansToDegrees, degreesToRadians, normalizeDegrees } from './utils/units';
@@ -27,6 +28,7 @@ export {
   AnalemmaGenerator,
   YearDataGenerator,
   SunPathGenerator,
+  ShadeRegionGenerator,
   Months,
   SolarTwin,
   AllPeriods,
