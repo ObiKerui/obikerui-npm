@@ -6,5 +6,6 @@ import { Scaler } from './scaler';
 import Legend from './legend';
 import AxLine from './plots/axLine';
 import Brush from './brush';
+import Interactor from './plots/interactor';
 
-export { BarChart as BarPlot, Container, Scaler, Legend, Scatter, Line, AxLine, Brush };
+export { BarChart as BarPlot, Container, Scaler, Legend, Scatter, Line, AxLine, Brush, Interactor };

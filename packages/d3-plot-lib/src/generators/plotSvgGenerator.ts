@@ -27,6 +27,7 @@ function plotSvgGenerator() {
 
     obj.index = children.size();
     obj.plotID = `plot-${obj.index}`;
+    obj.clipPathID = obj.plotID;
     chartGroup.append('g').classed(`${obj.plotID}`, true);
   }
 

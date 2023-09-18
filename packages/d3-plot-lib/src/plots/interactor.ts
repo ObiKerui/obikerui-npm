@@ -10,8 +10,6 @@ import plotAttributes from '../attributes/plot';
 import AttrsGenerator from '../generators/attributeGenerator';
 import plotSvgGenerator from '../generators/plotSvgGenerator';
 
-import { DataFormatter } from '../dataFormatter';
-
 const colorScheme = ['red', 'green', 'blue', 'grey'];
 
 export default function () {
@@ -27,22 +25,19 @@ export default function () {
   }
 
   function drawData(_container: tContainerAttrs) {
-    const { xs, ys } = obj;
+    const { xs, ys, data, onClick, onEnter, onLeave, onMouseDown, onMouseUp, onMove } = obj;
     const { xScale, yScale, svg, chartHeight, chartWidth } = _container;
     const colours = obj.colours.length > 0 ? obj.colours : colorScheme;
     const curveType = obj.curve ?? d3.curveLinear;
     const alpha = [1.0];
+
+    // console.log('in interactor what is the data passed? ', data);
 
     // console.log('in line ftn what is xs/ys? ', xs, ys);
 
     if (!xScale || !yScale || !svg) {
       return;
     }
-
-    const dataFormatter = DataFormatter().xs(xs).ys(ys);
-    dataFormatter();
-    const xsFormatted = dataFormatter.xsFormatted();
-    const ysFormatted = dataFormatter.ysFormatted();
 
     const chartGroup = svg.select(`.${obj.plotID}`);
 
@@ -59,7 +54,7 @@ export default function () {
       .attr('height', chartHeight); // Adjust the height as needed
 
     // select all rect in svg.chart-group with the class bar
-    let lines = chartGroup.selectAll('.lines').data(ysFormatted);
+    let lines = chartGroup.selectAll('.lines').data(data);
 
     // Exit - remove data points if current data.length < data.length last time this ftn was called
     lines.exit().style('opacity', 0).remove();
@@ -76,35 +71,64 @@ export default function () {
     // join the new data points with existing
     lines = lines.merge(enterGroup as any);
 
-    function definedFtn(d: any) {
-      return d >= -0.2;
-    }
-
-    function getXValue(_d: any, i: number, _dth: any, ith: number) {
-      const ithIndex = ith < xsFormatted.length ? ith : 0;
-      const ithX = xsFormatted[ithIndex];
-      return ithX[i];
-    }
+    // function definedFtn(d: any) {
+    //   return d >= -0.2;
+    // }
 
     lines
-      .attr('d', (dth: any, ith: number) => {
+      .attr('d', (dth: any, _ith: number) => {
+        // console.log('what is the data here in interactor: ', dth);
+        const { xCoords, yCoords } = dth;
+
         const line = d3
           .line()
-          .defined(definedFtn)
+          //   .defined(definedFtn)
           .curve(curveType)
-          .x((d: any, i: number) => xScale(getXValue(d, i, dth, ith)) || 0)
+          .x((_d: any, i: number) => xScale(xCoords[i]) || 0)
           .y((d: any) => yScale(d) || 0);
 
-        return line(dth);
+        return line(yCoords);
       })
       .attr('clip-path', `url(#${obj.clipPathID})`)
       .attr('stroke', (_d: any, i: number) => colours[i] || 'black')
+      .attr('fill', 'red')
       .style(
         'opacity',
-        (_d: any, i: number) =>
+        (_d: any, _i: number) =>
           // console.log('alpha / d / i ', alpha, d, i)
-          alpha[i]
-      );
+          //   alpha[i]
+          0.5
+      )
+      .on('click', (_d: any, i: number, node: any) => {
+        if (onClick) {
+          onClick(_d, i, node);
+        }
+      })
+      .on('mousemove', (_d: any, i: number, node: any) => {
+        if (onMove) {
+          onMove(_d, i, node);
+        }
+      })
+      .on('mouseleave', (_d: any, i: number, node: any) => {
+        if (onLeave) {
+          onLeave(_d, i, node);
+        }
+      })
+      .on('mouseenter', (_d: any, i: number, node: any) => {
+        if (onEnter) {
+          onEnter(_d, i, node);
+        }
+      })
+      .on('mousedown', (_d: any, i: number, node: any) => {
+        if (onMouseDown) {
+          onMouseDown(_d, i, node);
+        }
+      })
+      .on('mouseup', (_d: any, i: number, node: any) => {
+        if (onMouseUp) {
+          onMouseUp(_d, i, node);
+        }
+      });
 
     //   .style(lineEffect, '3, 3')
   }
@@ -126,6 +150,13 @@ export default function () {
   toExport.colours = attrsGen('colours');
   toExport.tag = attrsGen('tag');
   toExport.lineStyles = attrsGen('lineStyles');
+  toExport.data = attrsGen('data');
+  toExport.onMouseDown = attrsGen('onMouseDown');
+  toExport.onMouseUp = attrsGen('onMouseUp');
+  toExport.onClick = attrsGen('onClick');
+  toExport.onEnter = attrsGen('onEnter');
+  toExport.onLeave = attrsGen('onLeave');
+  toExport.onMove = attrsGen('onMove');
 
   return chart;
 }

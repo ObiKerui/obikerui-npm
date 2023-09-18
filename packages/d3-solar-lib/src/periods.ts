@@ -40,5 +40,3 @@ export enum AllPeriods {
   AprAug,
   MayJul,
 }
-
-// export type AllPeriods = Months | SolarTwin;
