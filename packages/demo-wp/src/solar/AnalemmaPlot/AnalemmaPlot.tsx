@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 import * as d3 from 'd3';
-import * as SolarLib from 'd3-solar-lib';
+import * as SolarLib from '@obikerui/d3-solar-lib';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 // import createPlot from './createPlot';
 import createPlot from './createPlot';
@@ -19,7 +19,9 @@ function generateTimestamps() {
   const start = new Date(Date.UTC(2000, 0, 1));
   const end = new Date(Date.UTC(2001, 0, 1));
   const days = d3.utcDays(start, end, periods.get('day')).slice(0, -1);
-  const hours = days.flatMap((day) => d3.utcHours(day, new Date(+day + 24 * 3600 * 1000), 1));
+  const hours = days.flatMap((day) =>
+    d3.utcHours(day, new Date(+day + 24 * 3600 * 1000), 1)
+  );
 
   const data = hours
     .map((date) => ({
@@ -66,8 +68,8 @@ function AnalemmaPlot({ data }: Props): JSX.Element {
         <div className="plot plot--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Scatter plot is for rendering such n such. Good for which types of visual, bad for these
-            others..etc.
+            Scatter plot is for rendering such n such. Good for which types of
+            visual, bad for these others..etc.
           </p>
         </div>
       </div>

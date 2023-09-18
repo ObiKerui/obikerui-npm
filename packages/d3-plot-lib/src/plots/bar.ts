@@ -70,7 +70,7 @@ function BarChart() {
         return result || null;
       })
       .attr('y', (_x: d3.AxisDomain, idx: number) => {
-        const yValue = yScale(ysChecked[idx]);
+        const yValue = yScale(ysChecked[idx] ?? 0);
         return yValue || null;
       })
       .attr('width', () => {
@@ -78,7 +78,7 @@ function BarChart() {
         return bandwidthFtn ? bandwidthFtn() : 0;
       })
       .attr('height', (_x: d3.AxisDomain, idx: number) => {
-        const yValue = yScale(ysChecked[idx]);
+        const yValue = yScale(ysChecked[idx] ?? 0);
         if (!yValue) return 0;
         const height = chartHeight - +yValue;
         return height;

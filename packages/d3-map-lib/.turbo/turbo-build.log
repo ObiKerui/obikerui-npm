@@ -1,0 +1,26 @@
+
+> @obikerui/d3-map-lib@0.0.0 build /Users/craigsharp/Coding/obikerui/packages/d3-map-lib
+> cross-env NODE_ENV=development webpack --config webpack.config.js
+
+(node:10148) [DEP_WEBPACK_COMPILATION_ASSETS] DeprecationWarning: Compilation.assets will be frozen in future, all modifications are deprecated.
+BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
+	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
+	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+asset index.js 1.88 MiB [compared for emit] (name: main)
+asset index.d.ts 4.78 KiB [compared for emit]
+runtime modules 937 bytes 4 modules
+modules by path ../../node_modules/.pnpm/ 992 KiB 526 modules
+modules by path ./src/ 18.7 KiB
+  modules by path ./src/*.ts 4.37 KiB 2 modules
+  modules by path ./src/plots/*.ts 8.01 KiB
+    ./src/plots/layers.ts 2.58 KiB [built] [code generated]
+    ./src/plots/hexbin.ts 5.43 KiB [built] [code generated]
+  modules by path ./src/attributes/*.ts 1.99 KiB
+    ./src/attributes/container.ts 1.75 KiB [built] [code generated]
+    ./src/attributes/plot.ts 241 bytes [built] [code generated]
+  modules by path ./src/generators/*.ts 1.97 KiB
+    ./src/generators/attributeGenerator.ts 928 bytes [built] [code generated]
+    ./src/generators/plotSvgGenerator.ts 1.07 KiB [built] [code generated]
+  ./src/markers/markers.ts 2.32 KiB [built] [code generated]
+webpack 5.84.1 compiled successfully in 8559 ms

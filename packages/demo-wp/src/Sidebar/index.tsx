@@ -12,6 +12,9 @@ export default function () {
       <li>
         <Link to="solar">Solar</Link>
       </li>
+      <li>
+        <Link to="shapes">Shapes</Link>
+      </li>
     </ul>
   );
 }

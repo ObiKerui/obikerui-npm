@@ -1,0 +1,30 @@
+
+> @obikerui/demo-wp@1.0.0 build /Users/craigsharp/Coding/obikerui/packages/demo-wp
+> rimraf dist && cross-env NODE_ENV=development webpack --config webpack.config.js
+
+[BABEL] Note: The code generator has deoptimised the styling of /Users/craigsharp/Coding/obikerui/packages/d3-solar-lib/dist/index.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/craigsharp/Coding/obikerui/packages/d3-plot-lib/dist/index.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/craigsharp/Coding/obikerui/packages/d3-map-lib/dist/index.js as it exceeds the max of 500KB.
+assets by path assets/*.json 1.86 MiB
+  asset assets/markets_overall.json 1.85 MiB [compared for emit] [from: src/assets/markets_overall.json] [copied]
+  asset assets/USA.json 7.13 KiB [compared for emit] [from: src/assets/USA.json] [copied]
+assets by path assets/*.geojson 1010 KiB
+  asset assets/NE.geojson 1000 KiB [compared for emit] [from: src/assets/NE.geojson] [copied]
+  asset assets/properties.geojson 2.24 KiB [compared for emit] [from: src/assets/properties.geojson] [copied]
+asset index.js 7.88 MiB [emitted] (name: main)
+asset assets/iris.csv 3.63 KiB [compared for emit] [from: src/assets/iris.csv] [copied]
+runtime modules 1.29 KiB 7 modules
+modules by path ../../node_modules/.pnpm/ 1.9 MiB 544 modules
+modules by path ./src/ 70.4 KiB
+  modules by path ./src/plots/ 20.1 KiB 8 modules
+  modules by path ./src/*.css 22.4 KiB 4 modules
+  modules by path ./src/solar/ 18.5 KiB 4 modules
+  modules by path ./src/Utils/ 2.27 KiB 3 modules
+  modules by path ./src/maps/MapPlot/ 2.94 KiB
+    ./src/maps/MapPlot/MapPlot.tsx 1.83 KiB [built] [code generated]
+    ./src/maps/MapPlot/createMap.ts 1.11 KiB [built] [code generated]
+  + 4 modules
+../d3-plot-lib/dist/index.js 1.45 MiB [built] [code generated]
+../d3-solar-lib/dist/index.js 1.44 MiB [built] [code generated]
+../d3-map-lib/dist/index.js 1.87 MiB [built] [code generated]
+webpack 5.84.1 compiled successfully in 9797 ms

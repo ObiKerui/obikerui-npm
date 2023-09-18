@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLayoutEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import * as d3MapLib from 'd3-map-lib';
+import * as d3MapLib from '@obikerui/d3-map-lib';
 
 declare const topojson: any;
 
@@ -26,7 +26,9 @@ async function createHexbinMap(ref: any) {
 
   //   const projector = d3MapLib.Projection().projection(d3.geoAlbers());
 
-  const hexes = (d3MapLib.Hexbin() as any).geojson(geojsonCopy).datapoints(datapoints);
+  const hexes = (d3MapLib.Hexbin() as any)
+    .geojson(geojsonCopy)
+    .datapoints(datapoints);
 
   const regions = (d3MapLib.MapLayer() as any).geojson(geojsonCopy);
 
@@ -58,8 +60,8 @@ export default function () {
         <div className="plot plot--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Hexbin map is for rendering such n such. Good for which types of visual, bad for these
-            others..etc.
+            Hexbin map is for rendering such n such. Good for which types of
+            visual, bad for these others..etc.
           </p>
         </div>
       </div>

@@ -78,7 +78,7 @@ export default function () {
       .attr('r', 1.5)
       .style('fill', (d: unknown) => {
         const elem = d as tPairType;
-        return colours[elem.i];
+        return colours[elem.i] ?? 0;
       });
   }
 

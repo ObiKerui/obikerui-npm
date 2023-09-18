@@ -1,0 +1,5 @@
+packages:
+  - packages/d3-map-lib
+  - packages/d3-plot-lib
+  - packages/d3-solar-lib
+  - packages/demo-wp

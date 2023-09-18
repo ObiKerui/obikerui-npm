@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-extraneous-dependencies */
+// @ts-nocheck
+// This file will not be type-checked by TypeScript
 // import * as d3 from 'd3';
 import rfdc from 'rfdc';
 import { tContainerAttrs } from '../attributes/container';

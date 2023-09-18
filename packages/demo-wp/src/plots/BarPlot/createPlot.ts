@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as d3 from 'd3';
-import * as d3PlotLib from 'd3-plot-lib';
+import * as d3PlotLib from '@obikerui/d3-plot-lib';
 
 export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
   const [xs, bars, _yLineData] = data;

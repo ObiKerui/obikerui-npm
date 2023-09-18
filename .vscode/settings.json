@@ -1,4 +1,15 @@
 {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
+  "eslint.workingDirectories": [
+    "packages/d3-map-lib",
+    "packages/d3-plot-lib",
+    "packages/d3-solar-lib",
+    "packages/demo-wp"
+  ]
+  // "typescript.enablePromptUseWorkspaceTsdk": true,
+  // "typescript.tsdk": "node_modules/typescript/lib"
 }

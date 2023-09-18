@@ -1,0 +1,26 @@
+
+> @obikerui/d3-solar-lib@0.0.0 build /Users/craigsharp/Coding/obikerui/packages/d3-solar-lib
+> cross-env NODE_ENV=development webpack --config webpack.config.js
+
+(node:10137) [DEP_WEBPACK_COMPILATION_ASSETS] DeprecationWarning: Compilation.assets will be frozen in future, all modifications are deprecated.
+BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
+	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
+	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+asset index.js 1.45 MiB [compared for emit] (name: main)
+asset index.d.ts 10.6 KiB [compared for emit]
+runtime modules 937 bytes 4 modules
+modules by path ../../node_modules/.pnpm/ 550 KiB 523 modules
+modules by path ./src/ 49.1 KiB
+  modules by path ./src/generators/*.ts 20.1 KiB 9 modules
+  modules by path ./src/*.ts 14.6 KiB 5 modules
+  modules by path ./src/plots/*.ts 12 KiB
+    ./src/plots/bar.ts 3.75 KiB [built] [code generated]
+    + 3 modules
+  modules by path ./src/utils/*.ts 1.43 KiB
+    ./src/utils/sun-position-in-900-bytes.ts 1.04 KiB [built] [code generated]
+    ./src/utils/units.ts 401 bytes [built] [code generated]
+  modules by path ./src/attributes/*.ts 974 bytes
+    ./src/attributes/container.ts 812 bytes [built] [code generated]
+    ./src/attributes/plot.ts 162 bytes [built] [code generated]
+webpack 5.84.1 compiled successfully in 8922 ms

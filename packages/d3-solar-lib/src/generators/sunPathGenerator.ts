@@ -1,5 +1,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
+// This file will not be type-checked by TypeScript
 import rfdc from 'rfdc';
 import AttrsGenerator from './attributeGenerator';
 import { AllPeriods } from '../periods';

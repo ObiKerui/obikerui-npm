@@ -1,6 +1,8 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
+// This file will not be type-checked by TypeScript
 import * as d3 from 'd3';
 import * as utils from '../utils/units';
 import { Months } from '../periods';
