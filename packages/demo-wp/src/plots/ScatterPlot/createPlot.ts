@@ -1,34 +1,9 @@
 import * as d3 from 'd3';
 import * as d3PlotLib from '@obikerui/d3-plot-lib';
+import { flatten } from '../../Utils/Utils';
 
 export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
   const [xs, bars, _yLineData] = data;
-
-  const scaler = d3PlotLib
-    .Scaler()
-    .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      console.log('what is xs? ', _xs);
-      const flatXs = _xs.flat() as string[];
-
-      return d3
-        .scaleBand()
-        .domain(flatXs)
-        .padding(0.1)
-        .rangeRound([0, chartWidth]) as d3.AxisScale<d3.AxisDomain>;
-    })
-    .yScaleCallback((ys: d3.AxisDomain[][], chartHeight: number) => {
-      const flatYs = ys.flat() as number[];
-      const extent = d3.extent(flatYs);
-
-      if (!extent[0]) {
-        return null;
-      }
-
-      return d3
-        .scaleLinear()
-        .domain([0, +extent[1] + 1])
-        .rangeRound([chartHeight, 0]);
-    });
 
   const hist = d3PlotLib //
     .Scatter()
@@ -45,10 +20,23 @@ export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
     .Container()
     .xAxisLabel('X Axis')
     .yAxisLabel('Y Axis')
-    .scale(scaler)
     .plot(hist)
     // .plot(yLines)
-    .legend(legend);
+    .legend(legend)
+    .onGetXScale((chartWidth: number) =>
+      d3
+        .scaleBand()
+        .domain(xs as string[])
+        .padding(0.1)
+        .rangeRound([0, chartWidth])
+    )
+    .onGetYScale((chartHeight: number) => {
+      const extent = d3.extent(flatten(bars as number[][])) as [number, number];
+      return d3
+        .scaleLinear()
+        .domain([0, +extent[1] + 1])
+        .rangeRound([chartHeight, 0]);
+    });
 
   d3.select(ref).call(container);
 

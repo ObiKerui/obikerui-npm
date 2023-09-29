@@ -28,6 +28,7 @@ module.exports = {
     output: {
         filename: 'index.js', // Name your output file
         path: path.resolve(__dirname, 'public'),
+        globalObject: 'this'
     },
     mode: "development",
     devServer: {

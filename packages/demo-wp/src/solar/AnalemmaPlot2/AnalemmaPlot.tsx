@@ -88,27 +88,6 @@ async function createPlot(ref: HTMLDivElement) {
 
   yearDataGen();
 
-  const scaler = SolarLib.Scaler()
-    .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      const flatXs = _xs.flat() as number[];
-      const extent = d3.extent(flatXs);
-
-      return d3
-        .scaleLinear()
-        .domain([0, 350])
-        .rangeRound([0, chartWidth]) as d3.AxisScale<d3.AxisDomain>;
-    })
-    .yScaleCallback((_ys: d3.AxisDomain[][], chartHeight: number) => {
-      const flatYs = _ys.flat() as number[];
-      const extent = d3.extent(flatYs);
-
-      if (!extent[0]) {
-        return null;
-      }
-
-      return d3.scaleLinear().domain([-0.1, 1.2]).rangeRound([chartHeight, 0]);
-    });
-
   const analemmaXs = [];
   const analemmaYs = [];
 
@@ -308,11 +287,17 @@ async function createPlot(ref: HTMLDivElement) {
     .Container()
     .xAxisLabel('X Axis')
     .yAxisLabel('Y Axis')
-    .scale(scaler)
+    // .scale(scaler)
     .plot(analemmaLines)
     .plot(sunpathLines)
     .plot(shadeRegions)
-    .legend(legend);
+    .legend(legend)
+    .onGetXScale((chartWidth: number) =>
+      d3.scaleLinear().domain([0, 350]).rangeRound([0, chartWidth])
+    )
+    .onGetYScale((chartHeight: number) =>
+      d3.scaleLinear().domain([-0.1, 1.2]).rangeRound([chartHeight, 0])
+    );
 
   d3.select(ref).call(container);
 

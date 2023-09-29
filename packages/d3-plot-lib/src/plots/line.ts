@@ -103,7 +103,7 @@ export default function () {
         'opacity',
         (_d: any, i: number) =>
           // console.log('alpha / d / i ', alpha, d, i)
-          alpha[i] ?? 0
+          alpha[i] ?? 1
       );
 
     //   .style(lineEffect, '3, 3')

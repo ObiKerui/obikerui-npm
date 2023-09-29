@@ -40,24 +40,6 @@ const vLine = d3PlotLib
   .lineStyles(['--']);
 
 async function createPrimaryLinePlot(ref: HTMLDivElement) {
-  const scaler = d3PlotLib
-    .Scaler()
-    .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      const flatXs = _xs.flat() as number[];
-      const extent = verifyExtent(d3.extent(flatXs));
-      return d3
-        .scaleTime()
-        .domain(extent)
-        .rangeRound([0, chartWidth]) as d3.AxisScale<d3.AxisDomain>;
-    })
-    .yScaleCallback((_ys: d3.AxisDomain[][], chartHeight: number) => {
-      const extent = verifyExtent(d3.extent(ys));
-      return d3
-        .scaleLinear()
-        .domain([extent[0], 1])
-        .rangeRound([chartHeight, 0]);
-    });
-
   const plot1 = d3PlotLib.Line().xs(xs).ys([ys]).tag('plot1').labels(['Norm']);
   const plot2 = d3PlotLib.Line().xs(xs).ys([ys2]).tag('plot2').labels(['Skew']);
 
@@ -67,11 +49,21 @@ async function createPrimaryLinePlot(ref: HTMLDivElement) {
     .height(300)
     .xAxisText({ rotation: 65 })
     .yAxisLabel('Y Axis')
-    .scale(scaler)
     .plot(plot1)
     .plot(plot2)
     .plot(vLine)
-    .legend(d3PlotLib.Legend());
+    .legend(d3PlotLib.Legend())
+    .onGetXScale((chartWidth: number) => {
+      const extent = d3.extent(xs) as [Date, Date];
+      return d3.scaleTime().domain(extent).rangeRound([0, chartWidth]);
+    })
+    .onGetYScale((chartHeight: number) => {
+      const extent = d3.extent(ys) as [number, number];
+      return d3
+        .scaleLinear()
+        .domain([extent[0], 1])
+        .rangeRound([chartHeight, 0]);
+    });
 
   d3.select(ref).call(container);
 
@@ -83,47 +75,15 @@ async function createSecondaryLinePlot(
   primaryPlot: any,
   primRef: any
 ) {
-  const scaler = d3PlotLib
-    .Scaler()
-    .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      const flatXs = _xs.flat() as number[];
-      const extent = verifyExtent(d3.extent(flatXs));
-      return d3
-        .scaleTime()
-        .domain(extent)
-        .rangeRound([0, chartWidth]) as d3.AxisScale<d3.AxisDomain>;
-    })
-    .yScaleCallback((_ys: d3.AxisDomain[][], chartHeight: number) => {
-      const extent = verifyExtent(d3.extent(ys));
-      return d3
-        .scaleLinear()
-        .domain([extent[0], 1])
-        .rangeRound([chartHeight, 0]) as d3.AxisScale<d3.AxisDomain>;
-    });
-
   const plot1 = d3PlotLib.Line().xs(xs).ys([ys]).tag('plot1').labels('Norm');
-
   const plot2 = d3PlotLib.Line().xs(xs).ys([ys2]).tag('plot2').labels('Skew');
-
-  // try to get the info before we create brush
-  // const primaryScaler = primaryPlot.scale();
-  // const someScale = d3.scaleTime().domain([0, 1]).rangeRound([0, 1]);
-  // primaryScaler.xScaleCallback(() => d3.scaleTime().domain(someScale.domain()));
-  // const whatisIt = d3.scaleLinear().domain([0, 1]).range([0, 1]);
 
   // function test(scale: d3.ScaleContinuousNumeric<number, number>) {
   //   return scale.invert(10);
   // }
 
-  // test(whatisIt);
-
-  // const star = dayjs('2020-01-01');
-  // const end = dayjs('2020-12-01');
-  // const whatisthat = d3.scaleTime().domain([star, end]).range([0, 1]);
-
   const brush = d3PlotLib.Brush().onChange((newScale: any) => {
-    const localScaler = primaryPlot.scale();
-    localScaler.xScaleCallback((_x: any, chartWidth: number) =>
+    primaryPlot.onGetXScale((chartWidth: number) =>
       d3.scaleTime().domain(newScale.domain()).rangeRound([0, chartWidth])
     );
     primaryPlot(d3.select(primRef));
@@ -138,11 +98,20 @@ async function createSecondaryLinePlot(
     .xAxisLabel('X Axis')
     .xAxisText({ rotation: 65 })
     .yAxisLabel('Y Axis')
-    .scale(scaler)
     .plot(plot1)
     .plot(plot2)
-    // .plot(vLine)
-    .legend(brush);
+    .legend(brush)
+    .onGetXScale((chartWidth: number) => {
+      const extent = d3.extent(xs) as [Date, Date];
+      return d3.scaleTime().domain(extent).rangeRound([0, chartWidth]);
+    })
+    .onGetYScale((chartHeight: number) => {
+      const extent = d3.extent(ys) as [number, number];
+      return d3
+        .scaleLinear()
+        .domain([extent[0], 1])
+        .rangeRound([chartHeight, 0]) as d3.AxisScale<d3.AxisDomain>;
+    });
 
   d3.select(ref).call(container);
 

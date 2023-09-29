@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Outlet, RouterProvider, createHashRouter } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import ErrorPage from './ErrorPage';
 import Sidebar from './Sidebar';
 import './index.css';
@@ -11,21 +12,21 @@ import { LinePlotContainer } from './plots/LinePlot/LinePlot';
 import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
 import { ScatterPlotContainer } from './plots/ScatterPlot/ScatterPlot';
 // import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
+import WarehouseContainer from './shapes/Warehouse';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
-import { ShapePlotContainer } from './shapes';
 import './style.css';
 
 function Root() {
   return (
     <div className="container mx-auto">
       <div className="flex flex-row flex-wrap py-4">
-        <aside className="w-full px-2 sm:w-1/3 md:w-1/4">
+        <aside className="w-full px-2 sm:w-1/3 md:w-1/6">
           <div className="sticky top-0 w-full p-4">
             <Sidebar />
           </div>
         </aside>
-        <main role="main" className="w-full px-2 pt-1 sm:w-2/3 md:w-3/4">
+        <main role="main" className="w-full px-2 pt-1 sm:w-2/3 md:w-5/6">
           <Outlet />
         </main>
       </div>
@@ -65,7 +66,8 @@ function Solar() {
 function Shapes() {
   return (
     <div>
-      <ShapePlotContainer />
+      {/* <ShapePlotContainer /> */}
+      <WarehouseContainer />
     </div>
   );
 }
@@ -99,8 +101,14 @@ const router = createHashRouter([
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const clientId =
+  '506002570270-6cqvj29r485c5b38f10fbutnnmviohs5.apps.googleusercontent.com';
+
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <GoogleOAuthProvider clientId={clientId}>
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );

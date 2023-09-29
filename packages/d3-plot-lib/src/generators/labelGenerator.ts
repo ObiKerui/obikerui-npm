@@ -22,7 +22,7 @@ function LabelGenerator() {
       yAxisShift = container.chartWidth + 80;
     }
 
-    if (container.yAxisLabel) {
+    if (container.yAxisLabel && container.yAxisShow) {
       if (container.yAxisLabelEl) {
         container.yAxisLabelEl.remove();
       }
@@ -39,7 +39,7 @@ function LabelGenerator() {
         .text(container.yAxisLabel);
     }
 
-    if (container.xAxisLabel) {
+    if (container.xAxisLabel && container.xAxisShow) {
       if (container.xAxisLabelEl) {
         container.xAxisLabelEl.remove();
       }

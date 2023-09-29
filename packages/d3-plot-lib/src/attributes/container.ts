@@ -43,6 +43,9 @@ const ContainerAttrs = {
   chartWidth: 500,
   chartHeight: 500,
   plots: [] as CallableFunction[],
+
+  onGetXScale: null as ((chartWidth: number) => unknown) | null,
+  onGetYScale: null as ((chartHeight: number) => unknown) | null,
 };
 
 export default ContainerAttrs;
