@@ -8,6 +8,9 @@
     "build:prod": "rimraf dist && cross-env NODE_ENV=production webpack --config webpack.config.js",
     "test": "vitest --globals"
   },
+  "files": [
+    "dist/*"
+  ],
   "dependencies": {
     "d3": "^5.16.0",
     "d3-hexbin": "^0.2.2",
