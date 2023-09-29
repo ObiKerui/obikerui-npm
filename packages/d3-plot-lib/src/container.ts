@@ -16,15 +16,17 @@ function Container() {
   const labelGenerator = LabelGenerator();
   const gridGenerator = GridGenerator();
 
-  function buildScales() {
-    const scaler = obj.scale === null ? null : obj.scale;
-    if (scaler) {
-      scaler(obj, plots);
-    }
-  }
+  // function buildScales() {
+  //   const scaler = obj.scale === null ? null : obj.scale;
+  //   if (scaler) {
+  //     scaler(obj, plots);
+  //   }
+  // }
 
   // Building Blocks
-  function buildContainerGroups(svg: d3.Selection<SVGSVGElement, unknown, null, undefined>) {
+  function buildContainerGroups(
+    svg: d3.Selection<SVGSVGElement, unknown, null, undefined>
+  ) {
     const marginLeft = obj.margins.left;
     const marginTop = obj.margins.top;
 
@@ -49,13 +51,18 @@ function Container() {
 
   function buildSVG(container: HTMLElement) {
     if (!obj.svg) {
-      obj.svg = d3.select(container).append('svg').classed('jschart-container', true);
+      obj.svg = d3
+        .select(container)
+        .append('svg')
+        .classed('jschart-container', true);
       buildContainerGroups(obj.svg);
     }
     obj.svg.attr('width', obj.width).attr('height', obj.height);
   }
 
-  function toExport(htmlSelection: d3.Selection<HTMLElement, unknown, null, undefined>) {
+  function toExport(
+    htmlSelection: d3.Selection<HTMLElement, unknown, null, undefined>
+  ) {
     obj.chartWidth = +(obj.width - obj.margins.left - obj.margins.right);
     obj.chartHeight = +(obj.height - obj.margins.top - obj.margins.bottom);
 
@@ -65,7 +72,17 @@ function Container() {
     }
 
     buildSVG(node);
-    buildScales();
+    // buildScales();
+    if (obj.onGetXScale) {
+      obj.xScale = obj.onGetXScale(
+        obj.chartWidth
+      ) as d3.AxisScale<d3.AxisDomain>;
+    }
+    if (obj.onGetYScale) {
+      obj.yScale = obj.onGetYScale(
+        obj.chartHeight
+      ) as d3.AxisScale<d3.AxisDomain>;
+    }
 
     plots.forEach((plot: CallableFunction) => {
       plot(obj);
@@ -107,12 +124,18 @@ function Container() {
   toExport.showMargins = generateAccessor('showMargins');
   toExport.height = generateAccessor('height');
   toExport.width = generateAccessor('width');
-  toExport.margin = generateAccessor('margins');
+  toExport.margins = generateAccessor('margins');
   toExport.xAxisLabel = generateAccessor('xAxisLabel');
   toExport.xAxisText = generateAccessor('xAxisText');
+  toExport.xAxisShow = generateAccessor('xAxisShow');
+  toExport.xGridShow = generateAccessor('xGridShow');
   toExport.yAxisLabel = generateAccessor('yAxisLabel');
   toExport.yAxisText = generateAccessor('yAxisText');
   toExport.yAxisPosition = generateAccessor('yAxisPosition');
+  toExport.yAxisShow = generateAccessor('yAxisShow');
+  toExport.yGridShow = generateAccessor('yGridShow');
+  toExport.onGetXScale = generateAccessor('onGetXScale');
+  toExport.onGetYScale = generateAccessor('onGetYScale');
 
   return toExport;
 }

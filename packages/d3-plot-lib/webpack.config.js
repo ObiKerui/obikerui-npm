@@ -6,7 +6,9 @@ module.exports = {
   output: {
     filename: 'index.js', // Name your output file
     path: path.resolve(__dirname, 'dist'),
-    libraryTarget: 'umd'
+    library: 'd3-plot-lib',
+    libraryTarget: 'umd',
+    globalObject: 'this'
   },
   resolve: {
     extensions: ['.ts', '.tsx', '...'],

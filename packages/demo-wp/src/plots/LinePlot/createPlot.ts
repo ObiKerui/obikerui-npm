@@ -1,33 +1,9 @@
 import * as d3 from 'd3';
 import * as d3PlotLib from '@obikerui/d3-plot-lib';
+import { flatten } from '../../Utils/Utils';
 
 export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
   const [xs, ys] = data;
-
-  const scaler = d3PlotLib
-    .Scaler()
-    .xScaleCallback((_xs: d3.AxisDomain[][], chartWidth: number) => {
-      const flatXs = _xs.flat();
-      const extent = d3.extent(flatXs as number[]);
-
-      return d3
-        .scaleLinear()
-        .domain(extent[0] ? extent : [0, 0])
-        .rangeRound([0, chartWidth]) as d3.AxisScale<d3.AxisDomain>;
-    })
-    .yScaleCallback((_ys: d3.AxisDomain[][], chartHeight: number) => {
-      const flatYs = _ys.flat() as number[];
-      const extent = d3.extent(flatYs);
-
-      if (!extent[0]) {
-        return null;
-      }
-
-      return d3
-        .scaleLinear()
-        .domain([0, +extent[1] + 1])
-        .rangeRound([chartHeight, 0]);
-    });
 
   const lines = d3PlotLib //
     .Line()
@@ -44,9 +20,22 @@ export default async function createPlot(ref: HTMLDivElement, data: unknown[]) {
     .Container()
     .xAxisLabel('X Axis')
     .yAxisLabel('Y Axis')
-    .scale(scaler)
     .plot(lines)
-    .legend(legend);
+    .legend(legend)
+    .onGetXScale((chartWidth: number) => {
+      const extent = d3.extent(xs as number[]) as [number, number];
+      return d3
+        .scaleLinear()
+        .domain(extent[0] ? extent : [0, 0])
+        .rangeRound([0, chartWidth]);
+    })
+    .onGetYScale((chartHeight: number) => {
+      const extent = d3.extent(flatten(ys as number[][])) as [number, number];
+      return d3
+        .scaleLinear()
+        .domain([0, +extent[1] + 1])
+        .rangeRound([chartHeight, 0]);
+    });
 
   d3.select(ref).call(container);
 
