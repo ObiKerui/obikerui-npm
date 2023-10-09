@@ -16,13 +16,6 @@ function Container() {
   const labelGenerator = LabelGenerator();
   const gridGenerator = GridGenerator();
 
-  // function buildScales() {
-  //   const scaler = obj.scale === null ? null : obj.scale;
-  //   if (scaler) {
-  //     scaler(obj, plots);
-  //   }
-  // }
-
   // Building Blocks
   function buildContainerGroups(
     svg: d3.Selection<SVGSVGElement, unknown, null, undefined>
@@ -60,19 +53,22 @@ function Container() {
     obj.svg.attr('width', obj.width).attr('height', obj.height);
   }
 
-  function toExport(
-    htmlSelection: d3.Selection<HTMLElement, unknown, null, undefined>
-  ) {
-    obj.chartWidth = +(obj.width - obj.margins.left - obj.margins.right);
-    obj.chartHeight = +(obj.height - obj.margins.top - obj.margins.bottom);
-
-    const node = htmlSelection.node();
-    if (!node) {
+  function toExport() {
+    // htmlSelection: d3.Selection<HTMLElement, unknown, null, undefined>
+    if (!obj.html) {
       return;
     }
 
-    buildSVG(node);
-    // buildScales();
+    obj.chartWidth = +(obj.width - obj.margins.left - obj.margins.right);
+    obj.chartHeight = +(obj.height - obj.margins.top - obj.margins.bottom);
+
+    // const node = htmlSelection.node();
+    // if (!node) {
+    //   return;
+    // }
+
+    buildSVG(obj.html);
+
     if (obj.onGetXScale) {
       obj.xScale = obj.onGetXScale(
         obj.chartWidth
@@ -119,7 +115,6 @@ function Container() {
   generateAccessor.attachTo(obj);
   generateAccessor.setterReturnValue(toExport);
 
-  toExport.scale = generateAccessor('scale');
   toExport.legend = generateAccessor('legend');
   toExport.showMargins = generateAccessor('showMargins');
   toExport.height = generateAccessor('height');
@@ -134,6 +129,7 @@ function Container() {
   toExport.yAxisPosition = generateAccessor('yAxisPosition');
   toExport.yAxisShow = generateAccessor('yAxisShow');
   toExport.yGridShow = generateAccessor('yGridShow');
+  toExport.html = generateAccessor('html');
   toExport.onGetXScale = generateAccessor('onGetXScale');
   toExport.onGetYScale = generateAccessor('onGetYScale');
 
