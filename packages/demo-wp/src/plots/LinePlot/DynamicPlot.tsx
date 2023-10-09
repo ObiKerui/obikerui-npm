@@ -45,7 +45,7 @@ async function createPrimaryLinePlot(ref: HTMLDivElement) {
 
   const container = d3PlotLib
     .Container()
-    .margin({ left: 50, right: 20, top: 10, bottom: 40 })
+    .margins({ left: 50, right: 20, top: 10, bottom: 40 })
     .height(300)
     .xAxisText({ rotation: 65 })
     .yAxisLabel('Y Axis')
@@ -93,7 +93,7 @@ async function createSecondaryLinePlot(
 
   const container = d3PlotLib
     .Container()
-    .margin({ left: 50, right: 20, top: 10, bottom: 60 })
+    .margins({ left: 50, right: 20, top: 10, bottom: 60 })
     .height(200)
     .xAxisLabel('X Axis')
     .xAxisText({ rotation: 65 })
