@@ -3,10 +3,10 @@
 import { Axis, AxisDomain, AxisScale } from 'd3';
 
 const ContainerAttrs = {
+  html: null as HTMLElement | null,
   svg: null as d3.Selection<SVGSVGElement, any, null, undefined> | null,
-  scale: (_obj: unknown, _plots: unknown): void => {},
-  legend: (_obj: unknown, _plots: unknown): void => {},
-  showMargins: true,
+  legend: null as ((_obj: unknown, _plots: unknown) => void) | null,
+  showMargins: false,
   height: 500,
   width: 800,
   margins: {

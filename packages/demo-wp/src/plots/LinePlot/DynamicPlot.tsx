@@ -63,9 +63,10 @@ async function createPrimaryLinePlot(ref: HTMLDivElement) {
         .scaleLinear()
         .domain([extent[0], 1])
         .rangeRound([chartHeight, 0]);
-    });
+    })
+    .html(ref);
 
-  d3.select(ref).call(container);
+  container();
 
   return container;
 }
@@ -111,9 +112,10 @@ async function createSecondaryLinePlot(
         .scaleLinear()
         .domain([extent[0], 1])
         .rangeRound([chartHeight, 0]) as d3.AxisScale<d3.AxisDomain>;
-    });
+    })
+    .html(ref);
 
-  d3.select(ref).call(container);
+  container();
 
   return container;
 }
@@ -145,29 +147,23 @@ export default function () {
 
   useResize(() => {
     if (primaryPlotObj) {
-      const pCurrRef = pRef.current;
-      primaryPlotObj(d3.select(pCurrRef));
+      primaryPlotObj();
     }
 
     if (secondaryPlotObj) {
-      const sCurrRef = sRef.current;
-      secondaryPlotObj(d3.select(sCurrRef));
+      secondaryPlotObj();
     }
   });
 
   function updatePlot() {
     if (primaryPlotObj) {
-      const pCurrRef = pRef.current;
       primaryPlotObj.plot('plot1').xs([1, 2, 3]).ys([2, 4, 5]);
-
-      primaryPlotObj(d3.select(pCurrRef));
+      primaryPlotObj();
     }
 
     if (secondaryPlotObj) {
-      const sCurrRef = sRef.current;
       secondaryPlotObj.plot('plot1').xs([1, 2, 3]).ys([2, 4, 5]);
-
-      secondaryPlotObj(d3.select(sCurrRef));
+      secondaryPlotObj();
     }
   }
 

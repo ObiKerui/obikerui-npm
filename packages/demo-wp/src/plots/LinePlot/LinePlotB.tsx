@@ -105,9 +105,10 @@ async function createPlot(ref: HTMLDivElement, data: unknown[]) {
         .scaleLinear()
         .domain([0, +extent[1] + 1])
         .rangeRound([chartHeight, 0]);
-    });
+    })
+    .html(ref);
 
-  d3.select(ref).call(container);
+  container();
 
   return container;
 }
