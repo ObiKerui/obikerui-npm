@@ -34,6 +34,7 @@
     "webpack-watch-files-plugin": "^1.2.1"
   },
   "dependencies": {
+    "@obikerui/d3-plot-lib": "*",
     "d3": "^5.16.0",
     "d3-hexbin": "^0.2.2",
     "dayjs": "^1.11.9",

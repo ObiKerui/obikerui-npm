@@ -287,7 +287,6 @@ async function createPlot(ref: HTMLDivElement) {
     .Container()
     .xAxisLabel('X Axis')
     .yAxisLabel('Y Axis')
-    // .scale(scaler)
     .plot(analemmaLines)
     .plot(sunpathLines)
     .plot(shadeRegions)
@@ -297,9 +296,10 @@ async function createPlot(ref: HTMLDivElement) {
     )
     .onGetYScale((chartHeight: number) =>
       d3.scaleLinear().domain([-0.1, 1.2]).rangeRound([chartHeight, 0])
-    );
+    )
+    .html(ref);
 
-  d3.select(ref).call(container);
+  container();
 
   return container;
 }

@@ -15,6 +15,7 @@ import { ScatterPlotContainer } from './plots/ScatterPlot/ScatterPlot';
 import WarehouseContainer from './shapes/Warehouse';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
+import RoofPlot from './solar/RoofPlanner/RootPlot';
 import './style.css';
 
 function Root() {
@@ -59,6 +60,7 @@ function Solar() {
     <div>
       <ShadePlotContainer />
       <AnalemmaPlotContainer />
+      <RoofPlot />
     </div>
   );
 }

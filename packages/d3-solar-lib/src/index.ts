@@ -1,6 +1,10 @@
 import { Container } from './container';
 import { BarChart } from './plots/bar';
 import Scatter from './plots/scatter';
+import Surface from './plots/surface';
+import Boundaries from './plots/boundaries';
+import SolarArray from './plots/solarArray';
+import SolarPlacer from './utils/solarPlacer';
 import { Scaler } from './scaler';
 import Legend from './legend';
 import SunPos900 from './utils/sun-position-in-900-bytes';
@@ -11,7 +15,11 @@ import SunPathGenerator from './generators/sunPathGenerator';
 import ShadeRegionGenerator from './generators/shadeRegionGenerator';
 import ShadePlot from './plots/shade';
 import { Months, SolarTwin, AllPeriods } from './periods';
-import { radiansToDegrees, degreesToRadians, normalizeDegrees } from './utils/units';
+import {
+  radiansToDegrees,
+  degreesToRadians,
+  normalizeDegrees,
+} from './utils/units';
 
 export {
   BarChart as BarPlot,
@@ -22,6 +30,10 @@ export {
   SunPos900,
   Analemma,
   ShadePlot,
+  Surface,
+  Boundaries,
+  SolarArray,
+  SolarPlacer,
   radiansToDegrees,
   degreesToRadians,
   normalizeDegrees,

@@ -6,11 +6,13 @@ const plotAttributes = {
   alpha: 0,
   labels: [] as string[],
   colours: [] as string[],
+  hidden: false as boolean,
 
   tag: null as string | null,
   data: [] as unknown[],
   styles: [] as string[],
   curve: null as unknown,
+  pointerEvents: 'all' as string,
   onClick: null as unknown,
   onMouseDown: null as unknown,
   onMouseUp: null as unknown,

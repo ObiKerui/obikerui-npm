@@ -68,6 +68,7 @@ function Brush() {
 
         if (isMouseDown && isInsideBrush) {
           const mousePosition = d3.mouse(node[i]);
+          console.log('node-i and mouse: ', node[i], mousePosition);
           const posOnChartX = cScale.invert(mousePosition[0]);
           // const x = xScale.invert(+rect.attr('x'))
           const rectX = +rect.attr('x');
@@ -83,7 +84,8 @@ function Brush() {
 
           // check for values outside bounds of domain
           const lessThanXLimit = newXvalue < (cScale(minX) as number);
-          const greaterThanXLimit = +(newXvalue + rectWidth) > (cScale(maxX) as number);
+          const greaterThanXLimit =
+            +(newXvalue + rectWidth) > (cScale(maxX) as number);
 
           // correct if necessary
           newXvalue = lessThanXLimit ? rectX : newXvalue;
