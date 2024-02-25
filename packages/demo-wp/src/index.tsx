@@ -12,10 +12,13 @@ import { LinePlotContainer } from './plots/LinePlot/LinePlot';
 import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
 import { ScatterPlotContainer } from './plots/ScatterPlot/ScatterPlot';
 // import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
-import WarehouseContainer from './shapes/Warehouse';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
 import RoofPlot from './solar/RoofPlanner/RootPlot';
+
+import ThreeSolar from './solar/ThreeSolar';
+import { AppProvider } from './solar/ThreeSolar/Provider';
+
 import './style.css';
 
 function Root() {
@@ -65,12 +68,13 @@ function Solar() {
   );
 }
 
-function Shapes() {
+function ThreeSolarHolder() {
   return (
-    <div>
-      {/* <ShapePlotContainer /> */}
-      <WarehouseContainer />
-    </div>
+    <AppProvider>
+      <div>
+        <ThreeSolar />
+      </div>
+    </AppProvider>
   );
 }
 
@@ -93,8 +97,8 @@ const router = createHashRouter([
         element: <Solar />,
       },
       {
-        path: '/shapes',
-        element: <Shapes />,
+        path: '/three-solar',
+        element: <ThreeSolarHolder />,
       },
     ],
   },

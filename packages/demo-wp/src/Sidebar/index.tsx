@@ -13,7 +13,7 @@ export default function () {
         <Link to="solar">Solar</Link>
       </li>
       <li>
-        <Link to="shapes">Shapes</Link>
+        <Link to="three-solar">Three Solar</Link>
       </li>
     </ul>
   );

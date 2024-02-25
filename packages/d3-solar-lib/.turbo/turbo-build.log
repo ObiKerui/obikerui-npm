@@ -1,26 +1,29 @@
 
-> @obikerui/d3-solar-lib@0.0.0 build /Users/craigsharp/Coding/obikerui/packages/d3-solar-lib
+
+> @obikerui/d3-solar-lib@0.0.0 build /Users/craigsharp/Coding/obikerui-npm/packages/d3-solar-lib
 > cross-env NODE_ENV=development webpack --config webpack.config.js
 
-(node:10137) [DEP_WEBPACK_COMPILATION_ASSETS] DeprecationWarning: Compilation.assets will be frozen in future, all modifications are deprecated.
+[BABEL] Note: The code generator has deoptimised the styling of /Users/craigsharp/Coding/obikerui-npm/packages/d3-plot-lib/dist/index.js as it exceeds the max of 500KB.
+(node:3675) [DEP_WEBPACK_COMPILATION_ASSETS] DeprecationWarning: Compilation.assets will be frozen in future, all modifications are deprecated.
 BREAKING CHANGE: No more changes should happen to Compilation.assets after sealing the Compilation.
 	Do changes to assets earlier, e. g. in Compilation.hooks.processAssets.
 	Make sure to select an appropriate stage from Compilation.PROCESS_ASSETS_STAGE_*.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-asset index.js 1.45 MiB [compared for emit] (name: main)
-asset index.d.ts 10.6 KiB [compared for emit]
+asset [1m[32mindex.js[39m[22m 2.98 MiB [1m[32m[emitted][39m[22m (name: main)
+asset [1m[32mindex.d.ts[39m[22m 11.1 KiB [1m[32m[emitted][39m[22m
 runtime modules 937 bytes 4 modules
-modules by path ../../node_modules/.pnpm/ 550 KiB 523 modules
-modules by path ./src/ 49.1 KiB
-  modules by path ./src/generators/*.ts 20.1 KiB 9 modules
-  modules by path ./src/*.ts 14.6 KiB 5 modules
-  modules by path ./src/plots/*.ts 12 KiB
-    ./src/plots/bar.ts 3.75 KiB [built] [code generated]
-    + 3 modules
-  modules by path ./src/utils/*.ts 1.43 KiB
-    ./src/utils/sun-position-in-900-bytes.ts 1.04 KiB [built] [code generated]
-    ./src/utils/units.ts 401 bytes [built] [code generated]
-  modules by path ./src/attributes/*.ts 974 bytes
-    ./src/attributes/container.ts 812 bytes [built] [code generated]
-    ./src/attributes/plot.ts 162 bytes [built] [code generated]
-webpack 5.84.1 compiled successfully in 8922 ms
+modules by path [1m../../node_modules/.pnpm/[39m[22m 550 KiB 523 modules
+modules by path [1m./src/[39m[22m 53.1 KiB
+  modules by path [1m./src/generators/*.ts[39m[22m 20.1 KiB 9 modules
+  modules by path [1m./src/plots/*.ts[39m[22m 14.7 KiB 7 modules
+  modules by path [1m./src/*.ts[39m[22m 14.8 KiB
+    [1m./src/index.ts[39m[22m 1.19 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    + 4 modules
+  modules by path [1m./src/utils/*.ts[39m[22m 2.48 KiB
+    [1m./src/utils/solarPlacer.ts[39m[22m 1.06 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    + 2 modules
+  modules by path [1m./src/attributes/*.ts[39m[22m 974 bytes
+    [1m./src/attributes/container.ts[39m[22m 812 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/attributes/plot.ts[39m[22m 162 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+[1m../d3-plot-lib/dist/index.js[39m[22m 1.47 MiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.84.1 compiled [1m[32msuccessfully[39m[22m in 3524 ms
