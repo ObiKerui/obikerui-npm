@@ -7,6 +7,8 @@ class MouseControls {
   camera: THREE.Camera;
   domElement: HTMLElement;
   rayCaster: THREE.Raycaster;
+  lastMouseDownObject: THREE.Mesh | null;
+  mouseIsDown: boolean;
 
   constructor(
     objects: THREE.Mesh[],
@@ -17,9 +19,11 @@ class MouseControls {
     this.camera = camera;
     this.domElement = domElement;
     this.rayCaster = new THREE.Raycaster();
+    this.lastMouseDownObject = null;
+    this.mouseIsDown = false;
   }
 
-  computeMousePosition(mouseEvent: MouseEvent) {
+  computeNDCPosition(mouseEvent: MouseEvent) {
     const { domElement: container } = this;
 
     const bbox = container.getBoundingClientRect();
@@ -30,9 +34,10 @@ class MouseControls {
     const offsetX = screenX - bbox.left;
     const offsetY = screenY - bbox.top;
 
-    const mouse = new THREE.Vector2();
+    const mouse = new THREE.Vector3();
     mouse.x = (offsetX / containerWidth) * 2 - 1;
     mouse.y = -(offsetY / containerHeight) * 2 + 1;
+    mouse.z = 0;
 
     // console.log(
     //   'screen / container / ndc',
@@ -45,7 +50,7 @@ class MouseControls {
     return mouse;
   }
 
-  findIntersection(mouseCoords: THREE.Vector2) {
+  findIntersection(mouseCoords: THREE.Vector3) {
     let intersecting = null;
     const { camera, rayCaster, objects, domElement } = this;
     const { x, y } = mouseCoords;
@@ -67,7 +72,8 @@ class MouseControls {
   }
 
   handleMouseMove(mouseEvent: MouseEvent, callback: tMouseEvent) {
-    const mousePos = this.computeMousePosition(mouseEvent);
+    const mousePos = this.computeNDCPosition(mouseEvent);
+    const worldCoords = mousePos.unproject(this.camera);
     const scenePos = new THREE.Vector3(mousePos.x, 0, mousePos.y);
     const intersectingObj = this.findIntersection(mousePos);
 
@@ -76,7 +82,32 @@ class MouseControls {
 
     callback({
       mouseCoords: scenePos,
+      worldCoords,
       object: mesh,
+    });
+  }
+
+  handleMouseDown(mouseEvent: MouseEvent, callback: tMouseEvent) {
+    this.handleMouseMove(mouseEvent, ({ mouseCoords, worldCoords, object }) => {
+      this.lastMouseDownObject = object;
+      this.mouseIsDown = true;
+      callback({
+        mouseCoords,
+        worldCoords,
+        object,
+      });
+    });
+  }
+
+  handleMouseUp(mouseEvent: MouseEvent, callback: tMouseEvent) {
+    const object = this.lastMouseDownObject;
+    this.handleMouseMove(mouseEvent, ({ mouseCoords, worldCoords }) => {
+      this.mouseIsDown = false;
+      callback({
+        mouseCoords,
+        worldCoords,
+        object,
+      });
     });
   }
 
@@ -94,6 +125,17 @@ class MouseControls {
           this.handleMouseMove(event, callback);
         });
         break;
+      case 'mousedown':
+        domElement.addEventListener(eventId, (event) => {
+          this.handleMouseDown(event, callback);
+        });
+        break;
+      case 'mouseup':
+        domElement.addEventListener(eventId, (event) => {
+          this.handleMouseUp(event, callback);
+        });
+        break;
+
       default:
         break;
     }

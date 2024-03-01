@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import MouseControls from '../Lib/MouseControls';
+import { tCallback } from '../Lib/sharedTypes';
 
 class Plan {
   scene: THREE.Scene;
@@ -10,6 +11,9 @@ class Plan {
   container: HTMLDivElement | null;
   orbitControls: OrbitControls | null;
   mouseControls: MouseControls | null;
+  onMouseDown: tCallback | null;
+  onMouseUp: tCallback | null;
+  onMouseMove: tCallback | null;
 
   constructor() {
     this.scene = new THREE.Scene();
@@ -18,6 +22,10 @@ class Plan {
     this.renderer = null;
     this.orbitControls = null;
     this.mouseControls = null;
+
+    this.onMouseDown = null;
+    this.onMouseUp = null;
+    this.onMouseMove = null;
   }
 
   load() {
@@ -94,25 +102,45 @@ class Plan {
   }
 
   addControls() {
-    const { mouseControls } = this;
-    if (!mouseControls) {
+    const { mouseControls, orbitControls } = this;
+    if (!mouseControls || !orbitControls) {
       return;
     }
 
-    mouseControls.addEventListener('mouseover', (data) => {
-      console.log('mouse over event: ', data);
+    mouseControls.addEventListener('mouseover', () => {
+      // console.log('mouse over event: ', data);
     });
 
     mouseControls.addEventListener('mousedown', (data) => {
-      console.log('mouse down event: ', data);
+      orbitControls.enabled = false;
+      // console.log('mouse down event: ', data);
+      if (this.onMouseDown) {
+        this.onMouseDown({
+          eventData: data,
+          eventName: 'mousedown',
+        });
+      }
     });
 
     mouseControls.addEventListener('mouseup', (data) => {
-      console.log('mouse up event: ', data);
+      orbitControls.enabled = true;
+      // console.log('mouse up event: ', data);
+      if (this.onMouseUp) {
+        this.onMouseUp({
+          eventData: data,
+          eventName: 'mouseup',
+        });
+      }
     });
 
     mouseControls.addEventListener('mousemove', (data) => {
-      console.log('mouse move event: ', data);
+      // console.log('mouse move event: ', data);
+      if (this.onMouseMove) {
+        this.onMouseMove({
+          eventData: data,
+          eventName: 'mousemove',
+        });
+      }
     });
   }
 

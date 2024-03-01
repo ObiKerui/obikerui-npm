@@ -1,7 +1,7 @@
 import { createContext, useContext, type ReactNode, useMemo } from 'react';
 import Plan from './Scenes/Plan';
 import * as types from './Lib/sharedTypes';
-import Controller from './Model/Controller';
+import Controller from './Controllers/Controller';
 import { Model } from './Model/Model';
 import Perspective from './Scenes/Perspective';
 
@@ -36,6 +36,10 @@ const plan = new Plan();
 const perspective = new Perspective();
 
 controller.model = model;
+plan.onMouseDown = controller.onMouseDown;
+plan.onMouseUp = controller.onMouseUp;
+plan.onMouseMove = controller.onMouseMove;
+
 model.planScene = plan;
 model.perspectiveScene = perspective;
 

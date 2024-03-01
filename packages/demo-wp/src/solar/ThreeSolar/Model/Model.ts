@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import { Mesh } from 'three';
 import BuildingPlan from '../Buildings/Plan';
 import Plan from '../Scenes/Plan';
 import Perspective from '../Scenes/Perspective';
@@ -16,14 +17,30 @@ class Model {
   planScene: Plan | null;
   perspectiveScene: Perspective | null;
   buildings: BuildingModel[];
+  selectedBuildingIndex: number;
+  mouseIsDown: boolean;
+  selectedMesh: Mesh | null;
   listeners: tListener[];
 
   constructor() {
-    // this.planScene = new THREE.Scene();
     this.planScene = null;
     this.perspectiveScene = null;
     this.buildings = [];
     this.listeners = [];
+    this.selectedBuildingIndex = -1;
+    this.mouseIsDown = false;
+    this.selectedMesh = null;
+  }
+
+  get SelectedBuilding() {
+    const { buildings, selectedBuildingIndex } = this;
+    if (
+      selectedBuildingIndex < 0 ||
+      selectedBuildingIndex >= buildings.length
+    ) {
+      return null;
+    }
+    return buildings[selectedBuildingIndex];
   }
 
   notifyListeners() {
