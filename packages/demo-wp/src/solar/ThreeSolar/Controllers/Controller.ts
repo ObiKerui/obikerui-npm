@@ -1,13 +1,12 @@
 /* eslint-disable no-console */
 import { tCallback, tCallbackData } from '../Lib/sharedTypes';
-import { BuildingModel, Model } from '../Model/Model';
+import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 import PositionControl from './PositionControl';
 import RotateControl from './RotateControl';
 
 import ScaleControl from './ScaleControl';
 
 class Controller {
-  // scaleControl: GeometryScaleControl;
   scaleControl: ScaleControl;
   rotateControl: RotateControl;
   positionControl: PositionControl;
@@ -37,16 +36,38 @@ class Controller {
   handleMouseDown(params: tCallbackData) {
     const { model } = this;
     const { object } = params.eventData;
-    if (!model) {
+    if (!model || !object) {
       return;
     }
     model.mouseIsDown = true;
 
     const selectedBuilding = model.SelectedBuilding;
+
     if (!selectedBuilding) {
       return;
     }
-    this.scaleControl.setBuilding(selectedBuilding);
+
+    if (object.name === 'rotate-building') {
+      model.interaction = InteractionMode.ROTATE;
+      this.rotateControl.setBuilding(selectedBuilding, params);
+      console.log('rot - interaction mode... ', model);
+      return;
+    }
+
+    if (object.name === 'perimeter') {
+      model.interaction = InteractionMode.POSITION;
+      this.positionControl.setBuilding(selectedBuilding, params);
+      console.log('move - interaction mode... ', model);
+      return;
+    }
+
+    console.log('what is it? ', object);
+
+    if (object.name.startsWith('scale')) {
+      model.interaction = InteractionMode.SCALE;
+      this.scaleControl.setBuilding(selectedBuilding);
+      console.log('scale - interaction mode: ', model);
+    }
   }
 
   handleMouseUp() {
@@ -55,8 +76,11 @@ class Controller {
       return;
     }
     model.mouseIsDown = false;
-    console.log('mouse up called: ', model);
-    this.scaleControl.recentre();
+
+    if (model.interaction === InteractionMode.SCALE) {
+      this.scaleControl.recentre();
+    }
+    model.interaction = InteractionMode.NONE;
   }
 
   handleMouseMove(params: tCallbackData) {
@@ -70,21 +94,19 @@ class Controller {
       return;
     }
 
-    // console.log('handle mouse move : ', model);
+    if (model.interaction === InteractionMode.POSITION) {
+      this.positionControl.setPosition(params);
+      return;
+    }
 
-    // const dragHandleName = model.selectedMesh.name;
+    if (model.interaction === InteractionMode.ROTATE) {
+      this.rotateControl.setRotation(params);
+      return;
+    }
 
-    // if (dragHandleName.startsWith('scale')) {
-    this.scaleControl.setScale(params);
-    // } else if (dragHandleName.startsWith('rotat')) {
-
-    // this.rotateControl.buildingModel = building;
-    // this.rotateControl.setRotation(params);
-
-    // }
-
-    // this.positionControl.buildingModel = building;
-    // this.positionControl.setPosition(params);
+    if (model.interaction === InteractionMode.SCALE) {
+      this.scaleControl.setScale(params);
+    }
   }
 
   addBuilding() {
@@ -103,7 +125,6 @@ class Controller {
 
     const newBuilding = new BuildingModel();
     planScene.scene.add(newBuilding.buildingPlan.transform);
-    newBuilding.buildingPlan.rotation.rotation.set(0, Math.PI / 4, 0);
 
     const { mouseControls } = planScene;
     if (!mouseControls) {
@@ -113,8 +134,10 @@ class Controller {
     // this should be more like set active handles - only 1 set of drag-handles active at any one
     // time, that of the selected building plan
     // - but we still need to be able to click on a building plan and select that one
-    mouseControls.objects = newBuilding.buildingPlan.scaleHandles;
-    console.log('mouse controls objs: ', mouseControls);
+    mouseControls.objects = [
+      ...newBuilding.buildingPlan.scaleHandles,
+      newBuilding.buildingPlan.perimeter,
+    ];
 
     model.buildings.push(newBuilding);
     model.selectedBuildingIndex = model.buildings.length - 1;

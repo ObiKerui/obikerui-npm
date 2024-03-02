@@ -1,33 +1,51 @@
+import { Vector3 } from 'three';
 import { tCallbackData } from '../Lib/sharedTypes';
 import { BuildingModel } from '../Model/Model';
 
 class PositionControl {
   buildingModel: BuildingModel | null;
+  offset: Vector3 | null;
   constructor() {
     this.buildingModel = null;
+    this.offset = null;
+  }
+
+  setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
+    this.buildingModel = buildingModel;
+    const { transform } = this.buildingModel.buildingPlan;
+
+    const { worldCoords } = params.eventData;
+
+    // for the offset find difference between mouse click pos and centre of transform
+    const transformCentre = new Vector3();
+    transform.getWorldPosition(transformCentre);
+
+    this.offset = new Vector3(
+      worldCoords.x - transformCentre.x,
+      0,
+      worldCoords.z - transformCentre.z
+    );
   }
 
   setPosition(params: tCallbackData) {
     const { buildingModel } = this;
     const { eventData } = params;
-    const { mouseCoords, worldCoords } = eventData;
+    const { worldCoords } = eventData;
+    const { offset } = this;
 
-    if (!buildingModel) {
+    if (!buildingModel || !offset) {
       return;
     }
 
     const { transform } = buildingModel.buildingPlan;
 
-    // console.log(
-    //   'rotate-pos / mouse / angle is: ',
-    //   rotation.position,
-    //   mouseCoords,
-    //   angle
-    // );
+    const newPosition = new Vector3(
+      worldCoords.x - offset.x,
+      0,
+      worldCoords.z - offset.z
+    );
 
-    console.log('world coords: ', worldCoords);
-
-    transform.position.copy(worldCoords.clone());
+    transform.position.copy(newPosition);
   }
 }
 

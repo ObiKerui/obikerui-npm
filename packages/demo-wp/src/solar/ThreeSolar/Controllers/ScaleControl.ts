@@ -25,8 +25,7 @@ class ScaleControl {
 
   setBuilding(buildingModel: BuildingModel) {
     this.buildingModel = buildingModel;
-    const { transform, rotation, anchor, scale, perimeter, doubleHipRoof } =
-      this.buildingModel.buildingPlan;
+    const { anchor, scale, doubleHipRoof } = this.buildingModel.buildingPlan;
 
     // console.log(
     //   'scales: ',
@@ -38,8 +37,10 @@ class ScaleControl {
     //   doubleHipRoof.scale
     // );
 
-    const xShift = (scale.scale.x * 2) / 2;
-    const zShift = (scale.scale.z * 2) / 2;
+    // const xShift = (scale.scale.x * 2) / 2;
+    // const zShift = (scale.scale.z * 2) / 2;
+    const xShift = scale.scale.x;
+    const zShift = scale.scale.z;
 
     const anchorShift = new Vector3(-xShift, 0, zShift);
     const anchorShiftInverse = new Vector3(1, 0, -1);
@@ -53,16 +54,14 @@ class ScaleControl {
     if (!this.buildingModel) {
       return;
     }
-    const { anchor, scale, xyCursor, scaleHandles } =
-      this.buildingModel.buildingPlan;
-    const { mouseCoords, worldCoords } = params.eventData;
+    const { anchor, scale, scaleHandles } = this.buildingModel.buildingPlan;
+    const { worldCoords } = params.eventData;
     // console.log('mouse / world coords: ', mouseCoords, worldCoords);
 
     // const newWorldCoords = worldCoords.clone();
     const newWorldCoords = new Vector3(worldCoords.x, 0, worldCoords.z);
     anchor.worldToLocal(newWorldCoords);
 
-    const posUnderCursor = new Vector3(newWorldCoords.x, 0, newWorldCoords.z);
     const newScale = new Vector3(
       newWorldCoords.x / 2,
       1,
@@ -71,7 +70,6 @@ class ScaleControl {
 
     const newInverseScale = new Vector3(1 / newScale.x, 1, 1 / newScale.z);
 
-    xyCursor.position.copy(posUnderCursor);
     scale.scale.copy(newScale);
 
     scaleHandles.forEach((handle) => {
@@ -84,15 +82,8 @@ class ScaleControl {
       return;
     }
 
-    const {
-      transform,
-      rotation,
-      anchor,
-      scale,
-      perimeter,
-      xyCursor,
-      doubleHipRoof,
-    } = this.buildingModel.buildingPlan;
+    const { transform, rotation, anchor, scale, perimeter, doubleHipRoof } =
+      this.buildingModel.buildingPlan;
 
     // what's the current pos of the geometry
     // const beforeCurrPos = doubleHipRoof.position.clone();
@@ -102,7 +93,6 @@ class ScaleControl {
     // const centre = getCenterPoint(perimeter);
     const worldPos = new Vector3();
     doubleHipRoof.getWorldPosition(worldPos);
-    xyCursor.position.copy(worldPos.clone());
 
     transform.position.copy(worldPos.clone());
     rotation.position.set(0, 0, 0);

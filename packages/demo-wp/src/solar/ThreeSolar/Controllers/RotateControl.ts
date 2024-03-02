@@ -3,7 +3,7 @@ import { tCallbackData } from '../Lib/sharedTypes';
 import { BuildingModel } from '../Model/Model';
 
 function calculateAngle(centre: Vector3, mouse: Vector3) {
-  return Math.atan2(mouse.z - centre.z, mouse.x - centre.x);
+  return -Math.atan2(mouse.z - centre.z, mouse.x - centre.x);
 }
 
 class RotateControl {
@@ -12,28 +12,26 @@ class RotateControl {
     this.buildingModel = null;
   }
 
+  setBuilding(buildingModel: BuildingModel, _params: tCallbackData) {
+    this.buildingModel = buildingModel;
+  }
+
   setRotation(params: tCallbackData) {
     const { buildingModel } = this;
     const { eventData } = params;
-    const { mouseCoords } = eventData;
+    const { worldCoords } = eventData;
 
     if (!buildingModel) {
       return;
     }
 
-    const { rotation } = buildingModel.buildingPlan;
+    const { rotation, transform } = buildingModel.buildingPlan;
 
-    const angle = calculateAngle(rotation.position, mouseCoords);
-
-    // console.log(
-    //   'rotate-pos / mouse / angle is: ',
-    //   rotation.position,
-    //   mouseCoords,
-    //   angle
-    // );
+    // const angle = calculateAngle(rotation.position, mouseCoords);
+    const angle = calculateAngle(transform.position, worldCoords);
 
     const euler = new Euler(0, angle, 0);
-    rotation.rotation.copy(euler.clone());
+    rotation.rotation.copy(euler);
   }
 }
 

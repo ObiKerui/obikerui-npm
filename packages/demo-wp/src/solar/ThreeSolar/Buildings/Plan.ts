@@ -31,17 +31,6 @@ const doubleHipRoof = [
 
 const allPoints = [...perimeter, ...doubleHipRoof];
 
-// function constructBuilding() {
-//   const geometry = new THREE.BufferGeometry().setFromPoints(perimeter);
-//   geometry.computeVertexNormals();
-//   const material = new THREE.LineBasicMaterial({
-//     color: 0x00ff00,
-//   });
-//   const cube = new THREE.LineLoop(geometry, material);
-
-//   return cube;
-// }
-
 function constructRoof() {
   const geometry = new THREE.BufferGeometry().setFromPoints(allPoints);
 
@@ -54,13 +43,18 @@ function constructRoof() {
 }
 
 type tDragParams = {
+  dimensions?: THREE.Vector3;
   position: THREE.Vector3;
   name: string;
 };
 
-function constructScaleHandle(params: tDragParams) {
+function constructHandle(params: tDragParams) {
   // Create a box geometry with no height
-  const geometry = new THREE.BoxGeometry(0.2, 0, 0.1);
+  let dims = new THREE.Vector3(0.2, 0, 0.1);
+  if (params.dimensions) {
+    dims = params.dimensions;
+  }
+  const geometry = new THREE.BoxGeometry(dims.x, dims.y, dims.z);
 
   // Create a material with white color
   const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -80,48 +74,47 @@ class BuildingPlan {
   rotation: THREE.Mesh;
   anchor: THREE.Mesh;
   scale: THREE.Mesh;
-  xyCursor: THREE.Mesh;
+  // xyCursor: THREE.Mesh;
 
   constructor() {
-    this.doubleHipRoof = constructRoof();
-
-    const topLeft = constructScaleHandle({
-      position: new THREE.Vector3(-1, 0, -1),
+    const topLeft = constructHandle({
+      position: new THREE.Vector3(-1, 0.5, -1),
       name: 'scale-topleft',
     });
 
-    const topRight = constructScaleHandle({
-      position: new THREE.Vector3(1, 0, -1),
+    const topRight = constructHandle({
+      position: new THREE.Vector3(1, 0.5, -1),
       name: 'scale-topright',
     });
 
-    const bottomLeft = constructScaleHandle({
-      position: new THREE.Vector3(-1, 0, 1),
+    const bottomLeft = constructHandle({
+      position: new THREE.Vector3(-1, 0.5, 1),
       name: 'scale-bottomleft',
     });
 
-    const bottomRight = constructScaleHandle({
-      position: new THREE.Vector3(1, 0, 1),
+    const bottomRight = constructHandle({
+      position: new THREE.Vector3(1, 0.5, 1),
       name: 'scale-bottomright',
     });
 
-    const topHip = constructScaleHandle({
-      position: new THREE.Vector3(0, 0, -0.75),
+    const topHip = constructHandle({
+      position: new THREE.Vector3(0, 0.5, -0.75),
       name: 'move-tophip',
     });
 
-    const bottomHip = constructScaleHandle({
-      position: new THREE.Vector3(0, 0, 0.75),
+    const bottomHip = constructHandle({
+      position: new THREE.Vector3(0, 0.5, 0.75),
       name: 'move-bottomhip',
     });
 
-    const ridgeLine = constructScaleHandle({
-      position: new THREE.Vector3(0, 0, 0),
+    const ridgeLine = constructHandle({
+      position: new THREE.Vector3(0, 0.5, 0),
       name: 'move-ridgeline',
     });
 
-    const rotateHandle = constructScaleHandle({
-      position: new THREE.Vector3(1.5, 0, 0),
+    const rotateHandle = constructHandle({
+      dimensions: new THREE.Vector3(0.2, 0, 0.2),
+      position: new THREE.Vector3(1.5, 0.5, 0),
       name: 'rotate-building',
     });
 
@@ -139,9 +132,10 @@ class BuildingPlan {
     const transRotGeom = new THREE.BoxGeometry();
     // Create a material with white color
     const transRotMat = new THREE.MeshBasicMaterial({
-      color: 0x000000,
+      color: 0x0000dd,
       wireframe: true,
-      opacity: 0,
+      transparent: true,
+      opacity: 0.0,
     });
 
     // Create a mesh with the geometry and material
@@ -151,6 +145,8 @@ class BuildingPlan {
     const anchorMat = new THREE.MeshBasicMaterial({
       color: 0x0000ff,
       wireframe: true,
+      transparent: true,
+      opacity: 0,
     });
 
     const anchorGeom = new THREE.BoxGeometry(4, 4, 4);
@@ -159,17 +155,24 @@ class BuildingPlan {
     const scaleMat = new THREE.MeshBasicMaterial({
       color: 0x00ccff,
       wireframe: true,
+      transparent: true,
+      opacity: 0,
     });
 
     const scaleGeom = new THREE.BoxGeometry(4, 4, 4);
     this.scale = new THREE.Mesh(scaleGeom, scaleMat);
 
-    const perimeterGeom = new THREE.BoxGeometry(1, 1, 1);
+    const perimeterGeom = new THREE.BoxGeometry(2, 2, 2);
     const perimeterMat = new THREE.MeshBasicMaterial({
-      color: 0x777777,
+      color: 0xeeeeee,
       wireframe: true,
+      transparent: true,
+      opacity: 0,
     });
     this.perimeter = new THREE.Mesh(perimeterGeom, perimeterMat);
+    this.perimeter.name = 'perimeter';
+
+    this.doubleHipRoof = constructRoof();
 
     this.doubleHipRoof.add(topLeft);
     this.doubleHipRoof.add(topRight);
@@ -186,14 +189,14 @@ class BuildingPlan {
     this.rotation.add(this.anchor);
     this.transform.add(this.rotation);
 
-    const circleGeom = new THREE.CircleGeometry(0.1);
-    const circleMat = new THREE.MeshBasicMaterial({
-      color: 0xdddddd,
-      wireframe: true,
-    });
-    this.xyCursor = new THREE.Mesh(circleGeom, circleMat);
-    this.xyCursor.rotation.set(Math.PI / 2, 0, 0);
-    this.transform.add(this.xyCursor);
+    // const circleGeom = new THREE.CircleGeometry(0.1);
+    // const circleMat = new THREE.MeshBasicMaterial({
+    //   color: 0xdddddd,
+    //   wireframe: true,
+    // });
+    // this.xyCursor = new THREE.Mesh(circleGeom, circleMat);
+    // this.xyCursor.rotation.set(Math.PI / 2, 0, 0);
+    // this.transform.add(this.xyCursor);
   }
 }
 

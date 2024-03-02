@@ -13,6 +13,13 @@ class BuildingModel {
 
 type tListener = (newModel: BuildingModel[]) => void;
 
+enum InteractionMode {
+  NONE = 'NONE',
+  POSITION = 'POSITION',
+  ROTATE = 'ROTATE',
+  SCALE = 'SCALE',
+}
+
 class Model {
   planScene: Plan | null;
   perspectiveScene: Perspective | null;
@@ -21,6 +28,7 @@ class Model {
   mouseIsDown: boolean;
   selectedMesh: Mesh | null;
   listeners: tListener[];
+  interaction: InteractionMode;
 
   constructor() {
     this.planScene = null;
@@ -30,6 +38,7 @@ class Model {
     this.selectedBuildingIndex = -1;
     this.mouseIsDown = false;
     this.selectedMesh = null;
+    this.interaction = InteractionMode.NONE;
   }
 
   get SelectedBuilding() {
@@ -62,4 +71,4 @@ class Model {
   }
 }
 
-export { BuildingModel, Model };
+export { BuildingModel, InteractionMode, Model };

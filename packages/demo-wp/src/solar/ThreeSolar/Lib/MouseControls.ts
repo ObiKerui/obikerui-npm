@@ -56,7 +56,7 @@ class MouseControls {
     const { x, y } = mouseCoords;
     rayCaster.setFromCamera(new THREE.Vector2(x, y), camera);
 
-    const intersects = rayCaster.intersectObjects(objects);
+    const intersects = rayCaster.intersectObjects(objects, false);
 
     if (intersects.length > 0) {
       domElement.style.cursor = 'pointer';
@@ -73,7 +73,7 @@ class MouseControls {
 
   handleMouseMove(mouseEvent: MouseEvent, callback: tMouseEvent) {
     const mousePos = this.computeNDCPosition(mouseEvent);
-    const worldCoords = mousePos.unproject(this.camera);
+    const worldCoords = mousePos.clone().unproject(this.camera);
     const scenePos = new THREE.Vector3(mousePos.x, 0, mousePos.y);
     const intersectingObj = this.findIntersection(mousePos);
 
