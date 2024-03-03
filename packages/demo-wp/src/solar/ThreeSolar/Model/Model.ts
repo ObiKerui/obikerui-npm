@@ -6,8 +6,10 @@ import Perspective from '../Scenes/Perspective';
 
 class BuildingModel {
   buildingPlan: BuildingPlan;
-  constructor() {
-    this.buildingPlan = new BuildingPlan();
+  id: string;
+  constructor(id: string) {
+    this.id = id;
+    this.buildingPlan = new BuildingPlan(this.id);
   }
 }
 
@@ -18,11 +20,14 @@ enum InteractionMode {
   POSITION = 'POSITION',
   ROTATE = 'ROTATE',
   SCALE = 'SCALE',
+  ADJUST_ROOF = 'ADJUST_ROOF',
 }
 
 class Model {
   planScene: Plan | null;
   perspectiveScene: Perspective | null;
+  buildingsMap: Map<string, BuildingModel>;
+  selectedBuildingId: string | null;
   buildings: BuildingModel[];
   selectedBuildingIndex: number;
   mouseIsDown: boolean;
@@ -33,6 +38,10 @@ class Model {
   constructor() {
     this.planScene = null;
     this.perspectiveScene = null;
+
+    this.buildingsMap = new Map();
+    this.selectedBuildingId = null;
+
     this.buildings = [];
     this.listeners = [];
     this.selectedBuildingIndex = -1;
@@ -42,15 +51,23 @@ class Model {
   }
 
   get SelectedBuilding() {
-    const { buildings, selectedBuildingIndex } = this;
-    if (
-      selectedBuildingIndex < 0 ||
-      selectedBuildingIndex >= buildings.length
-    ) {
+    const { buildingsMap, selectedBuildingId } = this;
+    if (!selectedBuildingId) {
       return null;
     }
-    return buildings[selectedBuildingIndex];
+    return buildingsMap.get(selectedBuildingId);
   }
+
+  // get SelectedBuilding() {
+  //   const { buildings, selectedBuildingIndex } = this;
+  //   if (
+  //     selectedBuildingIndex < 0 ||
+  //     selectedBuildingIndex >= buildings.length
+  //   ) {
+  //     return null;
+  //   }
+  //   return buildings[selectedBuildingIndex];
+  // }
 
   notifyListeners() {
     this.listeners.forEach((listener) => {

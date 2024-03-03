@@ -131,7 +131,11 @@ class GeometryScaleControl {
     if (!buildingModel) {
       return;
     }
-    const { scale, doubleHipRoof, scaleHandles } = buildingModel.buildingPlan;
+    const {
+      scale,
+      doubleHipRoof,
+      handles: scaleHandles,
+    } = buildingModel.buildingPlan;
 
     const currGeom = doubleHipRoof.geometry.getAttribute('position');
     const vecs = convertToVectors(

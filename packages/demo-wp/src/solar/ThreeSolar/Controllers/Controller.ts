@@ -1,15 +1,30 @@
 /* eslint-disable no-console */
 import { tCallback, tCallbackData } from '../Lib/sharedTypes';
 import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import Handles from './Handles';
 import PositionControl from './PositionControl';
+import RoofControl from './RoofControl';
 import RotateControl from './RotateControl';
-
 import ScaleControl from './ScaleControl';
+
+const regex = /id-\d+/;
+
+function extractId(name: string) {
+  const matchArray: RegExpMatchArray | null = name.match(regex);
+
+  if (matchArray !== null) {
+    const extractedValue: string = matchArray[0];
+    return extractedValue;
+  }
+  return null;
+}
 
 class Controller {
   scaleControl: ScaleControl;
   rotateControl: RotateControl;
   positionControl: PositionControl;
+  roofControl: RoofControl;
+  handleControl: Handles;
 
   model: Model | null;
   onMouseDown: tCallback;
@@ -20,6 +35,8 @@ class Controller {
     this.scaleControl = new ScaleControl();
     this.rotateControl = new RotateControl();
     this.positionControl = new PositionControl();
+    this.roofControl = new RoofControl();
+    this.handleControl = new Handles();
     this.model = null;
 
     this.onMouseDown = (params) => {
@@ -41,6 +58,17 @@ class Controller {
     }
     model.mouseIsDown = true;
 
+    const { name } = object;
+
+    if (name.startsWith('perimeter')) {
+      const id = extractId(name);
+      if (!id) {
+        return;
+      }
+      this.selectBuilding(id);
+    }
+
+    // set the selected building
     const selectedBuilding = model.SelectedBuilding;
 
     if (!selectedBuilding) {
@@ -50,23 +78,24 @@ class Controller {
     if (object.name === 'rotate-building') {
       model.interaction = InteractionMode.ROTATE;
       this.rotateControl.setBuilding(selectedBuilding, params);
-      console.log('rot - interaction mode... ', model);
       return;
     }
 
-    if (object.name === 'perimeter') {
+    if (object.name.startsWith('perimeter')) {
       model.interaction = InteractionMode.POSITION;
       this.positionControl.setBuilding(selectedBuilding, params);
-      console.log('move - interaction mode... ', model);
       return;
     }
-
-    console.log('what is it? ', object);
 
     if (object.name.startsWith('scale')) {
       model.interaction = InteractionMode.SCALE;
       this.scaleControl.setBuilding(selectedBuilding);
-      console.log('scale - interaction mode: ', model);
+      return;
+    }
+
+    if (object.name.startsWith('move')) {
+      model.interaction = InteractionMode.ADJUST_ROOF;
+      this.roofControl.setBuilding(selectedBuilding, params);
     }
   }
 
@@ -107,6 +136,28 @@ class Controller {
     if (model.interaction === InteractionMode.SCALE) {
       this.scaleControl.setScale(params);
     }
+
+    if (model.interaction === InteractionMode.ADJUST_ROOF) {
+      this.roofControl.setPosition(params);
+    }
+  }
+
+  selectBuilding(buildingId: string) {
+    const { model } = this;
+
+    if (!model) {
+      return;
+    }
+
+    model.selectedBuildingId = buildingId;
+    const selected = model.SelectedBuilding;
+
+    if (!selected) {
+      return;
+    }
+
+    // set the selected building to the index
+    selected.buildingPlan.addHandles(this.handleControl);
   }
 
   addBuilding() {
@@ -123,7 +174,11 @@ class Controller {
       return;
     }
 
-    const newBuilding = new BuildingModel();
+    // how many buildings
+    const nth = model.buildingsMap.size;
+    const buildingId = `id-${nth}`;
+    const newBuilding = new BuildingModel(buildingId);
+    newBuilding.buildingPlan.addHandles(this.handleControl);
     planScene.scene.add(newBuilding.buildingPlan.transform);
 
     const { mouseControls } = planScene;
@@ -131,16 +186,15 @@ class Controller {
       return;
     }
 
-    // this should be more like set active handles - only 1 set of drag-handles active at any one
-    // time, that of the selected building plan
-    // - but we still need to be able to click on a building plan and select that one
-    mouseControls.objects = [
-      ...newBuilding.buildingPlan.scaleHandles,
-      newBuilding.buildingPlan.perimeter,
-    ];
+    model.buildingsMap.set(buildingId, newBuilding);
+    model.selectedBuildingId = buildingId;
 
-    model.buildings.push(newBuilding);
-    model.selectedBuildingIndex = model.buildings.length - 1;
+    const buildings = Array.from(model.buildingsMap.values());
+    const perimeters = buildings.map(
+      (building) => building.buildingPlan.perimeter
+    );
+
+    mouseControls.objects = [...this.handleControl.handlesArray, ...perimeters];
   }
 }
 

@@ -27,18 +27,6 @@ class ScaleControl {
     this.buildingModel = buildingModel;
     const { anchor, scale, doubleHipRoof } = this.buildingModel.buildingPlan;
 
-    // console.log(
-    //   'scales: ',
-    //   transform.scale,
-    //   rotation.scale,
-    //   anchor.scale,
-    //   scale.scale,
-    //   perimeter.scale,
-    //   doubleHipRoof.scale
-    // );
-
-    // const xShift = (scale.scale.x * 2) / 2;
-    // const zShift = (scale.scale.z * 2) / 2;
     const xShift = scale.scale.x;
     const zShift = scale.scale.z;
 
@@ -54,7 +42,11 @@ class ScaleControl {
     if (!this.buildingModel) {
       return;
     }
-    const { anchor, scale, scaleHandles } = this.buildingModel.buildingPlan;
+    const {
+      anchor,
+      scale,
+      handles: scaleHandles,
+    } = this.buildingModel.buildingPlan;
     const { worldCoords } = params.eventData;
     // console.log('mouse / world coords: ', mouseCoords, worldCoords);
 
@@ -85,12 +77,6 @@ class ScaleControl {
     const { transform, rotation, anchor, scale, perimeter, doubleHipRoof } =
       this.buildingModel.buildingPlan;
 
-    // what's the current pos of the geometry
-    // const beforeCurrPos = doubleHipRoof.position.clone();
-    // const beforeCurrPosWorld = doubleHipRoof.localToWorld(beforeCurrPos);
-
-    // compute the centre of the geometry
-    // const centre = getCenterPoint(perimeter);
     const worldPos = new Vector3();
     doubleHipRoof.getWorldPosition(worldPos);
 

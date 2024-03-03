@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import MouseControls from '../Lib/MouseControls';
 import { tCallback } from '../Lib/sharedTypes';
 
@@ -86,6 +87,8 @@ class Plan {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(width, height);
     this.container.appendChild(this.renderer.domElement);
+
+    // this.dragControls = new DragControls()
 
     this.orbitControls = new OrbitControls(
       this.camera,
