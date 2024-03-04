@@ -27,6 +27,9 @@ class ScaleControl {
     this.buildingModel = buildingModel;
     const { anchor, scale, doubleHipRoof } = this.buildingModel.buildingPlan;
 
+    const { anchor: perspAnchor, doubleHipRoof: perspRoof } =
+      this.buildingModel.buildingPersp;
+
     const xShift = scale.scale.x;
     const zShift = scale.scale.z;
 
@@ -35,6 +38,9 @@ class ScaleControl {
 
     anchor.position.copy(anchorShift);
     doubleHipRoof.position.copy(anchorShiftInverse);
+
+    perspAnchor.position.copy(anchorShift);
+    perspRoof.position.copy(anchorShiftInverse);
   }
 
   setScale(params: tCallbackData) {
@@ -47,6 +53,9 @@ class ScaleControl {
       scale,
       handles: scaleHandles,
     } = this.buildingModel.buildingPlan;
+
+    const { scale: scalePersp } = this.buildingModel.buildingPersp;
+
     const { worldCoords } = params.eventData;
     // console.log('mouse / world coords: ', mouseCoords, worldCoords);
 
@@ -67,6 +76,8 @@ class ScaleControl {
     scaleHandles.forEach((handle) => {
       handle.scale.copy(newInverseScale.clone());
     });
+
+    scalePersp.scale.copy(newScale);
   }
 
   recentre() {
@@ -77,6 +88,15 @@ class ScaleControl {
     const { transform, rotation, anchor, scale, perimeter, doubleHipRoof } =
       this.buildingModel.buildingPlan;
 
+    const {
+      transform: tPersp,
+      rotation: rPersp,
+      anchor: aPersp,
+      scale: sPersp,
+      perimeter: pPersp,
+      doubleHipRoof: roofPersp,
+    } = this.buildingModel.buildingPersp;
+
     const worldPos = new Vector3();
     doubleHipRoof.getWorldPosition(worldPos);
 
@@ -86,6 +106,13 @@ class ScaleControl {
     scale.position.set(0, 0, 0);
     perimeter.position.set(0, 0, 0);
     doubleHipRoof.position.set(0, 0, 0);
+
+    tPersp.position.copy(worldPos.clone());
+    rPersp.position.set(0, 0, 0);
+    aPersp.position.set(0, 0, 0);
+    sPersp.position.set(0, 0, 0);
+    pPersp.position.set(0, 0, 0);
+    roofPersp.position.set(0, 0, 0);
   }
 }
 

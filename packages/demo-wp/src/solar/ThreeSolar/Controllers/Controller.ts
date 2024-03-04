@@ -178,8 +178,11 @@ class Controller {
     const nth = model.buildingsMap.size;
     const buildingId = `id-${nth}`;
     const newBuilding = new BuildingModel(buildingId);
+
     newBuilding.buildingPlan.addHandles(this.handleControl);
+
     planScene.scene.add(newBuilding.buildingPlan.transform);
+    perspectiveScene.scene.add(newBuilding.buildingPersp.transform);
 
     const { mouseControls } = planScene;
     if (!mouseControls) {

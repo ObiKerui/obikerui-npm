@@ -25,13 +25,15 @@ class RotateControl {
       return;
     }
 
-    const { rotation, transform } = buildingModel.buildingPlan;
+    const { rotation: planRotation, transform } = buildingModel.buildingPlan;
+    const { rotation: perspRotation } = buildingModel.buildingPersp;
 
     // const angle = calculateAngle(rotation.position, mouseCoords);
     const angle = calculateAngle(transform.position, worldCoords);
 
     const euler = new Euler(0, angle, 0);
-    rotation.rotation.copy(euler);
+    planRotation.rotation.copy(euler);
+    perspRotation.rotation.copy(euler);
   }
 }
 

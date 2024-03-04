@@ -7,11 +7,13 @@ class RoofControl {
   buildingModel: BuildingModel | null;
   handle: Mesh | null;
   vectorsOnStart: Vector3[];
+  perspVectorsOnStart: Vector3[];
 
   constructor() {
     this.buildingModel = null;
     this.handle = null;
     this.vectorsOnStart = [];
+    this.perspVectorsOnStart = [];
   }
 
   setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
@@ -24,6 +26,9 @@ class RoofControl {
 
     const vecs = this.buildingModel.buildingPlan.getRoofGeometry();
     this.vectorsOnStart = vecs.map((vec) => vec.clone());
+
+    const persVecs = this.buildingModel.buildingPersp.getRoofGeometry();
+    this.perspVectorsOnStart = persVecs.map((vec) => vec.clone());
   }
 
   setPosition(params: tCallbackData) {
@@ -69,6 +74,19 @@ class RoofControl {
     vecFromRidgeToTop.z = local.z;
 
     buildingModel.buildingPlan.setRoofGeometry(vectorsOnStart);
+
+    this.setTopHipPositionPersp(local);
+  }
+
+  setTopHipPositionPersp(coords: Vector3) {
+    const { perspVectorsOnStart, buildingModel } = this;
+    if (!buildingModel) {
+      return;
+    }
+
+    const vecFromLeftToTop = perspVectorsOnStart[9];
+    vecFromLeftToTop.z = coords.z;
+    buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
   }
 
   setBottomHipPosition(params: tCallbackData) {
@@ -94,6 +112,18 @@ class RoofControl {
     vecFromRidgeToBottom.z = local.z;
 
     buildingModel.buildingPlan.setRoofGeometry(vectorsOnStart);
+    this.setBottomHipPositionPersp(local);
+  }
+
+  setBottomHipPositionPersp(coords: Vector3) {
+    const { perspVectorsOnStart, buildingModel } = this;
+    if (!buildingModel) {
+      return;
+    }
+
+    const vecFromLeftToTop = perspVectorsOnStart[12];
+    vecFromLeftToTop.z = coords.z;
+    buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
   }
 
   setRidgePosition(params: tCallbackData) {
@@ -134,6 +164,20 @@ class RoofControl {
     vecFromRidgeToBottom.x = local.x;
 
     buildingModel.buildingPlan.setRoofGeometry(vectorsOnStart);
+    this.setRidgePositionPersp(local);
+  }
+
+  setRidgePositionPersp(coords: Vector3) {
+    const { perspVectorsOnStart, buildingModel } = this;
+    if (!buildingModel) {
+      return;
+    }
+
+    const vecToTopHip = perspVectorsOnStart[9];
+    const vecToBottomHip = perspVectorsOnStart[12];
+    vecToTopHip.x = coords.x;
+    vecToBottomHip.x = coords.x;
+    buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
   }
 }
 

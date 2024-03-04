@@ -159,10 +159,6 @@ class Plan {
     }
     animate();
   }
-
-  // onUpdateModel(newModel: unknown) {
-  //   console.log('model updated: ', newModel, this.scene);
-  // }
 }
 
 export default Plan;

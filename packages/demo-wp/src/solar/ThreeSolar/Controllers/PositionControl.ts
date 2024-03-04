@@ -37,7 +37,8 @@ class PositionControl {
       return;
     }
 
-    const { transform } = buildingModel.buildingPlan;
+    const { transform: planTransform } = buildingModel.buildingPlan;
+    const { transform: perspTransform } = buildingModel.buildingPersp;
 
     const newPosition = new Vector3(
       worldCoords.x - offset.x,
@@ -45,7 +46,8 @@ class PositionControl {
       worldCoords.z - offset.z
     );
 
-    transform.position.copy(newPosition);
+    planTransform.position.copy(newPosition);
+    perspTransform.position.copy(newPosition);
   }
 }
 

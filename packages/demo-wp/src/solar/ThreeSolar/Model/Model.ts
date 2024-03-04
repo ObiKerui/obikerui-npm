@@ -3,13 +3,17 @@ import { Mesh } from 'three';
 import BuildingPlan from '../Buildings/Plan';
 import Plan from '../Scenes/Plan';
 import Perspective from '../Scenes/Perspective';
+import BuildingPersp from '../Buildings/Perspective';
 
 class BuildingModel {
   buildingPlan: BuildingPlan;
+  buildingPersp: BuildingPersp;
   id: string;
+
   constructor(id: string) {
     this.id = id;
     this.buildingPlan = new BuildingPlan(this.id);
+    this.buildingPersp = new BuildingPersp(this.id);
   }
 }
 
@@ -57,17 +61,6 @@ class Model {
     }
     return buildingsMap.get(selectedBuildingId);
   }
-
-  // get SelectedBuilding() {
-  //   const { buildings, selectedBuildingIndex } = this;
-  //   if (
-  //     selectedBuildingIndex < 0 ||
-  //     selectedBuildingIndex >= buildings.length
-  //   ) {
-  //     return null;
-  //   }
-  //   return buildings[selectedBuildingIndex];
-  // }
 
   notifyListeners() {
     this.listeners.forEach((listener) => {
