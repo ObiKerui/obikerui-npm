@@ -44,30 +44,6 @@ function constructRoof() {
   return cube;
 }
 
-// type tDragParams = {
-//   dimensions?: THREE.Vector3;
-//   position: THREE.Vector3;
-//   name: string;
-// };
-
-// function constructHandle(params: tDragParams) {
-//   // Create a box geometry with no height
-//   let dims = new THREE.Vector3(0.2, 0, 0.1);
-//   if (params.dimensions) {
-//     dims = params.dimensions;
-//   }
-//   const geometry = new THREE.BoxGeometry(dims.x, dims.y, dims.z);
-
-//   // Create a material with white color
-//   const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-//   // Create a mesh with the geometry and material
-//   const square = new THREE.Mesh(geometry, material);
-//   square.position.copy(params.position);
-//   square.name = params.name;
-//   return square;
-// }
-
 class BuildingPlan {
   doubleHipRoof: THREE.LineSegments;
   handles: THREE.Mesh[];

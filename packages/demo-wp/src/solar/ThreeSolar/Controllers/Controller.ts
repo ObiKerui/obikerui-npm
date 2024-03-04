@@ -89,7 +89,7 @@ class Controller {
 
     if (object.name.startsWith('scale')) {
       model.interaction = InteractionMode.SCALE;
-      this.scaleControl.setBuilding(selectedBuilding);
+      this.scaleControl.setBuilding(selectedBuilding, params);
       return;
     }
 

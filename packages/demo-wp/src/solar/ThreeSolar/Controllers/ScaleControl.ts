@@ -23,18 +23,36 @@ class ScaleControl {
     this.buildingModel = null;
   }
 
-  setBuilding(buildingModel: BuildingModel) {
+  setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
     this.buildingModel = buildingModel;
     const { anchor, scale, doubleHipRoof } = this.buildingModel.buildingPlan;
 
     const { anchor: perspAnchor, doubleHipRoof: perspRoof } =
       this.buildingModel.buildingPersp;
 
-    const xShift = scale.scale.x;
-    const zShift = scale.scale.z;
+    const { object } = params.eventData;
+    if (!object) {
+      return;
+    }
+
+    const objName = object.name;
+
+    let xShift = scale.scale.x;
+    let xInvShift = 1;
+    let zShift = scale.scale.z;
+    let zInvShift = -1;
+
+    if (objName.endsWith('left')) {
+      xShift = -xShift;
+      xInvShift = -1;
+    }
+    if (objName.endsWith('bottomleft') || objName.endsWith('bottomright')) {
+      zShift = -zShift;
+      zInvShift = 1;
+    }
 
     const anchorShift = new Vector3(-xShift, 0, zShift);
-    const anchorShiftInverse = new Vector3(1, 0, -1);
+    const anchorShiftInverse = new Vector3(xInvShift, 0, zInvShift);
 
     anchor.position.copy(anchorShift);
     doubleHipRoof.position.copy(anchorShiftInverse);
@@ -57,17 +75,13 @@ class ScaleControl {
     const { scale: scalePersp } = this.buildingModel.buildingPersp;
 
     const { worldCoords } = params.eventData;
-    // console.log('mouse / world coords: ', mouseCoords, worldCoords);
 
-    // const newWorldCoords = worldCoords.clone();
     const newWorldCoords = new Vector3(worldCoords.x, 0, worldCoords.z);
     anchor.worldToLocal(newWorldCoords);
 
-    const newScale = new Vector3(
-      newWorldCoords.x / 2,
-      1,
-      Math.abs(newWorldCoords.z / 2)
-    );
+    const newXScale = Math.abs(newWorldCoords.x / 2);
+    const newZScale = Math.abs(newWorldCoords.z / 2);
+    const newScale = new Vector3(newXScale, 1, newZScale);
 
     const newInverseScale = new Vector3(1 / newScale.x, 1, 1 / newScale.z);
 
