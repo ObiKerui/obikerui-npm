@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { tCallback, tCallbackData } from '../Lib/sharedTypes';
 import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import ElevationControl from './ElevationControl';
 import Handles from './Handles';
 import PositionControl from './PositionControl';
 import RoofControl from './RoofControl';
@@ -25,6 +26,7 @@ class Controller {
   positionControl: PositionControl;
   roofControl: RoofControl;
   handleControl: Handles;
+  elevationControl: ElevationControl;
 
   model: Model | null;
   onMouseDown: tCallback;
@@ -37,6 +39,7 @@ class Controller {
     this.positionControl = new PositionControl();
     this.roofControl = new RoofControl();
     this.handleControl = new Handles();
+    this.elevationControl = new ElevationControl();
     this.model = null;
 
     this.onMouseDown = (params) => {
@@ -51,6 +54,7 @@ class Controller {
   }
 
   handleMouseDown(params: tCallbackData) {
+    console.log('handle mouse down: ', params);
     const { model } = this;
     const { object } = params.eventData;
     if (!model || !object) {
@@ -75,6 +79,8 @@ class Controller {
       return;
     }
 
+    console.log('what is object name: ', object);
+
     if (object.name === 'rotate-building') {
       model.interaction = InteractionMode.ROTATE;
       this.rotateControl.setBuilding(selectedBuilding, params);
@@ -96,6 +102,15 @@ class Controller {
     if (object.name.startsWith('move')) {
       model.interaction = InteractionMode.ADJUST_ROOF;
       this.roofControl.setBuilding(selectedBuilding, params);
+      return;
+    }
+
+    if (
+      object.name === 'adjust-roof-top' ||
+      object.name === 'adjust-roof-bottom'
+    ) {
+      model.interaction = InteractionMode.ADJUST_ELEVATION;
+      this.elevationControl.setBuilding(selectedBuilding, params);
     }
   }
 
@@ -118,6 +133,7 @@ class Controller {
     if (!model) {
       return;
     }
+
     const building = model.SelectedBuilding;
     if (!building || !model.mouseIsDown) {
       return;
@@ -139,6 +155,10 @@ class Controller {
 
     if (model.interaction === InteractionMode.ADJUST_ROOF) {
       this.roofControl.setPosition(params);
+    }
+
+    if (model.interaction === InteractionMode.ADJUST_ELEVATION) {
+      this.elevationControl.setPosition(params);
     }
   }
 
@@ -165,12 +185,12 @@ class Controller {
 
     const { model } = this;
 
-    if (!model || !model.planScene || !model.perspectiveScene) {
+    if (!model) {
       return;
     }
 
-    const { planScene, perspectiveScene } = model;
-    if (!planScene || !perspectiveScene) {
+    const { planScene, perspectiveScene, elevationScene } = model;
+    if (!planScene || !perspectiveScene || !elevationScene) {
       return;
     }
 
@@ -180,17 +200,20 @@ class Controller {
     const newBuilding = new BuildingModel(buildingId);
 
     newBuilding.buildingPlan.addHandles(this.handleControl);
+    newBuilding.buildingElev.addHandles(this.handleControl);
 
     planScene.scene.add(newBuilding.buildingPlan.transform);
     perspectiveScene.scene.add(newBuilding.buildingPersp.transform);
+    elevationScene.scene.add(newBuilding.buildingElev.transform);
 
+    model.buildingsMap.set(buildingId, newBuilding);
+    model.selectedBuildingId = buildingId;
+
+    // add plan scene mouse controls
     const { mouseControls } = planScene;
     if (!mouseControls) {
       return;
     }
-
-    model.buildingsMap.set(buildingId, newBuilding);
-    model.selectedBuildingId = buildingId;
 
     const buildings = Array.from(model.buildingsMap.values());
     const perimeters = buildings.map(
@@ -198,6 +221,21 @@ class Controller {
     );
 
     mouseControls.objects = [...this.handleControl.handlesArray, ...perimeters];
+
+    // add elevation scene mouse controls
+    const { mouseControls: mouseControlsElev } = elevationScene;
+    if (!mouseControlsElev) {
+      return;
+    }
+
+    const perimsElev = buildings.map(
+      (building) => building.buildingElev.perimeter
+    );
+
+    mouseControlsElev.objects = [
+      ...this.handleControl.elevationHandles,
+      ...perimsElev,
+    ];
   }
 }
 

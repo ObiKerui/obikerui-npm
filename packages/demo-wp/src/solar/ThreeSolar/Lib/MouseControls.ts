@@ -47,13 +47,14 @@ class MouseControls {
     //   containerHeight,
     //   mouse
     // );
+    // console.log('mouse: ', mouse);
     return mouse;
   }
 
-  findIntersection(mouseCoords: THREE.Vector3) {
+  findIntersection(ndc: THREE.Vector3) {
     let intersecting = null;
     const { camera, rayCaster, objects, domElement } = this;
-    const { x, y } = mouseCoords;
+    const { x, y } = ndc;
     rayCaster.setFromCamera(new THREE.Vector2(x, y), camera);
 
     const intersects = rayCaster.intersectObjects(objects, false);
@@ -72,10 +73,12 @@ class MouseControls {
   }
 
   handleMouseMove(mouseEvent: MouseEvent, callback: tMouseEvent) {
-    const mousePos = this.computeNDCPosition(mouseEvent);
-    const worldCoords = mousePos.clone().unproject(this.camera);
-    const scenePos = new THREE.Vector3(mousePos.x, 0, mousePos.y);
-    const intersectingObj = this.findIntersection(mousePos);
+    const ndc = this.computeNDCPosition(mouseEvent);
+    const worldCoords = ndc.clone().unproject(this.camera);
+    const scenePos = new THREE.Vector3(ndc.x, 0, ndc.y);
+    const intersectingObj = this.findIntersection(ndc);
+
+    // console.log('world coords / scene pos: ', worldCoords, scenePos);
 
     const obj = intersectingObj?.object ?? null;
     const mesh = obj as THREE.Mesh;

@@ -73,6 +73,7 @@ class ScaleControl {
     } = this.buildingModel.buildingPlan;
 
     const { scale: scalePersp } = this.buildingModel.buildingPersp;
+    const { scale: scaleElev } = this.buildingModel.buildingElev;
 
     const { worldCoords } = params.eventData;
 
@@ -92,6 +93,7 @@ class ScaleControl {
     });
 
     scalePersp.scale.copy(newScale);
+    scaleElev.scale.copy(newScale);
   }
 
   recentre() {

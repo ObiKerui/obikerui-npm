@@ -4,16 +4,20 @@ import BuildingPlan from '../Buildings/Plan';
 import Plan from '../Scenes/Plan';
 import Perspective from '../Scenes/Perspective';
 import BuildingPersp from '../Buildings/Perspective';
+import Elevation from '../Scenes/Elevation';
+import BuildingElev from '../Buildings/Elevation';
 
 class BuildingModel {
   buildingPlan: BuildingPlan;
   buildingPersp: BuildingPersp;
+  buildingElev: BuildingElev;
   id: string;
 
   constructor(id: string) {
     this.id = id;
     this.buildingPlan = new BuildingPlan(this.id);
     this.buildingPersp = new BuildingPersp(this.id);
+    this.buildingElev = new BuildingElev(this.id);
   }
 }
 
@@ -25,11 +29,13 @@ enum InteractionMode {
   ROTATE = 'ROTATE',
   SCALE = 'SCALE',
   ADJUST_ROOF = 'ADJUST_ROOF',
+  ADJUST_ELEVATION = 'ADJUST_ELEVATION',
 }
 
 class Model {
   planScene: Plan | null;
   perspectiveScene: Perspective | null;
+  elevationScene: Elevation | null;
   buildingsMap: Map<string, BuildingModel>;
   selectedBuildingId: string | null;
   buildings: BuildingModel[];
@@ -42,6 +48,7 @@ class Model {
   constructor() {
     this.planScene = null;
     this.perspectiveScene = null;
+    this.elevationScene = null;
 
     this.buildingsMap = new Map();
     this.selectedBuildingId = null;

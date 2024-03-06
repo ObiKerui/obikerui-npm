@@ -1,6 +1,10 @@
 import { Mesh, Vector3 } from 'three';
 
-type tPageElements = { plan: HTMLDivElement; perspective: HTMLDivElement };
+type tPageElements = {
+  plan: HTMLDivElement;
+  perspective: HTMLDivElement;
+  elevation: HTMLDivElement;
+};
 
 type tEventData = {
   mouseCoords: Vector3;

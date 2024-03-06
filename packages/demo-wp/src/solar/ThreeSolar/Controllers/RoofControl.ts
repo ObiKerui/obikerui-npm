@@ -87,6 +87,7 @@ class RoofControl {
     const vecFromLeftToTop = perspVectorsOnStart[9];
     vecFromLeftToTop.z = coords.z;
     buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
+    buildingModel.buildingElev.setRoofGeometry(perspVectorsOnStart);
   }
 
   setBottomHipPosition(params: tCallbackData) {
@@ -124,6 +125,7 @@ class RoofControl {
     const vecFromLeftToTop = perspVectorsOnStart[12];
     vecFromLeftToTop.z = coords.z;
     buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
+    buildingModel.buildingElev.setRoofGeometry(perspVectorsOnStart);
   }
 
   setRidgePosition(params: tCallbackData) {
