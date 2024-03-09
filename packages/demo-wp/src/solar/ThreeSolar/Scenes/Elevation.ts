@@ -6,7 +6,9 @@ import { tCallback } from '../Lib/sharedTypes';
 
 class Elevation {
   scene: THREE.Scene;
-  camera: THREE.Camera | null;
+  hudScene: THREE.Scene;
+  camera: THREE.OrthographicCamera | null;
+  hudCamera: THREE.OrthographicCamera | null;
   renderer: THREE.WebGLRenderer | null;
   container: HTMLDivElement | null;
   mouseControls: MouseControls | null;
@@ -14,11 +16,16 @@ class Elevation {
   onMouseDown: tCallback | null;
   onMouseUp: tCallback | null;
   onMouseMove: tCallback | null;
+  onCameraChange: ((camera: THREE.OrthographicCamera) => void) | null;
+
+  testBox: THREE.Object3D | null;
 
   constructor() {
     this.scene = new THREE.Scene();
+    this.hudScene = new THREE.Scene();
     this.container = null;
     this.camera = null;
+    this.hudCamera = null;
     this.renderer = null;
     this.mouseControls = null;
     this.orbitControls = null;
@@ -26,6 +33,9 @@ class Elevation {
     this.onMouseDown = null;
     this.onMouseUp = null;
     this.onMouseMove = null;
+    this.onCameraChange = null;
+
+    this.testBox = null;
   }
 
   load() {
@@ -42,17 +52,6 @@ class Elevation {
     const viewSize = height;
     const aspectRatio = width / height;
 
-    // const viewport = {
-    //   viewSize,
-    //   aspectRatio,
-    //   left: -2,
-    //   right: 2,
-    //   top: 2,
-    //   bottom: -0.5,
-    //   near: -100,
-    //   far: 10,
-    // };
-
     const viewport = {
       viewSize,
       aspectRatio,
@@ -60,9 +59,11 @@ class Elevation {
       right: 10,
       top: 10,
       bottom: -10,
-      near: -10,
-      far: 10,
+      near: 0.1,
+      far: 50,
     };
+
+    const startPos = new THREE.Vector3(10, 0, 0);
 
     this.camera = new THREE.OrthographicCamera(
       viewport.left,
@@ -73,19 +74,34 @@ class Elevation {
       viewport.far
     );
 
-    this.camera.position.set(1, 0, 0);
+    this.camera.position.copy(startPos);
     this.camera.lookAt(0, 0.0, 0);
+
+    this.hudCamera = new THREE.OrthographicCamera(
+      viewport.left,
+      viewport.right,
+      viewport.top,
+      viewport.bottom,
+      viewport.near,
+      viewport.far
+    );
+    this.hudCamera.position.copy(startPos);
+    this.hudCamera.lookAt(0, 0, 0);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
     });
     this.renderer.setSize(width, height);
+
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.autoClear = false; // To allow render overlay on top of sprited sphere
     this.renderer.setClearColor(0xdddddd, 1);
+
     this.container.appendChild(this.renderer.domElement);
 
     this.mouseControls = new MouseControls(
       [],
-      this.camera,
+      this.hudCamera,
       this.renderer.domElement
     );
 
@@ -93,17 +109,50 @@ class Elevation {
       this.camera,
       this.renderer.domElement
     );
-    this.orbitControls.enableRotate = false;
-    this.orbitControls.enablePan = false;
+    this.orbitControls.enableRotate = true;
+    this.orbitControls.enablePan = true;
 
     this.addControls();
   }
 
   addControls() {
-    const { mouseControls, orbitControls } = this;
-    if (!mouseControls || !orbitControls) {
+    const { mouseControls, orbitControls, camera, onCameraChange } = this;
+    if (!mouseControls || !orbitControls || !camera) {
       return;
     }
+
+    orbitControls.addEventListener('change', () => {
+      const orthCam = camera as THREE.OrthographicCamera;
+      if (onCameraChange) {
+        onCameraChange(orthCam);
+      }
+
+      // will need to get the world coords of the roof in the scene...
+      // specificy the y values of the roof top and bottom
+
+      // will need to set the y value of the testBox to be that y value...
+
+      // when user drags the test box too, will need to adjust the y values
+      // of the roof in the scene...
+
+      // orbitControls.update();
+      // camera.updateMatrix();
+      // camera.updateMatrixWorld();
+      // camera.updateWorldMatrix(true, true);
+      // const pos = new THREE.Vector3();
+      // const boxScale = testBox.scale.clone();
+      // const scaleMult = 1 / (10 * orthCam.zoom);
+      // boxScale.multiplyScalar(scaleMult);
+      // const scaleFactor = 20 / (20 * orthCam.zoom);
+      // testBox.scale.copy(
+      //   new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor)
+      // );
+      // const newZ = -1 / scaleFactor;
+      // testBox.position.set(5, 0, newZ);
+      // const dist = camera.position.distanceTo(testBox.position);
+      // console.log('the camera changed: ', testBox.scale);
+      // console.log('the zoom / sf: ', orthCam.zoom, scaleFactor, newZ);
+    });
 
     mouseControls.addEventListener('mouseover', () => {
       console.log('mouse over event: ');
@@ -140,14 +189,22 @@ class Elevation {
   }
 
   render() {
-    const { renderer, scene, camera } = this;
+    const { renderer, scene, camera, orbitControls, hudCamera, hudScene } =
+      this;
+    // const { renderer, scene, camera, orbitControls } = this;
 
     function animate() {
-      if (!renderer || !camera) {
+      if (!renderer || !camera || !hudCamera) {
         return;
       }
       requestAnimationFrame(animate);
+      orbitControls?.update();
       renderer.render(scene, camera);
+
+      renderer.clear();
+      renderer.render(scene, camera);
+      renderer.clearDepth();
+      renderer.render(hudScene, hudCamera);
     }
     animate();
   }

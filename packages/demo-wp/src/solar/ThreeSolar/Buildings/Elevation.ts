@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import Handles from '../Controllers/Handles';
+import CamHandles from '../Controllers/CamHandles';
 
 // 0, 1, 2, 0, 2, 3 back
 // 0, 4, 7, 0, 7, 3 left
@@ -83,18 +84,18 @@ type tDragParams = {
 
 class BuildingElev {
   doubleHipRoof: THREE.Mesh;
-  handles: THREE.Mesh[];
+  camHandles: CamHandles | null;
   perimeter: THREE.Mesh;
   transform: THREE.Mesh;
   rotation: THREE.Mesh;
   anchor: THREE.Mesh;
   scale: THREE.Mesh;
   id: string;
-  // xyCursor: THREE.Mesh;
+  xyCursor: THREE.Mesh;
 
   constructor(id: string) {
     this.id = id;
-    this.handles = [];
+    this.camHandles = null;
 
     const transRotGeom = new THREE.BoxGeometry();
     // Create a material with white color
@@ -147,32 +148,80 @@ class BuildingElev {
     this.rotation.add(this.anchor);
     this.transform.add(this.rotation);
 
-    // const circleGeom = new THREE.CircleGeometry(0.1);
-    // const circleMat = new THREE.MeshBasicMaterial({
-    //   color: 0xdddddd,
-    //   wireframe: true,
-    // });
-    // this.xyCursor = new THREE.Mesh(circleGeom, circleMat);
-    // this.xyCursor.rotation.set(Math.PI / 2, 0, 0);
-    // this.transform.add(this.xyCursor);
+    const circleGeom = new THREE.CircleGeometry(0.1);
+    const circleMat = new THREE.MeshBasicMaterial({
+      color: 0xdddddd,
+      wireframe: true,
+      side: THREE.DoubleSide,
+    });
+    this.xyCursor = new THREE.Mesh(circleGeom, circleMat);
+    this.xyCursor.rotation.set(0, Math.PI / 2, 0);
+    this.xyCursor.position.set(2, 1, 0);
+    this.transform.add(this.xyCursor);
   }
 
-  addHandles(handles: Handles) {
-    const roofBottomPos = new THREE.Vector3(1, 1, 1.5);
-    const roofBottomMesh = handles.roofBottomLevel.handle;
-    roofBottomMesh.position.copy(roofBottomPos);
-    this.doubleHipRoof.add(roofBottomMesh);
+  // addHandles(handles: Handles) {
+  //   const roofBottomPos = new THREE.Vector3(1, 1, 1.5);
+  //   const roofBottomMesh = handles.roofBottomLevel.handle;
+  //   roofBottomMesh.position.copy(roofBottomPos);
+  //   this.doubleHipRoof.add(roofBottomMesh);
 
-    const roofTopPos = new THREE.Vector3(1, 1.5, 1.5);
-    const roofTopMesh = handles.roofTopLevel.handle;
-    roofTopMesh.position.copy(roofTopPos);
-    this.doubleHipRoof.add(roofTopMesh);
+  //   const roofTopPos = new THREE.Vector3(1, 1.5, 1.5);
+  //   const roofTopMesh = handles.roofTopLevel.handle;
+  //   roofTopMesh.position.copy(roofTopPos);
+  //   this.doubleHipRoof.add(roofTopMesh);
+  // }
 
-    // WARN careful of this - could cause a bug down the line when handles
-    // are switched to another mesh object
-    // currently accessed by the RoofControl when moving ridge and
-    // the ScaleControl when applying inverse scaling
-    this.handles = [roofBottomMesh, roofTopMesh];
+  addCamHandles(handles: CamHandles) {
+    let { camHandles } = this;
+
+    camHandles = handles;
+
+    // position right in front of the camera but at the correct heights.
+    const cam = camHandles.camera;
+    if (!cam) {
+      return;
+    }
+
+    const roofBaseHeight = 1;
+    const zoomedBaseHeight = cam.zoom * roofBaseHeight;
+    const roofBaseHandle = handles.elevationHandles[0];
+    roofBaseHandle.position.copy(new THREE.Vector3(3, zoomedBaseHeight, 9));
+
+    const roofTopHeight = 1.5;
+    const zoomedTopHeight = cam.zoom * roofTopHeight;
+    const roofTopHandle = handles.elevationHandles[1];
+    roofTopHandle.position.copy(new THREE.Vector3(3, zoomedTopHeight, 9));
+
+    // const vec = new THREE.Vector3();
+    // cam.getWorldDirection(vec);
+    // vec.multiplyScalar(dist);
+    // vec.add(cam.position);
+  }
+
+  updateHandles() {
+    console.log('update handles start: ', this);
+    const { camHandles } = this;
+    if (!camHandles) {
+      return;
+    }
+
+    const { camera } = camHandles;
+    if (!camera) {
+      return;
+    }
+
+    const roofBaseHeight = 1;
+    const zoomedBaseHeight = camera.zoom * roofBaseHeight;
+    const roofBaseHandle = camHandles.roofBottomLevel.handle;
+    roofBaseHandle.position.copy(new THREE.Vector3(3, zoomedBaseHeight, 9));
+
+    const roofTopHeight = 1.5;
+    const zoomedTopHeight = camera.zoom * roofTopHeight;
+    const roofTopHandle = camHandles.roofTopLevel.handle;
+    roofTopHandle.position.copy(new THREE.Vector3(3, zoomedTopHeight, 9));
+
+    console.log('update handles: ', camera.zoom);
   }
 
   // currently nothing needs to be done here - when adding meshes to different

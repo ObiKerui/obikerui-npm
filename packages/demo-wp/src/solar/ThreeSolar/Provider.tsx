@@ -44,6 +44,7 @@ plan.onMouseMove = controller.onMouseMove;
 elevation.onMouseDown = controller.onMouseDown;
 elevation.onMouseUp = controller.onMouseUp;
 elevation.onMouseMove = controller.onMouseMove;
+elevation.onCameraChange = controller.onCameraChange;
 
 model.planScene = plan;
 model.perspectiveScene = perspective;

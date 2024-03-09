@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import { tMouseEvent } from './sharedTypes';
 
 class MouseControls {
-  objects: THREE.Mesh[];
+  // objects: THREE.Mesh[];
+  objects: THREE.Object3D[];
   camera: THREE.Camera;
   domElement: HTMLElement;
   rayCaster: THREE.Raycaster;
@@ -11,7 +12,8 @@ class MouseControls {
   mouseIsDown: boolean;
 
   constructor(
-    objects: THREE.Mesh[],
+    // objects: THREE.Mesh[],
+    objects: THREE.Object3D[],
     camera: THREE.Camera,
     domElement: HTMLElement
   ) {
@@ -77,8 +79,6 @@ class MouseControls {
     const worldCoords = ndc.clone().unproject(this.camera);
     const scenePos = new THREE.Vector3(ndc.x, 0, ndc.y);
     const intersectingObj = this.findIntersection(ndc);
-
-    // console.log('world coords / scene pos: ', worldCoords, scenePos);
 
     const obj = intersectingObj?.object ?? null;
     const mesh = obj as THREE.Mesh;

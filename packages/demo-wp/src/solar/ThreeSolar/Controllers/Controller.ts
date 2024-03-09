@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
+import { OrthographicCamera, Vector3 } from 'three';
 import { tCallback, tCallbackData } from '../Lib/sharedTypes';
 import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import CamHandles from './CamHandles';
 import ElevationControl from './ElevationControl';
 import Handles from './Handles';
 import PositionControl from './PositionControl';
@@ -25,6 +27,7 @@ class Controller {
   rotateControl: RotateControl;
   positionControl: PositionControl;
   roofControl: RoofControl;
+  elevationHandles: CamHandles;
   handleControl: Handles;
   elevationControl: ElevationControl;
 
@@ -32,6 +35,7 @@ class Controller {
   onMouseDown: tCallback;
   onMouseUp: tCallback;
   onMouseMove: tCallback;
+  onCameraChange: (camera: OrthographicCamera) => void;
 
   constructor() {
     this.scaleControl = new ScaleControl();
@@ -39,6 +43,7 @@ class Controller {
     this.positionControl = new PositionControl();
     this.roofControl = new RoofControl();
     this.handleControl = new Handles();
+    this.elevationHandles = new CamHandles();
     this.elevationControl = new ElevationControl();
     this.model = null;
 
@@ -51,10 +56,34 @@ class Controller {
     this.onMouseMove = (params) => {
       this.handleMouseMove(params);
     };
+
+    this.onCameraChange = (camera) => {
+      this.handleElevationCameraChange(camera);
+    };
+  }
+
+  handleElevationCameraChange(camera: OrthographicCamera) {
+    const { model } = this;
+    if (!model) {
+      return;
+    }
+    const { elevationScene } = model;
+    if (!elevationScene) {
+      return;
+    }
+    const { hudCamera } = elevationScene;
+    if (!camera || !hudCamera) {
+      return;
+    }
+
+    const building = model.SelectedBuilding;
+    if (!building) {
+      return;
+    }
+    building.buildingElev.updateHandles();
   }
 
   handleMouseDown(params: tCallbackData) {
-    console.log('handle mouse down: ', params);
     const { model } = this;
     const { object } = params.eventData;
     if (!model || !object) {
@@ -78,8 +107,6 @@ class Controller {
     if (!selectedBuilding) {
       return;
     }
-
-    console.log('what is object name: ', object);
 
     if (object.name === 'rotate-building') {
       model.interaction = InteractionMode.ROTATE;
@@ -109,7 +136,14 @@ class Controller {
       object.name === 'adjust-roof-top' ||
       object.name === 'adjust-roof-bottom'
     ) {
+      const { elevationScene } = model;
+      if (!elevationScene) {
+        return;
+      }
+      const { camera } = elevationScene;
+
       model.interaction = InteractionMode.ADJUST_ELEVATION;
+      this.elevationControl.camera = camera;
       this.elevationControl.setBuilding(selectedBuilding, params);
     }
   }
@@ -180,6 +214,47 @@ class Controller {
     selected.buildingPlan.addHandles(this.handleControl);
   }
 
+  willBeSelectBuilding(buildingId: string) {
+    const { model, elevationHandles } = this;
+    if (!model) {
+      return;
+    }
+
+    const { elevationScene } = model;
+    if (!elevationScene) {
+      return;
+    }
+
+    model.selectedBuildingId = buildingId;
+    const selected = model.SelectedBuilding;
+
+    if (!selected) {
+      return;
+    }
+
+    // set the selected building to the index
+    // selected.buildingPlan.addHandles(this.handleControl);
+
+    elevationHandles.building = selected;
+    elevationHandles.camera = elevationScene.camera;
+    selected.buildingElev.camHandles = elevationHandles;
+    selected.buildingElev.addCamHandles(elevationHandles);
+
+    elevationScene.hudScene.add(elevationHandles.roofTopLevel.handle);
+    elevationScene.hudScene.add(elevationHandles.roofBottomLevel.handle);
+
+    // add elevation scene mouse controls
+    const { mouseControls } = elevationScene;
+    if (!mouseControls) {
+      return;
+    }
+
+    mouseControls.objects = [
+      elevationHandles.roofBottomLevel.handle,
+      elevationHandles.roofTopLevel.handle,
+    ];
+  }
+
   addBuilding() {
     // :TODO need to add in the placer logic
 
@@ -200,7 +275,7 @@ class Controller {
     const newBuilding = new BuildingModel(buildingId);
 
     newBuilding.buildingPlan.addHandles(this.handleControl);
-    newBuilding.buildingElev.addHandles(this.handleControl);
+    // newBuilding.buildingElev.addHandles(this.handleControl);
 
     planScene.scene.add(newBuilding.buildingPlan.transform);
     perspectiveScene.scene.add(newBuilding.buildingPersp.transform);
@@ -208,6 +283,8 @@ class Controller {
 
     model.buildingsMap.set(buildingId, newBuilding);
     model.selectedBuildingId = buildingId;
+
+    this.willBeSelectBuilding(newBuilding.id);
 
     // add plan scene mouse controls
     const { mouseControls } = planScene;
@@ -223,19 +300,21 @@ class Controller {
     mouseControls.objects = [...this.handleControl.handlesArray, ...perimeters];
 
     // add elevation scene mouse controls
-    const { mouseControls: mouseControlsElev } = elevationScene;
-    if (!mouseControlsElev) {
-      return;
-    }
+    // const { mouseControls: mouseControlsElev } = elevationScene;
+    // if (!mouseControlsElev) {
+    //   return;
+    // }
 
-    const perimsElev = buildings.map(
-      (building) => building.buildingElev.perimeter
-    );
+    // const perimsElev = buildings.map(
+    //   (building) => building.buildingElev.perimeter
+    // );
 
-    mouseControlsElev.objects = [
-      ...this.handleControl.elevationHandles,
-      ...perimsElev,
-    ];
+    // mouseControlsElev.objects = [
+    //   ...mouseControlsElev.objects,
+    //   ...this.handleControl.elevationHandles,
+    //   ...perimsElev,
+    // ];
+    // mouseControlsElev.objects = [...mouseControlsElev.objects];
   }
 }
 

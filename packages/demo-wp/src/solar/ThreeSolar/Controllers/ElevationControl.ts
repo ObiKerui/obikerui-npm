@@ -1,5 +1,5 @@
 /* eslint-disable prefer-destructuring */
-import { Mesh, Vector3 } from 'three';
+import { Mesh, OrthographicCamera, Vector3 } from 'three';
 import { tCallbackData } from '../Lib/sharedTypes';
 import { BuildingModel } from '../Model/Model';
 
@@ -9,6 +9,7 @@ class ElevationControl {
   vectorsOnStart: Vector3[];
   perspVectorsOnStart: Vector3[];
   elevVectorsOnStart: Vector3[];
+  camera: OrthographicCamera | null;
 
   constructor() {
     this.buildingModel = null;
@@ -16,6 +17,7 @@ class ElevationControl {
     this.vectorsOnStart = [];
     this.perspVectorsOnStart = [];
     this.elevVectorsOnStart = [];
+    this.camera = null;
   }
 
   setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
@@ -54,8 +56,8 @@ class ElevationControl {
 
   setTopPosition(params: tCallbackData) {
     const { worldCoords } = params.eventData;
-    const { buildingModel, handle, elevVectorsOnStart } = this;
-    if (!buildingModel || !handle) {
+    const { buildingModel, handle, elevVectorsOnStart, camera } = this;
+    if (!buildingModel || !handle || !camera) {
       return;
     }
 
@@ -63,49 +65,54 @@ class ElevationControl {
 
     const currPos = handle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
-    handle.position.set(currPos.x, local.y, currPos.z);
+    const newYPosition = local.y;
+    handle.position.set(currPos.x, newYPosition, currPos.z);
 
     // need to adjust the roof geometry now too 9,11,16
     const vecToTop = elevVectorsOnStart[9];
     const vecToBottom = elevVectorsOnStart[12];
 
-    vecToTop.y = local.y;
-    vecToBottom.y = local.y;
+    vecToTop.y = newYPosition / camera.zoom;
+    vecToBottom.y = newYPosition / camera.zoom;
 
     buildingModel.buildingElev.setRoofGeometry(elevVectorsOnStart);
     this.setTopHipPositionPersp(local);
   }
 
   setTopHipPositionPersp(coords: Vector3) {
-    const { perspVectorsOnStart, buildingModel } = this;
-    if (!buildingModel) {
+    const { perspVectorsOnStart, buildingModel, camera } = this;
+    if (!buildingModel || !camera) {
       return;
     }
 
     const vecToTop = perspVectorsOnStart[9];
     const vecToBottom = perspVectorsOnStart[12];
 
-    vecToTop.y = coords.y;
-    vecToBottom.y = coords.y;
+    vecToTop.y = coords.y / camera.zoom;
+    vecToBottom.y = coords.y / camera.zoom;
     buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
   }
 
   setBottomPosition(params: tCallbackData) {
     const { worldCoords } = params.eventData;
-    const { buildingModel, elevVectorsOnStart } = this;
-    if (!buildingModel) {
+    const { buildingModel, elevVectorsOnStart, camera } = this;
+    if (!buildingModel || !camera) {
       return;
     }
 
-    const { handles: elevHandles } = buildingModel.buildingElev;
-    const roofBaseHandle = elevHandles[0];
-    const roofTopHandle = elevHandles[1];
+    const { camHandles: elevHandles } = buildingModel.buildingElev;
+    const roofBaseHandle = elevHandles?.roofBottomLevel.handle;
+    const roofTopHandle = elevHandles?.roofTopLevel.handle;
+    if (!roofBaseHandle || !roofTopHandle) {
+      return;
+    }
 
     const { perimeter } = buildingModel.buildingElev;
 
     const currPos = roofBaseHandle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
-    roofBaseHandle.position.set(currPos.x, local.y, currPos.z);
+    const newBaseYPosition = local.y;
+    roofBaseHandle.position.set(currPos.x, newBaseYPosition, currPos.z);
 
     // need to adjust the roof geometry now too 13,15,17
     const veca = elevVectorsOnStart[2];
@@ -120,21 +127,22 @@ class ElevationControl {
     const veci = elevVectorsOnStart[12];
     const vecj = elevVectorsOnStart[13];
 
-    veca.y = local.y;
-    vecb.y = local.y;
-    vecc.y = local.y;
-    vecd.y = local.y;
+    const scaledYPosition = newBaseYPosition / camera.zoom;
+    veca.y = scaledYPosition;
+    vecb.y = scaledYPosition;
+    vecc.y = scaledYPosition;
+    vecd.y = scaledYPosition;
 
     const roofHeight = vecf.y - vece.y;
-    const newRoofHeight = local.y + roofHeight;
+    const newRoofHeight = scaledYPosition + roofHeight;
 
-    vece.y = local.y;
+    vece.y = scaledYPosition;
     vecf.y = newRoofHeight;
-    vecg.y = local.y;
-    vech.y = local.y;
+    vecg.y = scaledYPosition;
+    vech.y = scaledYPosition;
     veci.y = newRoofHeight;
-    vecj.y = local.y;
-    roofTopHandle.position.y = newRoofHeight;
+    vecj.y = scaledYPosition;
+    roofTopHandle.position.y = newRoofHeight * camera.zoom;
 
     buildingModel.buildingElev.setRoofGeometry(elevVectorsOnStart);
     buildingModel.buildingPersp.setRoofGeometry(elevVectorsOnStart);
