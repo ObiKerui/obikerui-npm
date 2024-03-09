@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
-import Handles from '../Controllers/Handles';
 import CamHandles from '../Controllers/CamHandles';
 
 // 0, 1, 2, 0, 2, 3 back
@@ -211,17 +210,17 @@ class BuildingElev {
       return;
     }
 
-    const roofBaseHeight = 1;
+    const geom = this.getRoofGeometry();
+    const roofBaseHeight = geom[2].y;
+    const roofTopHeight = geom[9].y;
+
     const zoomedBaseHeight = camera.zoom * roofBaseHeight;
     const roofBaseHandle = camHandles.roofBottomLevel.handle;
     roofBaseHandle.position.copy(new THREE.Vector3(3, zoomedBaseHeight, 9));
 
-    const roofTopHeight = 1.5;
     const zoomedTopHeight = camera.zoom * roofTopHeight;
     const roofTopHandle = camHandles.roofTopLevel.handle;
     roofTopHandle.position.copy(new THREE.Vector3(3, zoomedTopHeight, 9));
-
-    console.log('update handles: ', camera.zoom);
   }
 
   // currently nothing needs to be done here - when adding meshes to different
