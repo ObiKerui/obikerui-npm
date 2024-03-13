@@ -1,20 +1,39 @@
 import { Vector3 } from 'three';
-import { tCallbackData } from '../Lib/sharedTypes';
-import { BuildingModel } from '../Model/Model';
+import { IListener, USER_EVENT } from '../Lib/sharedTypes';
+import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 
-class PositionControl {
-  buildingModel: BuildingModel | null;
+class PositionControl implements IListener {
   offset: Vector3 | null;
   constructor() {
-    this.buildingModel = null;
     this.offset = null;
   }
 
-  setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
-    this.buildingModel = buildingModel;
-    const { transform } = this.buildingModel.buildingPlan;
+  onUpdate(mouseEvent: USER_EVENT, model: Model) {
+    if (model.interaction !== InteractionMode.POSITION) {
+      return;
+    }
 
-    const { worldCoords } = params.eventData;
+    switch (mouseEvent) {
+      case USER_EVENT.MOUSE_DOWN:
+        this.onMouseDown(model);
+        break;
+      case USER_EVENT.MOUSE_MOVE:
+        this.setPosition(model);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onMouseDown(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const buildingModel = SelectedStructure as BuildingModel;
+    const { transform } = buildingModel.buildingPlan;
+    const { worldCoords } = uiEvent.positionData;
 
     // for the offset find difference between mouse click pos and centre of transform
     const transformCentre = new Vector3();
@@ -27,12 +46,16 @@ class PositionControl {
     );
   }
 
-  setPosition(params: tCallbackData) {
-    const { buildingModel } = this;
-    const { eventData } = params;
-    const { worldCoords } = eventData;
+  setPosition(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const { worldCoords } = uiEvent.positionData;
     const { offset } = this;
 
+    const buildingModel = SelectedStructure as BuildingModel;
     if (!buildingModel || !offset) {
       return;
     }

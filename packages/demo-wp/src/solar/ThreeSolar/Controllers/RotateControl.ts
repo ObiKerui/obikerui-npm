@@ -1,26 +1,36 @@
 import { Euler, Vector3 } from 'three';
-import { tCallbackData } from '../Lib/sharedTypes';
-import { BuildingModel } from '../Model/Model';
+import { IListener, USER_EVENT } from '../Lib/sharedTypes';
+import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 
 function calculateAngle(centre: Vector3, mouse: Vector3) {
   return -Math.atan2(mouse.z - centre.z, mouse.x - centre.x);
 }
 
-class RotateControl {
-  buildingModel: BuildingModel | null;
-  constructor() {
-    this.buildingModel = null;
+class RotateControl implements IListener {
+  onUpdate(mouseEvent: USER_EVENT, model: Model) {
+    if (model.interaction !== InteractionMode.ROTATE) {
+      return;
+    }
+
+    switch (mouseEvent) {
+      case USER_EVENT.MOUSE_MOVE:
+        this.setRotation(model);
+        break;
+      default:
+        break;
+    }
   }
 
-  setBuilding(buildingModel: BuildingModel, _params: tCallbackData) {
-    this.buildingModel = buildingModel;
-  }
+  // eslint-disable-next-line class-methods-use-this
+  setRotation(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
 
-  setRotation(params: tCallbackData) {
-    const { buildingModel } = this;
-    const { eventData } = params;
-    const { worldCoords } = eventData;
+    const { worldCoords } = uiEvent.positionData;
 
+    const buildingModel = SelectedStructure as BuildingModel;
     if (!buildingModel) {
       return;
     }
@@ -28,7 +38,6 @@ class RotateControl {
     const { rotation: planRotation, transform } = buildingModel.buildingPlan;
     const { rotation: perspRotation } = buildingModel.buildingPersp;
 
-    // const angle = calculateAngle(rotation.position, mouseCoords);
     const angle = calculateAngle(transform.position, worldCoords);
 
     const euler = new Euler(0, angle, 0);

@@ -1,11 +1,12 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable prefer-destructuring */
-import { Mesh, OrthographicCamera, Vector3 } from 'three';
-import { tCallbackData } from '../Lib/sharedTypes';
-import { BuildingModel } from '../Model/Model';
+import { Object3D, OrthographicCamera, Vector3 } from 'three';
+import { IListener, UI_ACTION, USER_EVENT } from '../Lib/sharedTypes';
+import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 
-class ElevationControl {
+class ElevationControl implements IListener {
   buildingModel: BuildingModel | null;
-  handle: Mesh | null;
+  handle: Object3D | null;
   vectorsOnStart: Vector3[];
   perspVectorsOnStart: Vector3[];
   elevVectorsOnStart: Vector3[];
@@ -20,13 +21,62 @@ class ElevationControl {
     this.camera = null;
   }
 
-  setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
-    const { object } = params.eventData;
-    if (!object) {
+  onUpdate(mouseEvent: USER_EVENT, model: Model) {
+    if (model.interaction !== InteractionMode.ADJUST_ELEVATION) {
       return;
     }
+
+    switch (mouseEvent) {
+      case USER_EVENT.MOUSE_DOWN:
+        this.onMouseDown(model);
+        break;
+      case USER_EVENT.MOUSE_MOVE:
+        this.onMouseMove(model);
+        break;
+      case USER_EVENT.ELEV_CAM_ZOOM:
+        this.onCameraChange(model);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onCameraChange(model: Model) {
+    const { SelectedStructure, elevationHandles, elevationScene } = model;
+    if (!SelectedStructure || !elevationScene) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const { camera } = elevationScene;
+    if (!camera) {
+      return;
+    }
+
+    const buildingModel = SelectedStructure as BuildingModel;
+
+    const geom = buildingModel.buildingElev.getRoofGeometry();
+    const roofBaseHeight = geom[2].y;
+    const roofTopHeight = geom[9].y;
+
+    const zoomedBaseHeight = camera.zoom * roofBaseHeight;
+    const roofBaseHandle = elevationHandles.roofBottomLevel.handle;
+    roofBaseHandle.position.copy(new Vector3(3, zoomedBaseHeight, 9));
+
+    const zoomedTopHeight = camera.zoom * roofTopHeight;
+    const roofTopHandle = elevationHandles.roofTopLevel.handle;
+    roofTopHandle.position.copy(new Vector3(3, zoomedTopHeight, 9));
+  }
+
+  onMouseDown(model: Model) {
+    const { SelectedStructure, uiEvent, elevationScene } = model;
+    if (!SelectedStructure || !uiEvent || !elevationScene) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const buildingModel = SelectedStructure as BuildingModel;
     this.buildingModel = buildingModel;
-    this.handle = object;
+    this.handle = uiEvent.actionSource;
+    this.camera = elevationScene?.camera;
 
     const elevVecs = this.buildingModel.buildingElev.getRoofGeometry();
     this.elevVectorsOnStart = elevVecs.map((vec) => vec.clone());
@@ -38,24 +88,33 @@ class ElevationControl {
     this.perspVectorsOnStart = persVecs.map((vec) => vec.clone());
   }
 
-  setPosition(params: tCallbackData) {
-    const { buildingModel, handle } = this;
+  onMouseMove(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
 
-    if (!buildingModel || !handle) {
+    this.buildingModel = SelectedStructure as BuildingModel;
+
+    const { handle } = this;
+    const { worldCoords } = uiEvent.positionData;
+
+    if (!this.buildingModel || !handle) {
       return;
     }
 
-    if (handle.name === 'adjust-roof-top') {
-      this.setTopPosition(params);
+    const handleType = UI_ACTION[handle.name as keyof typeof UI_ACTION];
+
+    if (handleType === UI_ACTION.ELEVATE_PEAK) {
+      this.setTopPosition(worldCoords);
     }
 
-    if (handle.name === 'adjust-roof-bottom') {
-      this.setBottomPosition(params);
+    if (handleType === UI_ACTION.ELEVATE_BASE) {
+      this.setBottomPosition(worldCoords);
     }
   }
 
-  setTopPosition(params: tCallbackData) {
-    const { worldCoords } = params.eventData;
+  setTopPosition(worldCoords: Vector3) {
     const { buildingModel, handle, elevVectorsOnStart, camera } = this;
     if (!buildingModel || !handle || !camera) {
       return;
@@ -93,8 +152,7 @@ class ElevationControl {
     buildingModel.buildingPersp.setRoofGeometry(perspVectorsOnStart);
   }
 
-  setBottomPosition(params: tCallbackData) {
-    const { worldCoords } = params.eventData;
+  setBottomPosition(worldCoords: Vector3) {
     const { buildingModel, elevVectorsOnStart, camera } = this;
     if (!buildingModel || !camera) {
       return;

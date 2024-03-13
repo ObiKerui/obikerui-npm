@@ -1,27 +1,14 @@
 // eslint-disable-next-line max-classes-per-file
 import { Mesh } from 'three';
-import BuildingPlan from '../Buildings/Plan';
 import Plan from '../Scenes/Plan';
 import Perspective from '../Scenes/Perspective';
-import BuildingPersp from '../Buildings/Perspective';
 import Elevation from '../Scenes/Elevation';
-import BuildingElev from '../Buildings/Elevation';
+import BuildingModel from '../Buildings/Model';
+import Istructure from './Structure';
+import { IListener, tUIEvent, USER_EVENT } from '../Lib/sharedTypes';
+import CamHandles from '../Handles/CamHandles';
 
-class BuildingModel {
-  buildingPlan: BuildingPlan;
-  buildingPersp: BuildingPersp;
-  buildingElev: BuildingElev;
-  id: string;
-
-  constructor(id: string) {
-    this.id = id;
-    this.buildingPlan = new BuildingPlan(this.id);
-    this.buildingPersp = new BuildingPersp(this.id);
-    this.buildingElev = new BuildingElev(this.id);
-  }
-}
-
-type tListener = (newModel: BuildingModel[]) => void;
+// type tListener = (newModel: BuildingModel[]) => void;
 
 enum InteractionMode {
   NONE = 'NONE',
@@ -33,58 +20,57 @@ enum InteractionMode {
 }
 
 class Model {
+  elevationHandles: CamHandles;
   planScene: Plan | null;
   perspectiveScene: Perspective | null;
   elevationScene: Elevation | null;
-  buildingsMap: Map<string, BuildingModel>;
-  selectedBuildingId: string | null;
-  buildings: BuildingModel[];
-  selectedBuildingIndex: number;
+  structuresMap: Map<string, Istructure>;
+  selectedStructureId: string | null;
   mouseIsDown: boolean;
   selectedMesh: Mesh | null;
-  listeners: tListener[];
+  listeners: IListener[];
   interaction: InteractionMode;
+  uiEvent: tUIEvent | null;
 
   constructor() {
+    this.elevationHandles = new CamHandles();
     this.planScene = null;
     this.perspectiveScene = null;
     this.elevationScene = null;
 
-    this.buildingsMap = new Map();
-    this.selectedBuildingId = null;
+    this.structuresMap = new Map();
+    this.selectedStructureId = null;
 
-    this.buildings = [];
+    // this.buildingsMap = new Map();
+    // this.selectedBuildingId = null;
+
+    // this.dormersMap = new Map();
+
+    // this.buildings = [];
     this.listeners = [];
-    this.selectedBuildingIndex = -1;
+    // this.selectedBuildingIndex = -1;
     this.mouseIsDown = false;
     this.selectedMesh = null;
     this.interaction = InteractionMode.NONE;
+    this.uiEvent = null;
   }
 
-  get SelectedBuilding() {
-    const { buildingsMap, selectedBuildingId } = this;
-    if (!selectedBuildingId) {
+  get SelectedStructure() {
+    const { structuresMap, selectedStructureId } = this;
+    if (!selectedStructureId) {
       return null;
     }
-    return buildingsMap.get(selectedBuildingId);
+    return structuresMap.get(selectedStructureId);
   }
 
-  notifyListeners() {
+  addListener(listener: IListener) {
+    this.listeners.push(listener);
+  }
+
+  notifyListeners(userEvent: USER_EVENT) {
     this.listeners.forEach((listener) => {
-      listener(this.buildings);
+      listener.onUpdate(userEvent, this);
     });
-  }
-
-  addBuilding() {
-    // const newBuilding = new BuildingModel();
-    // this.buildings.push(newBuilding);
-
-    // this.planScene.add(newBuilding.buildingPlan.transform);
-    // this.planScene.
-
-    // this.perspectiveScene.add(cube);
-
-    this.notifyListeners();
   }
 }
 

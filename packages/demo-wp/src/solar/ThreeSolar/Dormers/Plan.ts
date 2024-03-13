@@ -2,49 +2,7 @@ import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import { HandleControl, Handle } from '../Handles/BuildingHandles';
 
-const perimeter = [
-  new THREE.Vector3(-1, 0, -1), // top left
-  new THREE.Vector3(1, 0, -1), // to top right
-
-  new THREE.Vector3(1, 0, -1), // top right
-  new THREE.Vector3(1, 0, 1), // to bottom right
-
-  new THREE.Vector3(1, 0, 1), // bottom right
-  new THREE.Vector3(-1, 0, 1), // to bottom left
-
-  new THREE.Vector3(-1, 0, 1), // bottom left
-  new THREE.Vector3(-1, 0, -1), // to top left
-];
-
-const doubleHipRoof = [
-  new THREE.Vector3(-1, 1, -1), // top left
-  new THREE.Vector3(0, 1.5, -0.75), // to top hip
-  new THREE.Vector3(1, 1, -1), // top right
-  new THREE.Vector3(0, 1.5, -0.75), // to top hip
-
-  new THREE.Vector3(-1, 1, 1), // bottom left
-  new THREE.Vector3(0, 1.5, 0.75), // to bottom hip
-  new THREE.Vector3(1, 1, 1), // bottom right
-  new THREE.Vector3(0, 1.5, 0.75), // to bottom hip
-
-  new THREE.Vector3(0, 1.5, -0.75), // top ridge
-  new THREE.Vector3(0, 1.5, 0.75), // to bottom ridge
-];
-
-const allPoints = [...perimeter, ...doubleHipRoof];
-
-function constructRoof() {
-  const geometry = new THREE.BufferGeometry().setFromPoints(allPoints);
-
-  const material = new THREE.LineBasicMaterial({
-    color: 0x00ff00,
-  });
-
-  const cube = new THREE.LineSegments(geometry, material);
-  return cube;
-}
-
-class BuildingPlan {
+class DormerPlan {
   doubleHipRoof: THREE.LineSegments;
   handles: Handle[];
   perimeter: THREE.Mesh;
@@ -55,7 +13,7 @@ class BuildingPlan {
   id: string;
   // xyCursor: THREE.Mesh;
 
-  constructor(id: string) {
+  constructor(id: string, doubleHipRoof: THREE.LineSegments) {
     this.id = id;
     this.handles = [];
 
@@ -100,9 +58,9 @@ class BuildingPlan {
       opacity: 0,
     });
     this.perimeter = new THREE.Mesh(perimeterGeom, perimeterMat);
-    this.perimeter.name = this.id;
+    this.perimeter.name = `perimeter-${this.id}`;
 
-    this.doubleHipRoof = constructRoof();
+    this.doubleHipRoof = doubleHipRoof;
 
     this.perimeter.add(this.doubleHipRoof);
     this.scale.add(this.perimeter);
@@ -121,32 +79,29 @@ class BuildingPlan {
   }
 
   addHandles(handles: HandleControl) {
-    const {
-      topLeft,
-      topRight,
-      bottomLeft,
-      bottomRight,
-      topHip,
-      bottomHip,
-      ridge,
-      rotateHandle,
-    } = handles;
+    const { topLeft, topRight, bottomLeft, bottomRight } = handles;
+
     // TODO: What about if the roof height exceeds this?
     // the handle needs to always be on top
     const handleHeight = 1.8;
-    const topLeftPos = new THREE.Vector3(-1, handleHeight, -1);
+    const left = -0.25;
+    const right = 0.25;
+    const back = -0.25;
+    const front = 0.25;
+
+    const topLeftPos = new THREE.Vector3(left, handleHeight, back);
     topLeft.handleObject.position.copy(topLeftPos);
     this.doubleHipRoof.add(topLeft.handleObject);
 
-    const topRightPos = new THREE.Vector3(1, handleHeight, -1);
+    const topRightPos = new THREE.Vector3(right, handleHeight, back);
     topRight.handleObject.position.copy(topRightPos);
     this.doubleHipRoof.add(topRight.handleObject);
 
-    const bottomLeftPos = new THREE.Vector3(-1, handleHeight, 1);
+    const bottomLeftPos = new THREE.Vector3(left, handleHeight, front);
     bottomLeft.handleObject.position.copy(bottomLeftPos);
     this.doubleHipRoof.add(bottomLeft.handleObject);
 
-    const bottomRightPos = new THREE.Vector3(1, handleHeight, 1);
+    const bottomRightPos = new THREE.Vector3(right, handleHeight, front);
     bottomRight.handleObject.position.copy(bottomRightPos);
     this.doubleHipRoof.add(bottomRight.handleObject);
 
@@ -154,25 +109,25 @@ class BuildingPlan {
     const topHipVec = roofGeom[9];
     const bottomHipVec = roofGeom[13];
 
-    const topHipPos = new THREE.Vector3(topHipVec.x, handleHeight, topHipVec.z);
-    topHip.handleObject.position.copy(topHipPos);
-    this.doubleHipRoof.add(topHip.handleObject);
+    // const topHipPos = new THREE.Vector3(topHipVec.x, handleHeight, topHipVec.z);
+    // handles.topHip.position.copy(topHipPos);
+    // this.doubleHipRoof.add(handles.topHip);
 
-    const bottomHipPos = new THREE.Vector3(
-      bottomHipVec.x,
-      handleHeight,
-      bottomHipVec.z
-    );
-    bottomHip.handleObject.position.copy(bottomHipPos);
-    this.doubleHipRoof.add(bottomHip.handleObject);
+    // const bottomHipPos = new THREE.Vector3(
+    //   bottomHipVec.x,
+    //   handleHeight,
+    //   bottomHipVec.z
+    // );
+    // handles.bottomHip.position.copy(bottomHipPos);
+    // this.doubleHipRoof.add(handles.bottomHip);
 
-    const ridgePos = new THREE.Vector3(0, handleHeight, 0);
-    ridge.handleObject.position.copy(ridgePos);
-    this.doubleHipRoof.add(ridge.handleObject);
+    // const ridgePos = new THREE.Vector3(0, handleHeight, 0);
+    // handles.ridge.position.copy(ridgePos);
+    // this.doubleHipRoof.add(handles.ridge);
 
-    const rotatePos = new THREE.Vector3(1.5, handleHeight, 0);
-    rotateHandle.handleObject.position.copy(rotatePos);
-    this.doubleHipRoof.add(rotateHandle.handleObject);
+    // const rotatePos = new THREE.Vector3(1.5, handleHeight, 0);
+    // handles.rotateHandle.position.copy(rotatePos);
+    // this.doubleHipRoof.add(handles.rotateHandle);
 
     // WARN careful of this - could cause a bug down the line when handles
     // are switched to another mesh object
@@ -201,4 +156,4 @@ class BuildingPlan {
   }
 }
 
-export default BuildingPlan;
+export default DormerPlan;

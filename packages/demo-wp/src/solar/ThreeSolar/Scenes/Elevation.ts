@@ -126,32 +126,6 @@ class Elevation {
       if (onCameraChange) {
         onCameraChange(orthCam);
       }
-
-      // will need to get the world coords of the roof in the scene...
-      // specificy the y values of the roof top and bottom
-
-      // will need to set the y value of the testBox to be that y value...
-
-      // when user drags the test box too, will need to adjust the y values
-      // of the roof in the scene...
-
-      // orbitControls.update();
-      // camera.updateMatrix();
-      // camera.updateMatrixWorld();
-      // camera.updateWorldMatrix(true, true);
-      // const pos = new THREE.Vector3();
-      // const boxScale = testBox.scale.clone();
-      // const scaleMult = 1 / (10 * orthCam.zoom);
-      // boxScale.multiplyScalar(scaleMult);
-      // const scaleFactor = 20 / (20 * orthCam.zoom);
-      // testBox.scale.copy(
-      //   new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor)
-      // );
-      // const newZ = -1 / scaleFactor;
-      // testBox.position.set(5, 0, newZ);
-      // const dist = camera.position.distanceTo(testBox.position);
-      // console.log('the camera changed: ', testBox.scale);
-      // console.log('the zoom / sf: ', orthCam.zoom, scaleFactor, newZ);
     });
 
     mouseControls.addEventListener('mouseover', () => {
@@ -161,29 +135,20 @@ class Elevation {
     mouseControls.addEventListener('mousedown', (data) => {
       orbitControls.enabled = false;
       if (this.onMouseDown) {
-        this.onMouseDown({
-          eventData: data,
-          eventName: 'mousedown',
-        });
+        this.onMouseDown(data);
       }
     });
 
     mouseControls.addEventListener('mouseup', (data) => {
       orbitControls.enabled = true;
       if (this.onMouseUp) {
-        this.onMouseUp({
-          eventData: data,
-          eventName: 'mouseup',
-        });
+        this.onMouseUp(data);
       }
     });
 
     mouseControls.addEventListener('mousemove', (data) => {
       if (this.onMouseMove) {
-        this.onMouseMove({
-          eventData: data,
-          eventName: 'mousemove',
-        });
+        this.onMouseMove(data);
       }
     });
   }

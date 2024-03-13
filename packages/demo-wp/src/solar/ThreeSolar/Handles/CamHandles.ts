@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import * as THREE from 'three';
 import { BuildingModel } from '../Model/Model';
+import { UI_ACTION } from '../Lib/sharedTypes';
 
 type tDragParams = {
   dimensions?: THREE.Vector3;
@@ -50,13 +51,13 @@ class CamHandles {
     this.roofBottomLevel = new ElevationHandle({
       dimensions: new THREE.Vector3(0.1, 0.1, 0.2),
       position: new THREE.Vector3(0, 0, 0),
-      name: 'adjust-roof-bottom',
+      name: UI_ACTION.ELEVATE_BASE,
     });
 
     this.roofTopLevel = new ElevationHandle({
       dimensions: new THREE.Vector3(0.1, 0.1, 0.2),
       position: new THREE.Vector3(0, 1, 0),
-      name: 'adjust-roof-top',
+      name: UI_ACTION.ELEVATE_PEAK,
     });
 
     this.elevationHandles = [

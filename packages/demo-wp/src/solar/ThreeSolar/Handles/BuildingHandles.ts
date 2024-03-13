@@ -1,14 +1,15 @@
 /* eslint-disable max-classes-per-file */
 import * as THREE from 'three';
 import { BuildingModel } from '../Model/Model';
+import { UI_ACTION } from '../Lib/sharedTypes';
 
-type tDragParams = {
+type tHandleParams = {
   dimensions?: THREE.Vector3;
   position: THREE.Vector3;
-  name: string;
+  id: UI_ACTION;
 };
 
-function constructHandle(params: tDragParams) {
+function constructHandle(params: tHandleParams) {
   // Create a box geometry with no height
   let dims = new THREE.Vector3(0.2, 0, 0.1);
   if (params.dimensions) {
@@ -22,18 +23,17 @@ function constructHandle(params: tDragParams) {
   // Create a mesh with the geometry and material
   const square = new THREE.Mesh(geometry, material);
   square.position.copy(params.position);
-  square.name = params.name;
+  square.name = params.id;
   return square;
 }
 
 class ElevationHandle {
-  params: tDragParams;
+  attrs: tHandleParams;
   handle: THREE.Mesh;
   elevationLine: THREE.LineSegments;
-  // mesh: THREE.Mesh;
 
-  constructor(dragParams: tDragParams) {
-    this.params = dragParams;
+  constructor(attrs: tHandleParams) {
+    this.attrs = attrs;
     const handleGeom = new THREE.BoxGeometry(0.1, 0.1, 0.2);
     const handleMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
@@ -51,7 +51,7 @@ class ElevationHandle {
       opacity: 0.1,
     });
     this.elevationLine = new THREE.LineSegments(lineGeom, lineMat);
-    this.handle.name = this.params.name;
+    this.handle.name = this.attrs.id;
     this.handle.add(this.elevationLine);
 
     // const transformMat = new THREE.MeshBasicMaterial({
@@ -68,76 +68,94 @@ class ElevationHandle {
   }
 }
 
-class Handles {
+class Handle {
+  handleObject: THREE.Mesh;
+  attrs: tHandleParams;
+  constructor(attrs: tHandleParams) {
+    this.attrs = attrs;
+    this.handleObject = constructHandle(attrs);
+  }
+
+  onMouseDown() {
+    console.log('handle mouse down');
+  }
+
+  onMouseUp() {
+    console.log('handle mouse up');
+  }
+}
+
+// these could be sprites and not meshes in future
+class HandleControl {
   building: BuildingModel | null;
-  topLeft: THREE.Mesh;
-  topRight: THREE.Mesh;
-  bottomLeft: THREE.Mesh;
-  bottomRight: THREE.Mesh;
-  topHip: THREE.Mesh;
-  bottomHip: THREE.Mesh;
-  ridge: THREE.Mesh;
-  rotateHandle: THREE.Mesh;
+  topLeft: Handle;
+  topRight: Handle;
+  bottomLeft: Handle;
+  bottomRight: Handle;
+  topHip: Handle;
+  bottomHip: Handle;
+  ridge: Handle;
+  rotateHandle: Handle;
   roofBottomLevel: ElevationHandle;
   roofTopLevel: ElevationHandle;
 
-  handlesArray: THREE.Mesh[];
-  elevationHandles: THREE.Mesh[];
+  handlesArray: Handle[];
+  elevationHandles: ElevationHandle[];
 
   constructor() {
     this.building = null;
 
-    this.topLeft = constructHandle({
+    this.topLeft = new Handle({
       position: new THREE.Vector3(-1, 0.5, -1),
-      name: 'scale-topleft',
+      id: UI_ACTION.SCALE_NW,
     });
 
-    this.topRight = constructHandle({
+    this.topRight = new Handle({
       position: new THREE.Vector3(1, 0.5, -1),
-      name: 'scale-topright',
+      id: UI_ACTION.SCALE_NE,
     });
 
-    this.bottomLeft = constructHandle({
+    this.bottomLeft = new Handle({
       position: new THREE.Vector3(-1, 0.5, 1),
-      name: 'scale-bottomleft',
+      id: UI_ACTION.SCALE_SW,
     });
 
-    this.bottomRight = constructHandle({
+    this.bottomRight = new Handle({
       position: new THREE.Vector3(1, 0.5, 1),
-      name: 'scale-bottomright',
+      id: UI_ACTION.SCALE_SE,
     });
 
-    this.topHip = constructHandle({
+    this.topHip = new Handle({
       position: new THREE.Vector3(0, 0.5, -0.75),
-      name: 'move-tophip',
+      id: UI_ACTION.MOVE_N_HIP,
     });
 
-    this.bottomHip = constructHandle({
+    this.bottomHip = new Handle({
       position: new THREE.Vector3(0, 0.5, 0.75),
-      name: 'move-bottomhip',
+      id: UI_ACTION.MOVE_S_HIP,
     });
 
-    this.ridge = constructHandle({
+    this.ridge = new Handle({
       position: new THREE.Vector3(0, 0.5, 0),
-      name: 'move-ridgeline',
+      id: UI_ACTION.MOVE_RIDGE,
     });
 
-    this.rotateHandle = constructHandle({
+    this.rotateHandle = new Handle({
       dimensions: new THREE.Vector3(0.2, 0, 0.2),
       position: new THREE.Vector3(1.5, 0.5, 0),
-      name: 'rotate-building',
+      id: UI_ACTION.ROTATE_STRUCTURE,
     });
 
     this.roofBottomLevel = new ElevationHandle({
       dimensions: new THREE.Vector3(0.1, 0.1, 0.2),
       position: new THREE.Vector3(0, 0, 0),
-      name: 'adjust-roof-bottom',
+      id: UI_ACTION.ELEVATE_BASE,
     });
 
     this.roofTopLevel = new ElevationHandle({
       dimensions: new THREE.Vector3(0.1, 0.1, 0.2),
       position: new THREE.Vector3(0, 1, 0),
-      name: 'adjust-roof-top',
+      id: UI_ACTION.ELEVATE_PEAK,
     });
 
     this.handlesArray = [
@@ -151,11 +169,8 @@ class Handles {
       this.rotateHandle,
     ];
 
-    this.elevationHandles = [
-      this.roofBottomLevel.handle,
-      this.roofTopLevel.handle,
-    ];
+    this.elevationHandles = [this.roofBottomLevel, this.roofTopLevel];
   }
 }
 
-export default Handles;
+export { HandleControl, Handle };

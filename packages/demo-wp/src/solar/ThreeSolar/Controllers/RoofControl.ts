@@ -1,11 +1,11 @@
 /* eslint-disable prefer-destructuring */
-import { Mesh, Vector3 } from 'three';
-import { tCallbackData } from '../Lib/sharedTypes';
-import { BuildingModel } from '../Model/Model';
+import { Object3D, Vector3 } from 'three';
+import { IListener, UI_ACTION, USER_EVENT } from '../Lib/sharedTypes';
+import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 
-class RoofControl {
+class RoofControl implements IListener {
   buildingModel: BuildingModel | null;
-  handle: Mesh | null;
+  handle: Object3D | null;
   vectorsOnStart: Vector3[];
   perspVectorsOnStart: Vector3[];
 
@@ -16,43 +16,74 @@ class RoofControl {
     this.perspVectorsOnStart = [];
   }
 
-  setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
-    const { object } = params.eventData;
-    if (!object) {
+  onUpdate(mouseEvent: USER_EVENT, model: Model) {
+    if (model.interaction !== InteractionMode.ADJUST_ROOF) {
       return;
     }
-    this.buildingModel = buildingModel;
-    this.handle = object;
 
-    const vecs = this.buildingModel.buildingPlan.getRoofGeometry();
+    switch (mouseEvent) {
+      case USER_EVENT.MOUSE_DOWN:
+        this.onMouseDown(model);
+        break;
+      case USER_EVENT.MOUSE_MOVE:
+        this.onMouseMove(model);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onMouseDown(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const buildingModel = SelectedStructure as BuildingModel;
+    this.buildingModel = buildingModel;
+
+    const { actionSource } = uiEvent;
+    if (!actionSource) {
+      return;
+    }
+    this.handle = actionSource;
+
+    const vecs = buildingModel.buildingPlan.getRoofGeometry();
     this.vectorsOnStart = vecs.map((vec) => vec.clone());
 
-    const persVecs = this.buildingModel.buildingPersp.getRoofGeometry();
+    const persVecs = buildingModel.buildingPersp.getRoofGeometry();
     this.perspVectorsOnStart = persVecs.map((vec) => vec.clone());
   }
 
-  setPosition(params: tCallbackData) {
-    const { buildingModel, handle } = this;
+  onMouseMove(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
 
+    const { action } = uiEvent;
+
+    const buildingModel = SelectedStructure as BuildingModel;
+    const { handle } = this;
     if (!buildingModel || !handle) {
       return;
     }
 
-    if (handle.name === 'move-tophip') {
-      this.setTopHipPosition(params);
+    const { worldCoords } = uiEvent.positionData;
+
+    if (action === UI_ACTION.MOVE_N_HIP) {
+      this.setTopHipPosition(worldCoords);
     }
 
-    if (handle.name === 'move-bottomhip') {
-      this.setBottomHipPosition(params);
+    if (action === UI_ACTION.MOVE_S_HIP) {
+      this.setBottomHipPosition(worldCoords);
     }
 
-    if (handle.name === 'move-ridgeline') {
-      this.setRidgePosition(params);
+    if (action === UI_ACTION.MOVE_RIDGE) {
+      this.setRidgePosition(worldCoords);
     }
   }
-
-  setTopHipPosition(params: tCallbackData) {
-    const { worldCoords } = params.eventData;
+  setTopHipPosition(worldCoords: Vector3) {
     const { buildingModel, handle, vectorsOnStart } = this;
     if (!buildingModel || !handle) {
       return;
@@ -90,8 +121,7 @@ class RoofControl {
     buildingModel.buildingElev.setRoofGeometry(perspVectorsOnStart);
   }
 
-  setBottomHipPosition(params: tCallbackData) {
-    const { worldCoords } = params.eventData;
+  setBottomHipPosition(worldCoords: Vector3) {
     const { buildingModel, handle, vectorsOnStart } = this;
     if (!buildingModel || !handle) {
       return;
@@ -128,8 +158,7 @@ class RoofControl {
     buildingModel.buildingElev.setRoofGeometry(perspVectorsOnStart);
   }
 
-  setRidgePosition(params: tCallbackData) {
-    const { worldCoords } = params.eventData;
+  setRidgePosition(worldCoords: Vector3) {
     const { buildingModel, handle, vectorsOnStart } = this;
     if (!buildingModel || !handle) {
       return;
@@ -146,8 +175,17 @@ class RoofControl {
     const currPos = handle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
     handle.position.set(local.x, currPos.y, currPos.z);
-    topHip.position.set(local.x, topHip.position.y, topHip.position.z);
-    bottomHip.position.set(local.x, bottomHip.position.y, bottomHip.position.z);
+
+    const { handleObject: topHipObj } = topHip;
+
+    topHipObj.position.set(local.x, topHipObj.position.y, topHipObj.position.z);
+
+    const { handleObject: bottomHipObj } = bottomHip;
+    bottomHipObj.position.set(
+      local.x,
+      bottomHipObj.position.y,
+      bottomHipObj.position.z
+    );
 
     const vecFromLeftToTop = vectorsOnStart[9];
     const vecFromRightToTop = vectorsOnStart[11];

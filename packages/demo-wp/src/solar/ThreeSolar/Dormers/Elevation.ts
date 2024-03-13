@@ -2,86 +2,7 @@ import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import CamHandles from '../Handles/CamHandles';
 
-// 0, 1, 2, 0, 2, 3 back
-// 0, 4, 7, 0, 7, 3 left
-// 4, 5, 6, 4, 6, 7 front
-// 1, 5, 6, 1, 6, 2
-
-const perimeter = [
-  new THREE.Vector3(-1, 0, -1), // left bottom back 0
-  new THREE.Vector3(1, 0, -1), // right bottom back 1
-  new THREE.Vector3(1, 1, -1), // right top back 2
-  new THREE.Vector3(-1, 1, -1), // left top back 3
-
-  new THREE.Vector3(-1, 0, 1), // left bottom front 4
-  new THREE.Vector3(1, 0, 1), // right bottom front 5
-  new THREE.Vector3(1, 1, 1), // right top front 6
-  new THREE.Vector3(-1, 1, 1), // left top front 7
-];
-
-// [0, 2, 1]
-// [0, 3, 4, 0, 4, 1]
-// [3, 4, 5]
-// [2, 5, 4, 2, 4, 1]
-
-const doubleHipRoof = [
-  new THREE.Vector3(-1, 1, -1), // left bottom back 8
-  new THREE.Vector3(0, 1.5, -0.75), // centre top hip 9
-  new THREE.Vector3(1, 1, -1), // right bottom back 10
-
-  new THREE.Vector3(-1, 1, 1), // left bottom front 11
-  new THREE.Vector3(0, 1.5, 0.75), // centre top hip 12
-  new THREE.Vector3(1, 1, 1), // right bottom front 13
-];
-
-const allPoints = [...perimeter, ...doubleHipRoof];
-
-function constructRoof() {
-  const geometry = new THREE.BufferGeometry().setFromPoints(allPoints);
-  const back = [0, 1, 2, 0, 2, 3];
-  const left = [0, 4, 7, 0, 7, 3];
-  const right = [1, 5, 6, 1, 6, 2];
-  const front = [4, 5, 6, 4, 6, 7];
-
-  let roofBack = [0, 1, 2];
-  let roofLeft = [0, 3, 4, 0, 4, 1];
-  let roofFront = [3, 4, 5];
-  let roofRight = [2, 5, 4, 2, 4, 1];
-
-  roofBack = roofBack.map((x) => 8 + x);
-  roofLeft = roofLeft.map((x) => 8 + x);
-  roofFront = roofFront.map((x) => 8 + x);
-  roofRight = roofRight.map((x) => 8 + x);
-
-  const all = [
-    ...back,
-    ...left,
-    ...right,
-    ...front,
-    ...roofBack,
-    ...roofLeft,
-    ...roofFront,
-    ...roofRight,
-  ];
-  geometry.setIndex(all);
-  geometry.computeVertexNormals();
-
-  const material = new THREE.MeshNormalMaterial({
-    side: THREE.DoubleSide,
-    flatShading: true,
-  });
-
-  const cube = new THREE.Mesh(geometry, material);
-  return cube;
-}
-
-type tDragParams = {
-  dimensions?: THREE.Vector3;
-  position: THREE.Vector3;
-  name: string;
-};
-
-class BuildingElev {
+class DormerElev {
   doubleHipRoof: THREE.Mesh;
   camHandles: CamHandles | null;
   perimeter: THREE.Mesh;
@@ -92,7 +13,7 @@ class BuildingElev {
   id: string;
   xyCursor: THREE.Mesh;
 
-  constructor(id: string) {
+  constructor(id: string, doubleHipRoof: THREE.Mesh) {
     this.id = id;
     this.camHandles = null;
 
@@ -139,7 +60,7 @@ class BuildingElev {
     this.perimeter = new THREE.Mesh(perimeterGeom, perimeterMat);
     this.perimeter.name = `perimeter-${this.id}`;
 
-    this.doubleHipRoof = constructRoof();
+    this.doubleHipRoof = doubleHipRoof;
 
     this.perimeter.add(this.doubleHipRoof);
     this.scale.add(this.perimeter);
@@ -159,20 +80,7 @@ class BuildingElev {
     this.transform.add(this.xyCursor);
   }
 
-  // addHandles(handles: Handles) {
-  //   const roofBottomPos = new THREE.Vector3(1, 1, 1.5);
-  //   const roofBottomMesh = handles.roofBottomLevel.handle;
-  //   roofBottomMesh.position.copy(roofBottomPos);
-  //   this.doubleHipRoof.add(roofBottomMesh);
-
-  //   const roofTopPos = new THREE.Vector3(1, 1.5, 1.5);
-  //   const roofTopMesh = handles.roofTopLevel.handle;
-  //   roofTopMesh.position.copy(roofTopPos);
-  //   this.doubleHipRoof.add(roofTopMesh);
-  // }
-
   addCamHandles(handles: CamHandles) {
-    console.log('add cam handles start...', handles);
     let { camHandles } = this;
 
     camHandles = handles;
@@ -192,17 +100,9 @@ class BuildingElev {
     const zoomedTopHeight = cam.zoom * roofTopHeight;
     const roofTopHandle = handles.elevationHandles[1];
     roofTopHandle.position.copy(new THREE.Vector3(3, zoomedTopHeight, 9));
-
-    console.log('add cam handles end...');
-
-    // const vec = new THREE.Vector3();
-    // cam.getWorldDirection(vec);
-    // vec.multiplyScalar(dist);
-    // vec.add(cam.position);
   }
 
   updateHandles() {
-    console.log('update handles start: ', this);
     const { camHandles } = this;
     if (!camHandles) {
       return;
@@ -226,11 +126,6 @@ class BuildingElev {
     roofTopHandle.position.copy(new THREE.Vector3(3, zoomedTopHeight, 9));
   }
 
-  // currently nothing needs to be done here - when adding meshes to different
-  // meshes as children - ie. building trans/rot/scale/ meshs then object added is
-  // removed from any other parent mesh - but may change in future
-  removeHandles() {}
-
   getRoofGeometry() {
     const geometry = this.doubleHipRoof.geometry.getAttribute('position');
     const vectors = convertToPoints(geometry as THREE.BufferAttribute);
@@ -242,4 +137,4 @@ class BuildingElev {
   }
 }
 
-export default BuildingElev;
+export default DormerElev;

@@ -1,6 +1,7 @@
+/* eslint-disable class-methods-use-this */
 import { Vector3 } from 'three';
-import { tCallbackData } from '../Lib/sharedTypes';
-import { BuildingModel } from '../Model/Model';
+import { IListener, UI_ACTION, USER_EVENT } from '../Lib/sharedTypes';
+import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 
 // function getCenterPoint(mesh: Mesh) {
 //   const { geometry } = mesh;
@@ -16,37 +17,51 @@ import { BuildingModel } from '../Model/Model';
 //   return centre;
 // }
 
-class ScaleControl {
-  buildingModel: BuildingModel | null;
-
-  constructor() {
-    this.buildingModel = null;
-  }
-
-  setBuilding(buildingModel: BuildingModel, params: tCallbackData) {
-    this.buildingModel = buildingModel;
-    const { anchor, scale, doubleHipRoof } = this.buildingModel.buildingPlan;
-
-    const { anchor: perspAnchor, doubleHipRoof: perspRoof } =
-      this.buildingModel.buildingPersp;
-
-    const { object } = params.eventData;
-    if (!object) {
+class ScaleControl implements IListener {
+  onUpdate(mouseEvent: USER_EVENT, model: Model) {
+    if (model.interaction !== InteractionMode.SCALE) {
       return;
     }
 
-    const objName = object.name;
+    switch (mouseEvent) {
+      case USER_EVENT.MOUSE_DOWN:
+        this.onMouseDown(model);
+        break;
+      case USER_EVENT.MOUSE_MOVE:
+        this.onMouseMove(model);
+        break;
+      case USER_EVENT.MOUSE_UP:
+        this.onMouseUp(model);
+        break;
+      default:
+        break;
+    }
+  }
+
+  onMouseDown(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const buildingModel = SelectedStructure as BuildingModel;
+    const { anchor, scale, doubleHipRoof } = buildingModel.buildingPlan;
+
+    const { anchor: perspAnchor, doubleHipRoof: perspRoof } =
+      buildingModel.buildingPersp;
+
+    const { action } = uiEvent;
 
     let xShift = scale.scale.x;
     let xInvShift = 1;
     let zShift = scale.scale.z;
     let zInvShift = -1;
 
-    if (objName.endsWith('left')) {
+    if (action === UI_ACTION.SCALE_NW || action === UI_ACTION.SCALE_SW) {
       xShift = -xShift;
       xInvShift = -1;
     }
-    if (objName.endsWith('bottomleft') || objName.endsWith('bottomright')) {
+    if (action === UI_ACTION.SCALE_SW || action === UI_ACTION.SCALE_SE) {
       zShift = -zShift;
       zInvShift = 1;
     }
@@ -61,21 +76,20 @@ class ScaleControl {
     perspRoof.position.copy(anchorShiftInverse);
   }
 
-  setScale(params: tCallbackData) {
-    // console.log('params: ', params);
-    if (!this.buildingModel) {
-      return;
+  onMouseMove(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
     }
-    const {
-      anchor,
-      scale,
-      handles: scaleHandles,
-    } = this.buildingModel.buildingPlan;
 
-    const { scale: scalePersp } = this.buildingModel.buildingPersp;
-    const { scale: scaleElev } = this.buildingModel.buildingElev;
+    const buildingModel = SelectedStructure as BuildingModel;
 
-    const { worldCoords } = params.eventData;
+    const { anchor, scale, handles: scaleHandles } = buildingModel.buildingPlan;
+
+    const { scale: scalePersp } = buildingModel.buildingPersp;
+    const { scale: scaleElev } = buildingModel.buildingElev;
+
+    const { worldCoords } = uiEvent.positionData;
 
     const newWorldCoords = new Vector3(worldCoords.x, 0, worldCoords.z);
     anchor.worldToLocal(newWorldCoords);
@@ -88,21 +102,27 @@ class ScaleControl {
 
     scale.scale.copy(newScale);
 
-    scaleHandles.forEach((handle) => {
-      handle.scale.copy(newInverseScale.clone());
+    scaleHandles.forEach(({ handleObject }) => {
+      handleObject.scale.copy(newInverseScale.clone());
     });
 
     scalePersp.scale.copy(newScale);
     scaleElev.scale.copy(newScale);
   }
 
-  recentre() {
-    if (!this.buildingModel) {
+  onMouseUp(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    const buildingModel = SelectedStructure as BuildingModel;
+    if (!buildingModel) {
       return;
     }
 
     const { transform, rotation, anchor, scale, perimeter, doubleHipRoof } =
-      this.buildingModel.buildingPlan;
+      buildingModel.buildingPlan;
 
     const {
       transform: tPersp,
@@ -111,7 +131,7 @@ class ScaleControl {
       scale: sPersp,
       perimeter: pPersp,
       doubleHipRoof: roofPersp,
-    } = this.buildingModel.buildingPersp;
+    } = buildingModel.buildingPersp;
 
     const worldPos = new Vector3();
     doubleHipRoof.getWorldPosition(worldPos);

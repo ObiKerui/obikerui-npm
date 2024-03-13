@@ -5,6 +5,12 @@ import Controller from './Controllers/Controller';
 import { Model } from './Model/Model';
 import Perspective from './Scenes/Perspective';
 import Elevation from './Scenes/Elevation';
+import UIEventControl from './Controllers/UIEventControl';
+import ScaleControl from './Controllers/ScaleControl';
+import PositionControl from './Controllers/PositionControl';
+import RotateControl from './Controllers/RotateControl';
+import RoofControl from './Controllers/RoofControl';
+import ElevationControl from './Controllers/ElevationControl';
 
 /**
  * Interface Provider Stock Context
@@ -12,6 +18,7 @@ import Elevation from './Scenes/Elevation';
 interface IAppContext {
   setHTMLElements: (args: types.tPageElements) => void;
   addBuilding: () => void;
+  addDormer: () => void;
 }
 
 /**
@@ -33,18 +40,34 @@ interface IAppProvider {
 
 const model = new Model();
 const controller = new Controller();
+const uiController = new UIEventControl();
 const plan = new Plan();
 const perspective = new Perspective();
 const elevation = new Elevation();
+const scaleControl = new ScaleControl();
+const rotateControl = new RotateControl();
+const positionControl = new PositionControl();
+const roofControl = new RoofControl();
+// const handleControl = new HandleControl();
+// const elevationHandles = new CamHandles();
+const elevationControl = new ElevationControl();
 
 controller.model = model;
-plan.onMouseDown = controller.onMouseDown;
-plan.onMouseUp = controller.onMouseUp;
-plan.onMouseMove = controller.onMouseMove;
-elevation.onMouseDown = controller.onMouseDown;
-elevation.onMouseUp = controller.onMouseUp;
-elevation.onMouseMove = controller.onMouseMove;
-elevation.onCameraChange = controller.onCameraChange;
+uiController.model = model;
+
+model.addListener(scaleControl);
+model.addListener(rotateControl);
+model.addListener(positionControl);
+model.addListener(roofControl);
+model.addListener(elevationControl);
+
+plan.onMouseDown = uiController.onMouseDown;
+plan.onMouseUp = uiController.onMouseUp;
+plan.onMouseMove = uiController.onMouseMove;
+elevation.onMouseDown = uiController.onMouseDown;
+elevation.onMouseUp = uiController.onMouseUp;
+elevation.onMouseMove = uiController.onMouseMove;
+elevation.onCameraChange = uiController.onCameraChange;
 
 model.planScene = plan;
 model.perspectiveScene = perspective;
@@ -72,10 +95,15 @@ export function AppProvider({ children }: IAppProvider) {
     controller.addBuilding();
   };
 
+  const addDormer = () => {
+    // controller.addDormer();
+  };
+
   const value: IAppContext = useMemo(
     () => ({
       setHTMLElements,
       addBuilding,
+      addDormer,
     }),
     []
   );

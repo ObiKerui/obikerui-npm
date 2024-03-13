@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { DragControls } from 'three/examples/jsm/controls/DragControls';
+// import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import MouseControls from '../Lib/MouseControls';
 import { tCallback } from '../Lib/sharedTypes';
 
@@ -118,10 +118,7 @@ class Plan {
       orbitControls.enabled = false;
       // console.log('mouse down event: ', data);
       if (this.onMouseDown) {
-        this.onMouseDown({
-          eventData: data,
-          eventName: 'mousedown',
-        });
+        this.onMouseDown(data);
       }
     });
 
@@ -129,20 +126,13 @@ class Plan {
       orbitControls.enabled = true;
       // console.log('mouse up event: ', data);
       if (this.onMouseUp) {
-        this.onMouseUp({
-          eventData: data,
-          eventName: 'mouseup',
-        });
+        this.onMouseUp(data);
       }
     });
 
     mouseControls.addEventListener('mousemove', (data) => {
-      // console.log('mouse move event: ', data);
       if (this.onMouseMove) {
-        this.onMouseMove({
-          eventData: data,
-          eventName: 'mousemove',
-        });
+        this.onMouseMove(data);
       }
     });
   }

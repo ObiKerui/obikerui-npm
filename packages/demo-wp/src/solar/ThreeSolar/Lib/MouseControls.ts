@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import * as THREE from 'three';
-import { tMouseEvent } from './sharedTypes';
+import { tCallback } from './sharedTypes';
 
 class MouseControls {
   // objects: THREE.Mesh[];
@@ -8,7 +8,7 @@ class MouseControls {
   camera: THREE.Camera;
   domElement: HTMLElement;
   rayCaster: THREE.Raycaster;
-  lastMouseDownObject: THREE.Mesh | null;
+  lastMouseDownObject: THREE.Object3D | null;
   mouseIsDown: boolean;
 
   constructor(
@@ -74,7 +74,7 @@ class MouseControls {
     console.log('mouse event: ', mouseEvent, this.objects);
   }
 
-  handleMouseMove(mouseEvent: MouseEvent, callback: tMouseEvent) {
+  handleMouseMove(mouseEvent: MouseEvent, callback: tCallback) {
     const ndc = this.computeNDCPosition(mouseEvent);
     const worldCoords = ndc.clone().unproject(this.camera);
     const scenePos = new THREE.Vector3(ndc.x, 0, ndc.y);
@@ -90,7 +90,7 @@ class MouseControls {
     });
   }
 
-  handleMouseDown(mouseEvent: MouseEvent, callback: tMouseEvent) {
+  handleMouseDown(mouseEvent: MouseEvent, callback: tCallback) {
     this.handleMouseMove(mouseEvent, ({ mouseCoords, worldCoords, object }) => {
       this.lastMouseDownObject = object;
       this.mouseIsDown = true;
@@ -102,7 +102,7 @@ class MouseControls {
     });
   }
 
-  handleMouseUp(mouseEvent: MouseEvent, callback: tMouseEvent) {
+  handleMouseUp(mouseEvent: MouseEvent, callback: tCallback) {
     const object = this.lastMouseDownObject;
     this.handleMouseMove(mouseEvent, ({ mouseCoords, worldCoords }) => {
       this.mouseIsDown = false;
@@ -114,7 +114,7 @@ class MouseControls {
     });
   }
 
-  addEventListener(eventId: keyof HTMLElementEventMap, callback: tMouseEvent) {
+  addEventListener(eventId: keyof HTMLElementEventMap, callback: tCallback) {
     const { domElement } = this;
 
     switch (eventId) {
