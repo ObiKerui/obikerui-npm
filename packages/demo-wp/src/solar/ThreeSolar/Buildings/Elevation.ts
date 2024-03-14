@@ -172,7 +172,6 @@ class BuildingElev {
   // }
 
   addCamHandles(handles: CamHandles) {
-    console.log('add cam handles start...', handles);
     let { camHandles } = this;
 
     camHandles = handles;
@@ -192,8 +191,6 @@ class BuildingElev {
     const zoomedTopHeight = cam.zoom * roofTopHeight;
     const roofTopHandle = handles.elevationHandles[1];
     roofTopHandle.position.copy(new THREE.Vector3(3, zoomedTopHeight, 9));
-
-    console.log('add cam handles end...');
 
     // const vec = new THREE.Vector3();
     // cam.getWorldDirection(vec);
