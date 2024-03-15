@@ -45,19 +45,21 @@ class Controller {
 
     // add the object plan to the scene
     newBuilding.buildingPlan.addHandles(handleControl);
-    planScene.scene.add(newBuilding.buildingPlan.transform);
+    planScene.scene.add(newBuilding.buildingPlan.structureBase.transform);
 
     // add the object elevation to the scene
     elevationHandles.building = newBuilding;
     elevationHandles.camera = elevationScene.camera;
     newBuilding.buildingElev.camHandles = elevationHandles;
     newBuilding.buildingElev.addCamHandles(elevationHandles);
-    elevationScene.scene.add(newBuilding.buildingElev.transform);
+    elevationScene.scene.add(newBuilding.buildingElev.structureBase.transform);
     elevationScene.hudScene.add(elevationHandles.roofTopLevel.handle);
     elevationScene.hudScene.add(elevationHandles.roofBottomLevel.handle);
 
     // add the object perspective to the scene
-    perspectiveScene.scene.add(newBuilding.buildingPersp.transform);
+    perspectiveScene.scene.add(
+      newBuilding.buildingPersp.structureBase.transform
+    );
 
     // add plan scene mouse controls
     const { mouseControls } = planScene;
@@ -109,9 +111,9 @@ class Controller {
 
     newDormer.dormerPlan.addHandles(handleControl);
 
-    planScene.scene.add(newDormer.dormerPlan.transform);
-    perspectiveScene.scene.add(newDormer.dormerPersp.transform);
-    elevationScene.scene.add(newDormer.dormerElev.transform);
+    planScene.scene.add(newDormer.dormerPlan.structureBase.transform);
+    perspectiveScene.scene.add(newDormer.dormerPersp.structureBase.transform);
+    elevationScene.scene.add(newDormer.dormerElev.structureBase.transform);
 
     model.structuresMap.set(structureId, newDormer);
     const { mouseControls } = planScene;

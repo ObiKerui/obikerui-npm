@@ -44,7 +44,7 @@ class DormerModel implements Istructure {
   }
 
   get Handle() {
-    return this.dormerPlan.perimeter;
+    return this.dormerPlan.structureBase.perimeter;
   }
 
   get Plan() {

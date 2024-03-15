@@ -32,7 +32,7 @@ class PositionControl implements IListener {
     }
 
     const buildingModel = SelectedStructure as BuildingModel;
-    const { transform } = buildingModel.Plan;
+    const { transform } = buildingModel.Plan.structureBase;
     const { worldCoords } = uiEvent.positionData;
 
     buildingModel.Plan.addHandles(handleControl);
@@ -62,8 +62,8 @@ class PositionControl implements IListener {
       return;
     }
 
-    const { transform: planTransform } = buildingModel.Plan;
-    const { transform: perspTransform } = buildingModel.Persp;
+    const { transform: planTransform } = buildingModel.Plan.structureBase;
+    const { transform: perspTransform } = buildingModel.Persp.structureBase;
 
     const newPosition = new Vector3(
       worldCoords.x - offset.x,

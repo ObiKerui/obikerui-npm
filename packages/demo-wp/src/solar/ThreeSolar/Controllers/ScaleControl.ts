@@ -45,10 +45,14 @@ class ScaleControl implements IListener {
     }
 
     const buildingModel = SelectedStructure as BuildingModel;
-    const { anchor, scale, doubleHipRoof } = buildingModel.buildingPlan;
+    const {
+      anchor,
+      scale,
+      structure: doubleHipRoof,
+    } = buildingModel.buildingPlan.structureBase;
 
-    const { anchor: perspAnchor, doubleHipRoof: perspRoof } =
-      buildingModel.buildingPersp;
+    const { anchor: perspAnchor, structure: perspRoof } =
+      buildingModel.buildingPersp.structureBase;
 
     const { action } = uiEvent;
 
@@ -84,10 +88,11 @@ class ScaleControl implements IListener {
 
     const buildingModel = SelectedStructure as BuildingModel;
 
-    const { anchor, scale, handles: scaleHandles } = buildingModel.buildingPlan;
+    const { handles: scaleHandles } = buildingModel.buildingPlan;
+    const { anchor, scale } = buildingModel.buildingPlan.structureBase;
 
-    const { scale: scalePersp } = buildingModel.buildingPersp;
-    const { scale: scaleElev } = buildingModel.buildingElev;
+    const { scale: scalePersp } = buildingModel.buildingPersp.structureBase;
+    const { scale: scaleElev } = buildingModel.buildingElev.structureBase;
 
     const { worldCoords } = uiEvent.positionData;
 
@@ -121,8 +126,14 @@ class ScaleControl implements IListener {
       return;
     }
 
-    const { transform, rotation, anchor, scale, perimeter, doubleHipRoof } =
-      buildingModel.buildingPlan;
+    const {
+      transform,
+      rotation,
+      anchor,
+      scale,
+      perimeter,
+      structure: doubleHipRoof,
+    } = buildingModel.buildingPlan.structureBase;
 
     const {
       transform: tPersp,
@@ -130,8 +141,8 @@ class ScaleControl implements IListener {
       anchor: aPersp,
       scale: sPersp,
       perimeter: pPersp,
-      doubleHipRoof: roofPersp,
-    } = buildingModel.buildingPersp;
+      structure: roofPersp,
+    } = buildingModel.buildingPersp.structureBase;
 
     const worldPos = new Vector3();
     doubleHipRoof.getWorldPosition(worldPos);

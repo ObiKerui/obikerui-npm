@@ -1,81 +1,20 @@
 import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import { HandleControl, Handle } from '../Handles/BuildingHandles';
+import StructureBase from '../Lib/StructureBase';
 
 class DormerPlan {
   doubleHipRoof: THREE.LineSegments;
   handles: Handle[];
-  perimeter: THREE.Mesh;
-  transform: THREE.Mesh;
-  rotation: THREE.Mesh;
-  anchor: THREE.Mesh;
-  scale: THREE.Mesh;
+  structureBase: StructureBase;
   id: string;
   // xyCursor: THREE.Mesh;
 
   constructor(id: string, doubleHipRoof: THREE.LineSegments) {
     this.id = id;
     this.handles = [];
-
-    const transRotGeom = new THREE.BoxGeometry();
-    // Create a material with white color
-    const transRotMat = new THREE.MeshBasicMaterial({
-      color: 0x0000dd,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.0,
-    });
-
-    // Create a mesh with the geometry and material
-    this.transform = new THREE.Mesh(transRotGeom, transRotMat);
-    this.rotation = new THREE.Mesh(transRotGeom.clone(), transRotMat.clone());
-
-    const anchorMat = new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0,
-    });
-
-    const anchorGeom = new THREE.BoxGeometry(4, 4, 4);
-    this.anchor = new THREE.Mesh(anchorGeom, anchorMat);
-
-    const scaleMat = new THREE.MeshBasicMaterial({
-      color: 0x00ccff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0,
-    });
-
-    const scaleGeom = new THREE.BoxGeometry(4, 4, 4);
-    this.scale = new THREE.Mesh(scaleGeom, scaleMat);
-
-    const perimeterGeom = new THREE.BoxGeometry(2, 0, 2);
-    const perimeterMat = new THREE.MeshBasicMaterial({
-      color: 0xeeeeee,
-      wireframe: true,
-      transparent: true,
-      opacity: 0,
-    });
-    this.perimeter = new THREE.Mesh(perimeterGeom, perimeterMat);
-    this.perimeter.name = `perimeter-${this.id}`;
-
     this.doubleHipRoof = doubleHipRoof;
-
-    this.perimeter.add(this.doubleHipRoof);
-    this.scale.add(this.perimeter);
-    this.anchor.add(this.scale);
-    this.rotation.add(this.anchor);
-    this.transform.add(this.rotation);
-
-    // const circleGeom = new THREE.CircleGeometry(0.1);
-    // const circleMat = new THREE.MeshBasicMaterial({
-    //   color: 0xdddddd,
-    //   wireframe: true,
-    // });
-    // this.xyCursor = new THREE.Mesh(circleGeom, circleMat);
-    // this.xyCursor.rotation.set(Math.PI / 2, 0, 0);
-    // this.transform.add(this.xyCursor);
+    this.structureBase = new StructureBase(id, doubleHipRoof);
   }
 
   addHandles(handles: HandleControl) {
@@ -109,30 +48,6 @@ class DormerPlan {
     const topHipVec = roofGeom[9];
     const bottomHipVec = roofGeom[13];
 
-    // const topHipPos = new THREE.Vector3(topHipVec.x, handleHeight, topHipVec.z);
-    // handles.topHip.position.copy(topHipPos);
-    // this.doubleHipRoof.add(handles.topHip);
-
-    // const bottomHipPos = new THREE.Vector3(
-    //   bottomHipVec.x,
-    //   handleHeight,
-    //   bottomHipVec.z
-    // );
-    // handles.bottomHip.position.copy(bottomHipPos);
-    // this.doubleHipRoof.add(handles.bottomHip);
-
-    // const ridgePos = new THREE.Vector3(0, handleHeight, 0);
-    // handles.ridge.position.copy(ridgePos);
-    // this.doubleHipRoof.add(handles.ridge);
-
-    // const rotatePos = new THREE.Vector3(1.5, handleHeight, 0);
-    // handles.rotateHandle.position.copy(rotatePos);
-    // this.doubleHipRoof.add(handles.rotateHandle);
-
-    // WARN careful of this - could cause a bug down the line when handles
-    // are switched to another mesh object
-    // currently accessed by the RoofControl when moving ridge and
-    // the ScaleControl when applying inverse scaling
     this.handles = [
       handles.topLeft,
       handles.topRight,

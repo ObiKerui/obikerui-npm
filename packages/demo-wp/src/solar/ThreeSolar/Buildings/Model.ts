@@ -48,7 +48,7 @@ class BuildingModel implements Istructure {
   }
 
   get Handle() {
-    return this.buildingPlan.perimeter;
+    return this.buildingPlan.structureBase.perimeter;
   }
 
   get Plan() {

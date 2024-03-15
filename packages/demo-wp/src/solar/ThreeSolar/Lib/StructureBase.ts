@@ -1,15 +1,15 @@
-import THREE, { Mesh, Object3D } from 'three';
+import * as THREE from 'three';
 
 class StructureBase {
   id: string;
-  structure: Object3D;
-  transform: Mesh;
-  rotation: Mesh;
-  anchor: Mesh;
-  scale: Mesh;
-  perimeter: Mesh;
+  structure: THREE.Object3D;
+  transform: THREE.Mesh;
+  rotation: THREE.Mesh;
+  anchor: THREE.Mesh;
+  scale: THREE.Mesh;
+  perimeter: THREE.Mesh;
 
-  constructor(id: string, structure: Object3D) {
+  constructor(id: string, structure: THREE.Object3D) {
     this.id = id;
     this.structure = structure;
 

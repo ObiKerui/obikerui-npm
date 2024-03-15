@@ -120,7 +120,7 @@ class ElevationControl implements IListener {
       return;
     }
 
-    const { perimeter } = buildingModel.buildingElev;
+    const { perimeter } = buildingModel.buildingElev.structureBase;
 
     const currPos = handle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
@@ -165,7 +165,7 @@ class ElevationControl implements IListener {
       return;
     }
 
-    const { perimeter } = buildingModel.buildingElev;
+    const { perimeter } = buildingModel.buildingElev.structureBase;
 
     const currPos = roofBaseHandle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());

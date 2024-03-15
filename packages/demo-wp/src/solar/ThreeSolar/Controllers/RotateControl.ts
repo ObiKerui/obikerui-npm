@@ -35,8 +35,10 @@ class RotateControl implements IListener {
       return;
     }
 
-    const { rotation: planRotation, transform } = buildingModel.buildingPlan;
-    const { rotation: perspRotation } = buildingModel.buildingPersp;
+    const { rotation: planRotation, transform } =
+      buildingModel.buildingPlan.structureBase;
+    const { rotation: perspRotation } =
+      buildingModel.buildingPersp.structureBase;
 
     const angle = calculateAngle(transform.position, worldCoords);
 

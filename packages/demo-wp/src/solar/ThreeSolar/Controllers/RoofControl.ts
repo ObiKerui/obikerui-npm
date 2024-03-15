@@ -89,7 +89,7 @@ class RoofControl implements IListener {
       return;
     }
 
-    const { perimeter } = buildingModel.buildingPlan;
+    const { perimeter } = buildingModel.buildingPlan.structureBase;
 
     const currPos = handle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
@@ -127,7 +127,7 @@ class RoofControl implements IListener {
       return;
     }
 
-    const { perimeter } = buildingModel.buildingPlan;
+    const { perimeter } = buildingModel.buildingPlan.structureBase;
 
     const currPos = handle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
@@ -170,7 +170,7 @@ class RoofControl implements IListener {
     const topHip = handles[4];
     const bottomHip = handles[5];
 
-    const { perimeter } = buildingModel.buildingPlan;
+    const { perimeter } = buildingModel.buildingPlan.structureBase;
 
     const currPos = handle.position;
     const local = perimeter.worldToLocal(worldCoords.clone());
