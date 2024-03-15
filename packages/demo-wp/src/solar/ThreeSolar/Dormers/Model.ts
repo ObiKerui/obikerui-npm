@@ -46,6 +46,18 @@ class DormerModel implements Istructure {
   get Handle() {
     return this.dormerPlan.perimeter;
   }
+
+  get Plan() {
+    return this.dormerPlan;
+  }
+
+  get Persp() {
+    return this.dormerPersp;
+  }
+
+  get Elevation() {
+    return this.dormerElev;
+  }
 }
 
 export default DormerModel;

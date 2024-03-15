@@ -26,14 +26,16 @@ class PositionControl implements IListener {
   }
 
   onMouseDown(model: Model) {
-    const { SelectedStructure, uiEvent } = model;
+    const { SelectedStructure, uiEvent, handleControl } = model;
     if (!SelectedStructure || !uiEvent) {
       throw new Error('Structure not selected or no ui event!');
     }
 
     const buildingModel = SelectedStructure as BuildingModel;
-    const { transform } = buildingModel.buildingPlan;
+    const { transform } = buildingModel.Plan;
     const { worldCoords } = uiEvent.positionData;
+
+    buildingModel.Plan.addHandles(handleControl);
 
     // for the offset find difference between mouse click pos and centre of transform
     const transformCentre = new Vector3();
@@ -60,8 +62,8 @@ class PositionControl implements IListener {
       return;
     }
 
-    const { transform: planTransform } = buildingModel.buildingPlan;
-    const { transform: perspTransform } = buildingModel.buildingPersp;
+    const { transform: planTransform } = buildingModel.Plan;
+    const { transform: perspTransform } = buildingModel.Persp;
 
     const newPosition = new Vector3(
       worldCoords.x - offset.x,

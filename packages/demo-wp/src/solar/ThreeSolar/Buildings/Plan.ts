@@ -2,48 +2,6 @@ import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import { HandleControl, Handle } from '../Handles/BuildingHandles';
 
-const perimeter = [
-  new THREE.Vector3(-1, 0, -1), // top left
-  new THREE.Vector3(1, 0, -1), // to top right
-
-  new THREE.Vector3(1, 0, -1), // top right
-  new THREE.Vector3(1, 0, 1), // to bottom right
-
-  new THREE.Vector3(1, 0, 1), // bottom right
-  new THREE.Vector3(-1, 0, 1), // to bottom left
-
-  new THREE.Vector3(-1, 0, 1), // bottom left
-  new THREE.Vector3(-1, 0, -1), // to top left
-];
-
-const doubleHipRoof = [
-  new THREE.Vector3(-1, 1, -1), // top left
-  new THREE.Vector3(0, 1.5, -0.75), // to top hip
-  new THREE.Vector3(1, 1, -1), // top right
-  new THREE.Vector3(0, 1.5, -0.75), // to top hip
-
-  new THREE.Vector3(-1, 1, 1), // bottom left
-  new THREE.Vector3(0, 1.5, 0.75), // to bottom hip
-  new THREE.Vector3(1, 1, 1), // bottom right
-  new THREE.Vector3(0, 1.5, 0.75), // to bottom hip
-
-  new THREE.Vector3(0, 1.5, -0.75), // top ridge
-  new THREE.Vector3(0, 1.5, 0.75), // to bottom ridge
-];
-
-const allPoints = [...perimeter, ...doubleHipRoof];
-
-function constructRoof() {
-  const geometry = new THREE.BufferGeometry().setFromPoints(allPoints);
-
-  const material = new THREE.LineBasicMaterial({
-    color: 0x00ff00,
-  });
-
-  const cube = new THREE.LineSegments(geometry, material);
-  return cube;
-}
-
 class BuildingPlan {
   doubleHipRoof: THREE.LineSegments;
   handles: Handle[];
@@ -55,7 +13,7 @@ class BuildingPlan {
   id: string;
   // xyCursor: THREE.Mesh;
 
-  constructor(id: string) {
+  constructor(id: string, doubleHipRoof: THREE.LineSegments) {
     this.id = id;
     this.handles = [];
 
@@ -102,7 +60,7 @@ class BuildingPlan {
     this.perimeter = new THREE.Mesh(perimeterGeom, perimeterMat);
     this.perimeter.name = this.id;
 
-    this.doubleHipRoof = constructRoof();
+    this.doubleHipRoof = doubleHipRoof;
 
     this.perimeter.add(this.doubleHipRoof);
     this.scale.add(this.perimeter);

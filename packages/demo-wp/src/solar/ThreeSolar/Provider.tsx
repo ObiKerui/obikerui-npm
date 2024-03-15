@@ -96,7 +96,7 @@ export function AppProvider({ children }: IAppProvider) {
   };
 
   const addDormer = () => {
-    // controller.addDormer();
+    controller.addDormer();
   };
 
   const value: IAppContext = useMemo(

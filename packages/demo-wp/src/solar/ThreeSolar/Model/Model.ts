@@ -7,11 +7,13 @@ import BuildingModel from '../Buildings/Model';
 import Istructure from './Structure';
 import { IListener, tUIEvent, USER_EVENT } from '../Lib/sharedTypes';
 import CamHandles from '../Handles/CamHandles';
+import { HandleControl } from '../Handles/BuildingHandles';
 
 // type tListener = (newModel: BuildingModel[]) => void;
 
 enum InteractionMode {
   NONE = 'NONE',
+  SELECT_STRUCTURE = 'SELECT_STRUCTURE',
   POSITION = 'POSITION',
   ROTATE = 'ROTATE',
   SCALE = 'SCALE',
@@ -21,6 +23,7 @@ enum InteractionMode {
 
 class Model {
   elevationHandles: CamHandles;
+  handleControl: HandleControl;
   planScene: Plan | null;
   perspectiveScene: Perspective | null;
   elevationScene: Elevation | null;
@@ -34,6 +37,7 @@ class Model {
 
   constructor() {
     this.elevationHandles = new CamHandles();
+    this.handleControl = new HandleControl();
     this.planScene = null;
     this.perspectiveScene = null;
     this.elevationScene = null;

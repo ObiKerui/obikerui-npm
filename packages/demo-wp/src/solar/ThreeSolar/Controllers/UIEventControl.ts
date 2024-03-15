@@ -8,8 +8,6 @@ import {
   tUIEvent,
 } from '../Lib/sharedTypes';
 import { InteractionMode, Model } from '../Model/Model';
-import CamHandles from '../Handles/CamHandles';
-import { HandleControl } from '../Handles/BuildingHandles';
 
 // const regex = /id-\d+/;
 
@@ -35,7 +33,9 @@ class UIEventControl {
 
     this.onMouseDown = (params) => {
       const uiEvent = this.createUIEvent(params);
-      console.log('on mouse down ', params, uiEvent);
+      if (!uiEvent) {
+        return;
+      }
       this.handleMouseDown(uiEvent);
     };
     this.onMouseUp = (params) => {
@@ -67,15 +67,20 @@ class UIEventControl {
   createUIEvent({ object, mouseCoords, worldCoords }: tEventData) {
     const { model } = this;
     if (!model || !object) {
-      throw new Error('model or object does not exist!');
+      console.warn('model or object does not exist!');
+      return null;
     }
 
     let structure = null;
     const { name } = object;
     let uiAction = UI_ACTION[name as keyof typeof UI_ACTION];
 
-    if (name.startsWith('structure')) {
-      structure = model.structuresMap.get(name);
+    // is this a mouse down on a structure (building, dormer, extention), a handle or what about none?
+    // if mouse down on a structure we should update the handles to add to this structure...
+    const mouseDownOnStructure = name.startsWith('structure');
+    structure = model.structuresMap.get(name);
+
+    if (mouseDownOnStructure) {
       model.selectedStructureId = name;
       uiAction = UI_ACTION.MOVE_STRUCTURE;
     } else {
@@ -167,7 +172,6 @@ class UIEventControl {
         break;
     }
 
-    console.log('we here? ', interaction, action);
     model.interaction = interaction;
     model.uiEvent = uiEvent;
     model.notifyListeners(USER_EVENT.MOUSE_DOWN);
