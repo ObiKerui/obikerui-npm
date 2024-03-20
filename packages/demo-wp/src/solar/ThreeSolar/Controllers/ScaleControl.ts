@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { Vector3 } from 'three';
 import { IListener, UI_ACTION, USER_EVENT } from '../Lib/sharedTypes';
-import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import { InteractionMode, Model } from '../Model/Model';
 
 // function getCenterPoint(mesh: Mesh) {
 //   const { geometry } = mesh;
@@ -44,15 +44,15 @@ class ScaleControl implements IListener {
       throw new Error('Structure not selected or no ui event!');
     }
 
-    const buildingModel = SelectedStructure as BuildingModel;
+    const structureModel = SelectedStructure;
     const {
       anchor,
       scale,
       structure: doubleHipRoof,
-    } = buildingModel.buildingPlan.structureBase;
+    } = structureModel.Plan.Base;
 
     const { anchor: perspAnchor, structure: perspRoof } =
-      buildingModel.buildingPersp.structureBase;
+      structureModel.Persp.Base;
 
     const { action } = uiEvent;
 
@@ -73,6 +73,8 @@ class ScaleControl implements IListener {
     const anchorShift = new Vector3(-xShift, 0, zShift);
     const anchorShiftInverse = new Vector3(xInvShift, 0, zInvShift);
 
+    console.log('anchor shift / inverse: ', anchorShift, anchorShiftInverse);
+
     anchor.position.copy(anchorShift);
     doubleHipRoof.position.copy(anchorShiftInverse);
 
@@ -81,18 +83,15 @@ class ScaleControl implements IListener {
   }
 
   onMouseMove(model: Model) {
-    const { SelectedStructure, uiEvent } = model;
+    const { SelectedStructure, uiEvent, handleControl } = model;
     if (!SelectedStructure || !uiEvent) {
       throw new Error('Structure not selected or no ui event!');
     }
 
-    const buildingModel = SelectedStructure as BuildingModel;
-
-    const { handles: scaleHandles } = buildingModel.buildingPlan;
-    const { anchor, scale } = buildingModel.buildingPlan.structureBase;
-
-    const { scale: scalePersp } = buildingModel.buildingPersp.structureBase;
-    const { scale: scaleElev } = buildingModel.buildingElev.structureBase;
+    const structureModel = SelectedStructure;
+    const { anchor, scale } = structureModel.Plan.Base;
+    const { scale: scalePersp } = structureModel.Persp.Base;
+    const { scale: scaleElev } = structureModel.Elevation.Base;
 
     const { worldCoords } = uiEvent.positionData;
 
@@ -106,6 +105,8 @@ class ScaleControl implements IListener {
     const newInverseScale = new Vector3(1 / newScale.x, 1, 1 / newScale.z);
 
     scale.scale.copy(newScale);
+
+    const scaleHandles = handleControl.handlesArray;
 
     scaleHandles.forEach(({ handleObject }) => {
       handleObject.scale.copy(newInverseScale.clone());
@@ -121,10 +122,7 @@ class ScaleControl implements IListener {
       throw new Error('Structure not selected or no ui event!');
     }
 
-    const buildingModel = SelectedStructure as BuildingModel;
-    if (!buildingModel) {
-      return;
-    }
+    const structureModel = SelectedStructure;
 
     const {
       transform,
@@ -133,7 +131,7 @@ class ScaleControl implements IListener {
       scale,
       perimeter,
       structure: doubleHipRoof,
-    } = buildingModel.buildingPlan.structureBase;
+    } = structureModel.Plan.Base;
 
     const {
       transform: tPersp,
@@ -142,7 +140,7 @@ class ScaleControl implements IListener {
       scale: sPersp,
       perimeter: pPersp,
       structure: roofPersp,
-    } = buildingModel.buildingPersp.structureBase;
+    } = structureModel.Persp.Base;
 
     const worldPos = new Vector3();
     doubleHipRoof.getWorldPosition(worldPos);

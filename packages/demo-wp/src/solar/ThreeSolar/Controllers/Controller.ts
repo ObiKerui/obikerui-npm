@@ -44,8 +44,15 @@ class Controller {
     model.selectedStructureId = structureId;
 
     // add the object plan to the scene
+    handleControl.removeFromScene();
     newBuilding.buildingPlan.addHandles(handleControl);
     planScene.scene.add(newBuilding.buildingPlan.structureBase.transform);
+
+    // remove all from elevation scene
+    const { children } = elevationScene.scene;
+    children.forEach((child) => {
+      child.removeFromParent();
+    });
 
     // add the object elevation to the scene
     elevationHandles.building = newBuilding;
@@ -109,11 +116,19 @@ class Controller {
     model.structuresMap.set(structureId, newDormer);
     model.selectedStructureId = structureId;
 
+    handleControl.removeFromScene();
     newDormer.dormerPlan.addHandles(handleControl);
 
     planScene.scene.add(newDormer.dormerPlan.structureBase.transform);
     perspectiveScene.scene.add(newDormer.dormerPersp.structureBase.transform);
-    elevationScene.scene.add(newDormer.dormerElev.structureBase.transform);
+
+    // remove all from elevation scene
+    const { children } = elevationScene.scene;
+    children.forEach((child) => {
+      child.removeFromParent();
+    });
+
+    // elevationScene.scene.add(newDormer.dormerElev.structureBase.transform);
 
     model.structuresMap.set(structureId, newDormer);
     const { mouseControls } = planScene;
@@ -129,8 +144,6 @@ class Controller {
     );
 
     mouseControls.objects = [...handles, ...structureHandles];
-
-    console.log('create dormer done...');
   }
 }
 

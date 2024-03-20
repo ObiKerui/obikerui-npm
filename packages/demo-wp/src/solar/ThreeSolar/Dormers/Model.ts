@@ -3,15 +3,18 @@ import Geometry from './Geometry';
 import DormerPlan from './Plan';
 import DormerPersp from './Perspective';
 import DormerElev from './Elevation';
-import Istructure from '../Model/Structure';
+import { Istructure } from '../Lib/Structure';
+import { STRUCTURE_TYPE } from '../Lib/sharedTypes';
 
 class DormerModel implements Istructure {
   dormerPlan: DormerPlan;
   dormerPersp: DormerPersp;
   dormerElev: DormerElev;
   id: string;
+  structureType: STRUCTURE_TYPE;
 
   constructor(id: string) {
+    this.structureType = STRUCTURE_TYPE.DORMER;
     this.id = id;
     const geometry = new Geometry();
 
@@ -37,6 +40,10 @@ class DormerModel implements Istructure {
     this.dormerPlan = new DormerPlan(this.id, outline);
     this.dormerPersp = new DormerPersp(this.id, perspMesh);
     this.dormerElev = new DormerElev(this.id, elevMesh);
+  }
+
+  get Type() {
+    return this.structureType;
   }
 
   get ID() {

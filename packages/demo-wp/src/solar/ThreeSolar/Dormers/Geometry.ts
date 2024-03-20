@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
-const width = 0.5;
+const width = 2;
 const left = (width / 2) * -1;
 const right = (width / 2) * 1;
 
-const depth = 0.5;
+const depth = 2;
 const back = (depth / 2) * -1;
 const front = (depth / 2) * 1;
 
@@ -13,8 +13,8 @@ const height = 0.5;
 const roofBase = height - base;
 const roofTop = 1.0;
 
-const backHip = -0.25;
-const frontHip = 0.25;
+const backHip = -0.75;
+const frontHip = 0.75;
 
 // faces
 // 0, 1, 2, 0, 2, 3 back

@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import StructureBase from '../Lib/StructureBase';
 import CamHandles from '../Handles/CamHandles';
+import { Ielevation } from '../Lib/Structure';
 
-class BuildingElev {
+class BuildingElev implements Ielevation {
   doubleHipRoof: THREE.Mesh;
   camHandles: CamHandles | null;
   structureBase: StructureBase;
@@ -76,6 +77,10 @@ class BuildingElev {
 
   setRoofGeometry(vectorPoints: THREE.Vector3[]) {
     this.doubleHipRoof.geometry.setFromPoints(vectorPoints);
+  }
+
+  get Base() {
+    return this.structureBase;
   }
 }
 

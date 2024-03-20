@@ -1,5 +1,5 @@
 import { Object3D, Vector3 } from 'three';
-import Istructure from '../Model/Structure';
+import { Istructure } from './Structure';
 import { Model } from '../Model/Model';
 
 enum UI_ACTION {
@@ -59,4 +59,10 @@ type tCallback = (eventObj: tEventData) => void;
 
 export type { tEventData, tPageElements, tCallback, tUIEvent };
 
-export { UI_ACTION, USER_EVENT, IListener };
+enum STRUCTURE_TYPE {
+  BUILDING = 'BUILDING',
+  DORMER = 'DORMER',
+  EXTENTION = 'EXTENSION',
+}
+
+export { UI_ACTION, USER_EVENT, IListener, STRUCTURE_TYPE };

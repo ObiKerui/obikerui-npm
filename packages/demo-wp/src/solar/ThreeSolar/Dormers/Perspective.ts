@@ -2,12 +2,14 @@ import * as THREE from 'three';
 import { convertToPoints } from '../Lib/Geometry';
 import { HandleControl, Handle } from '../Handles/BuildingHandles';
 import StructureBase from '../Lib/StructureBase';
+import { Ipersp } from '../Lib/Structure';
 
-class DormerPersp {
+class DormerPersp implements Ipersp {
   doubleHipRoof: THREE.Mesh;
   structureBase: StructureBase;
   handles: Handle[];
   id: string;
+  attachPoints: THREE.Object3D[];
   // xyCursor: THREE.Mesh;
 
   constructor(id: string, doubleHipRoof: THREE.Mesh) {
@@ -15,6 +17,23 @@ class DormerPersp {
     this.handles = [];
     this.doubleHipRoof = doubleHipRoof;
     this.structureBase = new StructureBase(id, doubleHipRoof);
+    this.structureBase.scale.scale.copy(new THREE.Vector3(0.25, 0.25, 0.25));
+    this.attachPoints = [];
+    this.addAttachPoints();
+  }
+
+  addAttachPoints() {
+    const bottomLeftPos = new THREE.Vector3(-1, 0, -1);
+    const bottomLeftAP = new THREE.Object3D();
+    bottomLeftAP.position.copy(bottomLeftPos);
+    this.doubleHipRoof.add(bottomLeftAP);
+
+    const bottomRightPos = new THREE.Vector3(1, 0, -1);
+    const bottomRightAP = new THREE.Object3D();
+    bottomLeftAP.position.copy(bottomRightPos);
+    this.doubleHipRoof.add(bottomRightAP);
+
+    this.attachPoints = [bottomLeftAP, bottomRightAP];
   }
 
   addHandles(handles: HandleControl) {
@@ -90,6 +109,14 @@ class DormerPersp {
 
   setRoofGeometry(vectorPoints: THREE.Vector3[]) {
     this.doubleHipRoof.geometry.setFromPoints(vectorPoints);
+  }
+
+  get Base() {
+    return this.structureBase;
+  }
+
+  get AttachPoints() {
+    return this.attachPoints;
   }
 }
 

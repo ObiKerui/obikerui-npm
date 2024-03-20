@@ -2,16 +2,19 @@ import * as THREE from 'three';
 import BuildingPlan from './Plan';
 import BuildingPersp from './Perspective';
 import BuildingElev from './Elevation';
-import Istructure from '../Model/Structure';
+import { Istructure } from '../Lib/Structure';
 import Geometry from './Geometry';
+import { STRUCTURE_TYPE } from '../Lib/sharedTypes';
 
 class BuildingModel implements Istructure {
   buildingPlan: BuildingPlan;
   buildingPersp: BuildingPersp;
   buildingElev: BuildingElev;
   id: string;
+  structureType: STRUCTURE_TYPE;
 
   constructor(id: string) {
+    this.structureType = STRUCTURE_TYPE.BUILDING;
     this.id = id;
     const geometry = new Geometry();
 
@@ -37,10 +40,10 @@ class BuildingModel implements Istructure {
     this.buildingPlan = new BuildingPlan(this.id, outline);
     this.buildingPersp = new BuildingPersp(this.id, perspMesh);
     this.buildingElev = new BuildingElev(this.id, elevMesh);
+  }
 
-    // this.buildingPlan = new BuildingPlan(this.id);
-    // this.buildingPersp = new BuildingPersp(this.id);
-    // this.buildingElev = new BuildingElev(this.id);
+  get Type() {
+    return this.structureType;
   }
 
   get ID() {

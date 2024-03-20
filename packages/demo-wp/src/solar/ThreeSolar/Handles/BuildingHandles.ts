@@ -171,6 +171,17 @@ class HandleControl {
 
     this.elevationHandles = [this.roofBottomLevel, this.roofTopLevel];
   }
+
+  removeFromScene() {
+    this.topLeft.handleObject.removeFromParent();
+    this.topRight.handleObject.removeFromParent();
+    this.bottomLeft.handleObject.removeFromParent();
+    this.bottomRight.handleObject.removeFromParent();
+    this.topHip.handleObject.removeFromParent();
+    this.bottomHip.handleObject.removeFromParent();
+    this.ridge.handleObject.removeFromParent();
+    this.rotateHandle.handleObject.removeFromParent();
+  }
 }
 
 export { HandleControl, Handle };

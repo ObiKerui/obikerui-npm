@@ -1,11 +1,18 @@
+/* eslint-disable class-methods-use-this */
 import { Vector3 } from 'three';
-import { IListener, USER_EVENT } from '../Lib/sharedTypes';
-import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import { IListener, STRUCTURE_TYPE, USER_EVENT } from '../Lib/sharedTypes';
+import { InteractionMode, Model } from '../Model/Model';
+import Elevation from '../Scenes/Elevation';
+import { Istructure } from '../Lib/Structure';
+
+import PlacementControl from './PlacementControl';
 
 class PositionControl implements IListener {
   offset: Vector3 | null;
+  placer: PlacementControl;
   constructor() {
     this.offset = null;
+    this.placer = new PlacementControl();
   }
 
   onUpdate(mouseEvent: USER_EVENT, model: Model) {
@@ -16,8 +23,10 @@ class PositionControl implements IListener {
     switch (mouseEvent) {
       case USER_EVENT.MOUSE_DOWN:
         this.onMouseDown(model);
+        this.placer.onMouseDown(model);
         break;
       case USER_EVENT.MOUSE_MOVE:
+        this.placer.setPosition(model);
         this.setPosition(model);
         break;
       default:
@@ -25,17 +34,37 @@ class PositionControl implements IListener {
     }
   }
 
+  updateElevationSceneObject(structure: Istructure, elevationScene: Elevation) {
+    // remove all from elevation scene and add this if its a building?
+    const { children } = elevationScene.scene;
+    children.forEach((child) => {
+      child.removeFromParent();
+    });
+
+    // if the structure is mountable then we don't add it to the scene
+    // we don't want to show a dormer on its own
+    // when a dormer is 'attached' to a structure then we add both the structure
+    // and any attached dormers to the scene
+    if (structure.Type === STRUCTURE_TYPE.BUILDING) {
+      console.log('add structure to building: ', structure);
+      elevationScene.scene.add(structure.Elevation.Base.transform);
+    }
+  }
+
   onMouseDown(model: Model) {
-    const { SelectedStructure, uiEvent, handleControl } = model;
-    if (!SelectedStructure || !uiEvent) {
+    const { SelectedStructure, uiEvent, handleControl, elevationScene } = model;
+    if (!SelectedStructure || !uiEvent || !elevationScene) {
       throw new Error('Structure not selected or no ui event!');
     }
 
-    const buildingModel = SelectedStructure as BuildingModel;
-    const { transform } = buildingModel.Plan.structureBase;
+    const structureModel = SelectedStructure;
+    const { transform } = structureModel.Plan.Base;
     const { worldCoords } = uiEvent.positionData;
 
-    buildingModel.Plan.addHandles(handleControl);
+    this.updateElevationSceneObject(structureModel, elevationScene);
+
+    handleControl.removeFromScene();
+    structureModel.Plan.addHandles(handleControl);
 
     // for the offset find difference between mouse click pos and centre of transform
     const transformCentre = new Vector3();
@@ -56,18 +85,18 @@ class PositionControl implements IListener {
 
     const { worldCoords } = uiEvent.positionData;
     const { offset } = this;
-
-    const buildingModel = SelectedStructure as BuildingModel;
-    if (!buildingModel || !offset) {
-      return;
+    if (!offset) {
+      throw new Error('Error offset has not been set!');
     }
 
-    const { transform: planTransform } = buildingModel.Plan.structureBase;
-    const { transform: perspTransform } = buildingModel.Persp.structureBase;
+    const structureModel = SelectedStructure;
+
+    const { transform: planTransform } = structureModel.Plan.Base;
+    const { transform: perspTransform } = structureModel.Persp.Base;
 
     const newPosition = new Vector3(
       worldCoords.x - offset.x,
-      0,
+      perspTransform.position.y,
       worldCoords.z - offset.z
     );
 

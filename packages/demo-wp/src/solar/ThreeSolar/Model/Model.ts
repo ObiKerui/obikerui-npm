@@ -4,7 +4,7 @@ import Plan from '../Scenes/Plan';
 import Perspective from '../Scenes/Perspective';
 import Elevation from '../Scenes/Elevation';
 import BuildingModel from '../Buildings/Model';
-import Istructure from './Structure';
+import { Istructure } from '../Lib/Structure';
 import { IListener, tUIEvent, USER_EVENT } from '../Lib/sharedTypes';
 import CamHandles from '../Handles/CamHandles';
 import { HandleControl } from '../Handles/BuildingHandles';

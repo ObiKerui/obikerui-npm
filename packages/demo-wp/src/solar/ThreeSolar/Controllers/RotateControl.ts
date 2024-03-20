@@ -1,6 +1,6 @@
 import { Euler, Vector3 } from 'three';
 import { IListener, USER_EVENT } from '../Lib/sharedTypes';
-import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import { InteractionMode, Model } from '../Model/Model';
 
 function calculateAngle(centre: Vector3, mouse: Vector3) {
   return -Math.atan2(mouse.z - centre.z, mouse.x - centre.x);
@@ -30,15 +30,9 @@ class RotateControl implements IListener {
 
     const { worldCoords } = uiEvent.positionData;
 
-    const buildingModel = SelectedStructure as BuildingModel;
-    if (!buildingModel) {
-      return;
-    }
-
-    const { rotation: planRotation, transform } =
-      buildingModel.buildingPlan.structureBase;
-    const { rotation: perspRotation } =
-      buildingModel.buildingPersp.structureBase;
+    const structureModel = SelectedStructure;
+    const { rotation: planRotation, transform } = structureModel.Plan.Base;
+    const { rotation: perspRotation } = structureModel.Persp.Base;
 
     const angle = calculateAngle(transform.position, worldCoords);
 
