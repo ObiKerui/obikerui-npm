@@ -16,6 +16,7 @@ class BuildingModel implements Istructure {
   constructor(id: string) {
     this.structureType = STRUCTURE_TYPE.BUILDING;
     this.id = id;
+
     const geometry = new Geometry();
 
     const perspMat = new THREE.MeshPhongMaterial({

@@ -11,6 +11,11 @@ import {
 import { IListener, USER_EVENT } from '../Lib/sharedTypes';
 import { BuildingModel, InteractionMode, Model } from '../Model/Model';
 import { Istructure } from '../Lib/Structure';
+import {
+  subtractRotation,
+  convertToObjSpace,
+  addRotation,
+} from '../Lib/Geometry';
 
 class PlacementControl implements IListener {
   offset: Vector3 | null;
@@ -18,6 +23,7 @@ class PlacementControl implements IListener {
   planMeshes: Object3D[];
   perspMeshes: Object3D[];
   raycaster: Raycaster;
+  attachTo: Istructure | null;
 
   constructor() {
     this.offset = null;
@@ -26,6 +32,7 @@ class PlacementControl implements IListener {
 
     this.planMeshes = [];
     this.perspMeshes = [];
+    this.attachTo = null;
   }
 
   onUpdate(mouseEvent: USER_EVENT, model: Model) {
@@ -39,6 +46,9 @@ class PlacementControl implements IListener {
         break;
       case USER_EVENT.MOUSE_MOVE:
         this.setPosition(model);
+        break;
+      case USER_EVENT.MOUSE_UP:
+        this.onMouseUp(model);
         break;
       default:
         break;
@@ -58,12 +68,43 @@ class PlacementControl implements IListener {
   }
 
   onMouseDown(model: Model) {
-    const { SelectedStructure, uiEvent, elevationScene } = model;
+    const { SelectedStructure, uiEvent, elevationScene, planScene } = model;
     if (!SelectedStructure || !uiEvent || !elevationScene) {
       throw new Error('Structure not selected or no ui event!');
     }
     // get the structures in the scene...
     this.populateSceneStructures(model);
+    this.attachTo = null;
+    console.log('mouse down attach to is: ', this.attachTo);
+
+    // unmount what we have selected
+    const { transform: transformPlan, rotation: rotatePlan } =
+      SelectedStructure.Plan.Base;
+    const { transform: transformPersp } = SelectedStructure.Persp.Base;
+
+    const transformPlanMesh = transformPlan as Mesh;
+    const whatIsIt = transformPlanMesh.parent;
+    const isMounted = whatIsIt && whatIsIt.type !== 'Scene';
+
+    if (!isMounted) {
+      return;
+    }
+
+    // get the world coords of mounted structure
+    const worldPos = new Vector3();
+    transformPlan.getWorldPosition(worldPos);
+
+    // get the rotation for the structure
+    // addRotation(rotatePlan.rotation, );
+
+    console.log('is mounted so transform back to scene...', whatIsIt);
+    transformPlan.removeFromParent();
+    planScene?.scene.add(transformPlan);
+    transformPlan.position.copy(worldPos);
+    transformPersp.position.copy(worldPos);
+
+    // get the object it is attached to
+    // set the parent to be the plan scene
   }
 
   getRoofGeometry(structure: Istructure) {
@@ -77,8 +118,10 @@ class PlacementControl implements IListener {
     if (!SelectedStructure || !uiEvent) {
       throw new Error('Structure not selected or no ui event!');
     }
-    // const { worldCoords } = uiEvent.positionData;
-    // const pos = new Vector3(worldCoords.x, 0, worldCoords.z);
+
+    console.log('mouse move attach to is: ', this.attachTo);
+    console.log('selected sutructure: ', SelectedStructure);
+
     const { perspMeshes } = this;
 
     const { AttachPoints, Base } = SelectedStructure.Persp;
@@ -107,6 +150,11 @@ class PlacementControl implements IListener {
       return;
     }
     const structure = structuresMap.get(id);
+    if (!structure) {
+      return;
+    }
+    this.attachTo = structure;
+    console.log('attach to set to structure: ', this.attachTo);
 
     const { buildingPersp } = structure as BuildingModel;
     const { rotation } = buildingPersp.structureBase;
@@ -168,41 +216,101 @@ class PlacementControl implements IListener {
     perspRotate.rotation.copy(euler);
   }
 
-  // setPosition(model: Model) {
-  //   const { SelectedStructure, uiEvent } = model;
+  onMouseUp(model: Model) {
+    let { attachTo } = this;
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    console.log('attach to : ', attachTo);
+
+    if (!attachTo) {
+      return;
+    }
+
+    const { rotation: dormPlanRot } = SelectedStructure.Plan.Base;
+    const { rotation: dormPerspRot } = SelectedStructure.Persp.Base;
+    const { rotation: attachToPlanRot } = attachTo.Plan.Base;
+
+    // calculate the new rotation of the dormer
+    // when we add it as a child to parent rotation it will inherit and add-on
+    // the parent rotation - so subtract the parent to keep the child
+    // rotation the same as visually
+    const resultEuler = subtractRotation(
+      dormPlanRot.rotation,
+      attachToPlanRot.rotation
+    );
+
+    // copy the rotation to the plan/perspective
+    dormPlanRot.rotation.copy(resultEuler);
+    dormPerspRot.rotation.copy(resultEuler);
+
+    // calculate the new position when we add it to the parent rotation object
+    const { transform: selected } = SelectedStructure.Plan.Base;
+    const { rotation: mountTo } = attachTo.Plan.Base;
+
+    const newLocalPos = convertToObjSpace(selected, mountTo);
+
+    SelectedStructure.Plan.Base.transform.position.copy(newLocalPos);
+    SelectedStructure.Persp.Base.transform.position.copy(newLocalPos);
+
+    attachTo.Plan.Base.rotation.add(SelectedStructure.Plan.Base.transform);
+    attachTo.Persp.Base.rotation.add(SelectedStructure.Persp.Base.transform);
+    attachTo = null;
+  }
+
+  // onMouseUp(model: Model) {
+  //   const boxGeom = new BoxGeometry(1, 1, 1);
+  //   const boxMat = new LineBasicMaterial({
+  //     transparent: true,
+  //     opacity: 0.1,
+  //   });
+  //   const attachPoint = new Mesh(boxGeom, boxMat);
+
+  //   const { attachTo } = this;
+  //   const { SelectedStructure, uiEvent, structuresMap } = model;
   //   if (!SelectedStructure || !uiEvent) {
   //     throw new Error('Structure not selected or no ui event!');
   //   }
-  //   const { structures } = this;
 
-  //   const { structure, id } = SelectedStructure.Plan.Base;
-
-  //   const box = new Box3().setFromObject(structure);
-
-  //   const intersecting = structures.filter((struct) => {
-  //     const bbox = new Box3().setFromObject(struct.Plan.Base.structure);
-  //     const sameObject = id === struct.Plan.Base.id;
-  //     return sameObject === false && box.intersectsBox(bbox);
-  //   });
-
-  //   const box = new Box3().setFromObject(structure);
-
-  //   let intersects = false;
-  //   structures.forEach((s) => {
-  //     const bbox = new Box3().setFromObject(s.Plan.Base.structure);
-  //     const sameObject = structureModel.Plan.Base.id === s.Plan.Base.id;
-  //     intersects =
-  //       intersects || (sameObject === false && box.intersectsBox(bbox));
-  //     if (intersects) {
-  //       this.getRoofGeometry(s);
-  //     }
-  //   });
-
-  //   if (intersects) {
-  //     structureModel.Plan.Colour = 0x0000ff;
-  //   } else {
-  //     structureModel.Plan.Colour = 0xff0000;
+  //   if (!attachTo) {
+  //     return;
   //   }
+
+  //   const { transform: selected } = SelectedStructure.Plan.Base;
+  //   const { transform: mountTo, rotation: mountToRot } = attachTo.Plan.Base;
+
+  //   // Step 1: Get the world position of mesh1
+  //   const worldPosition = new Vector3();
+  //   selected.getWorldPosition(worldPosition);
+
+  //   const local = mountTo.worldToLocal(worldPosition.clone());
+  //   const quat = new Quaternion();
+  //   mountToRot.getWorldQuaternion(quat);
+
+  //   attachTo.Plan.Base.transform.add(attachPoint);
+  //   attachPoint.position.copy(local);
+  //   attachPoint.rotation.setFromQuaternion(quat);
+
+  //   // const attachPointWorld = mountTo.position.clone();
+  //   // attachPoint.localToWorld(attachPointWorld);
+  //   const attachPointWorld = new Vector3();
+  //   attachPoint.getWorldPosition(attachPointWorld);
+
+  //   SelectedStructure.Plan.Base.transform.position.copy(attachPointWorld);
+  //   SelectedStructure.Persp.Base.transform.position.copy(attachPointWorld);
+
+  //   console.log('position on of dormer: ', worldPosition);
+  //   console.log(
+  //     'local / world position local to mountable: ',
+  //     local,
+  //     attachPointWorld
+  //   );
+
+  //   // attachTo.Plan.Base.structure.add(SelectedStructure.Plan.Base.transform);
+  //   // attachTo.Persp.Base.structure.add(SelectedStructure.Persp.Base.transform);
+  // }
 }
 
 export default PlacementControl;

@@ -29,6 +29,9 @@ class PositionControl implements IListener {
         this.placer.setPosition(model);
         this.setPosition(model);
         break;
+      case USER_EVENT.MOUSE_UP:
+        this.placer.onMouseUp(model);
+        break;
       default:
         break;
     }
