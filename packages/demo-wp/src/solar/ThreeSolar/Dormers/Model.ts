@@ -3,8 +3,9 @@ import Geometry from './Geometry';
 import DormerPlan from './Plan';
 import DormerPersp from './Perspective';
 import DormerElev from './Elevation';
-import { Istructure } from '../Lib/Structure';
+import { IEventMgr, Istructure } from '../Lib/Structure';
 import { STRUCTURE_TYPE } from '../Lib/sharedTypes';
+import DormerEventControl from './EventControl';
 
 class DormerModel implements Istructure {
   dormerPlan: DormerPlan;
@@ -12,6 +13,7 @@ class DormerModel implements Istructure {
   dormerElev: DormerElev;
   id: string;
   structureType: STRUCTURE_TYPE;
+  eventMgr: DormerEventControl;
 
   constructor(id: string) {
     this.structureType = STRUCTURE_TYPE.DORMER;
@@ -40,6 +42,12 @@ class DormerModel implements Istructure {
     this.dormerPlan = new DormerPlan(this.id, outline);
     this.dormerPersp = new DormerPersp(this.id, perspMesh);
     this.dormerElev = new DormerElev(this.id, elevMesh);
+
+    this.eventMgr = new DormerEventControl(this);
+  }
+
+  get EventMgr(): IEventMgr {
+    return this.eventMgr;
   }
 
   get Type() {

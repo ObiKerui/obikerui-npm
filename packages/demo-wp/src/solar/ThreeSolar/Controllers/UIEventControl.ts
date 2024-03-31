@@ -174,7 +174,11 @@ class UIEventControl {
 
     model.interaction = interaction;
     model.uiEvent = uiEvent;
-    model.notifyListeners(USER_EVENT.MOUSE_DOWN);
+    const eventStructure = model.uiEvent.structure;
+    if (!eventStructure) {
+      throw new Error('No Event Structure');
+    }
+    eventStructure.EventMgr.onUpdate(USER_EVENT.MOUSE_DOWN, model);
   }
 
   handleMouseUp(uiEvent: tUIEvent) {
@@ -184,7 +188,12 @@ class UIEventControl {
     }
     model.mouseIsDown = false;
     model.uiEvent = uiEvent;
-    model.notifyListeners(USER_EVENT.MOUSE_UP);
+    const eventStructure = model.uiEvent.structure;
+    if (!eventStructure) {
+      throw new Error('No Event Structure');
+    }
+    eventStructure.EventMgr.onUpdate(USER_EVENT.MOUSE_UP, model);
+    // model.notifyListeners(USER_EVENT.MOUSE_UP);
   }
 
   handleMouseMove(uiEvent: tUIEvent) {
@@ -194,7 +203,12 @@ class UIEventControl {
     }
 
     model.uiEvent = uiEvent;
-    model.notifyListeners(USER_EVENT.MOUSE_MOVE);
+    const eventStructure = model.uiEvent.structure;
+    if (!eventStructure) {
+      throw new Error('No Event Structure');
+    }
+    eventStructure.EventMgr.onUpdate(USER_EVENT.MOUSE_MOVE, model);
+    // model.notifyListeners(USER_EVENT.MOUSE_MOVE);
   }
 }
 

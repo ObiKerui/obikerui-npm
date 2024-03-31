@@ -87,6 +87,12 @@ class DormerPlan implements IPlan {
     return this.doubleHipRoof;
   }
 
+  get Colour() {
+    const { doubleHipRoof } = this;
+    const mat = doubleHipRoof.material as THREE.LineBasicMaterial;
+    return mat.color;
+  }
+
   set Colour(newColor: THREE.ColorRepresentation) {
     const { doubleHipRoof } = this;
     const mat = doubleHipRoof.material as THREE.LineBasicMaterial;

@@ -23,14 +23,11 @@ class PositionControl implements IListener {
     switch (mouseEvent) {
       case USER_EVENT.MOUSE_DOWN:
         this.onMouseDown(model);
-        this.placer.onMouseDown(model);
         break;
       case USER_EVENT.MOUSE_MOVE:
-        this.placer.setPosition(model);
         this.setPosition(model);
         break;
       case USER_EVENT.MOUSE_UP:
-        this.placer.onMouseUp(model);
         break;
       default:
         break;

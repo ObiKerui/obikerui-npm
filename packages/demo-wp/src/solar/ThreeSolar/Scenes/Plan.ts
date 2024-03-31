@@ -15,6 +15,7 @@ class Plan {
   onMouseDown: tCallback | null;
   onMouseUp: tCallback | null;
   onMouseMove: tCallback | null;
+  mapTexture: THREE.TextureLoader | null;
 
   constructor() {
     this.scene = new THREE.Scene();
@@ -23,6 +24,7 @@ class Plan {
     this.renderer = null;
     this.orbitControls = null;
     this.mouseControls = null;
+    this.mapTexture = null;
 
     this.onMouseDown = null;
     this.onMouseUp = null;
@@ -102,6 +104,25 @@ class Plan {
     );
 
     this.addControls();
+
+    this.mapTexture = new THREE.TextureLoader();
+    const imageTexture = this.mapTexture.load('../assets/mapScreenshot.png');
+    // const material = new THREE.MeshBasicMaterial({ map: imageTexture });
+    // const material = new THREE.MeshBasicMaterial({ color: 0xffddee });
+    // const geometry = new THREE.PlaneGeometry(5, 5, 5, 5); // Adjust size as needed
+    // const plane = new THREE.Mesh(geometry, material);
+    // plane.position.copy(new THREE.Vector3(0, 3, 0));
+    // plane.rotation.copy(new THREE.Euler(Math.PI / 2, 0, 0));
+    // this.scene.add(plane);
+
+    const box = new THREE.BoxGeometry(10, 0, 10);
+    const boxMat = new THREE.MeshBasicMaterial({
+      map: imageTexture,
+      transparent: true,
+      opacity: 0.2,
+    });
+    const boxMesh = new THREE.Mesh(box, boxMat);
+    this.scene.add(boxMesh);
   }
 
   addControls() {

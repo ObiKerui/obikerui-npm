@@ -1,12 +1,14 @@
 import { ColorRepresentation, Mesh, Object3D } from 'three';
 import StructureBase from './StructureBase';
 import { HandleControl } from '../Handles/BuildingHandles';
-import { STRUCTURE_TYPE } from './sharedTypes';
+import { STRUCTURE_TYPE, USER_EVENT } from './sharedTypes';
+import { Model } from '../Model/Model';
 
 interface Iplan {
   get Base(): StructureBase;
   get Locations(): unknown;
   set Colour(color: ColorRepresentation);
+  get Colour(): ColorRepresentation;
   addHandles(handles: HandleControl): void;
   getRoofGeometry(): THREE.Vector3[];
 }
@@ -20,6 +22,10 @@ interface Ielevation {
   get Base(): StructureBase;
 }
 
+interface IEventMgr {
+  onUpdate(user_event: USER_EVENT, model: Model): void;
+}
+
 interface Istructure {
   get Type(): STRUCTURE_TYPE;
   get ID(): string;
@@ -27,6 +33,7 @@ interface Istructure {
   get Plan(): Iplan;
   get Persp(): Ipersp;
   get Elevation(): Ielevation;
+  get EventMgr(): IEventMgr;
 }
 
-export { Iplan as IPlan, Ipersp, Ielevation, Istructure };
+export { Iplan as IPlan, Ipersp, Ielevation, Istructure, IEventMgr };

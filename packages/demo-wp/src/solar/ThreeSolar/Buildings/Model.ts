@@ -5,6 +5,7 @@ import BuildingElev from './Elevation';
 import { Istructure } from '../Lib/Structure';
 import Geometry from './Geometry';
 import { STRUCTURE_TYPE } from '../Lib/sharedTypes';
+import BuildingEventControl from './EventControl';
 
 class BuildingModel implements Istructure {
   buildingPlan: BuildingPlan;
@@ -12,6 +13,7 @@ class BuildingModel implements Istructure {
   buildingElev: BuildingElev;
   id: string;
   structureType: STRUCTURE_TYPE;
+  eventMgr: BuildingEventControl;
 
   constructor(id: string) {
     this.structureType = STRUCTURE_TYPE.BUILDING;
@@ -41,6 +43,8 @@ class BuildingModel implements Istructure {
     this.buildingPlan = new BuildingPlan(this.id, outline);
     this.buildingPersp = new BuildingPersp(this.id, perspMesh);
     this.buildingElev = new BuildingElev(this.id, elevMesh);
+
+    this.eventMgr = new BuildingEventControl(this);
   }
 
   get Type() {
@@ -65,6 +69,10 @@ class BuildingModel implements Istructure {
 
   get Elevation() {
     return this.buildingElev;
+  }
+
+  get EventMgr() {
+    return this.eventMgr;
   }
 }
 

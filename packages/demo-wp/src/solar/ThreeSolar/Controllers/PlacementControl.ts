@@ -1,21 +1,14 @@
 /* eslint-disable class-methods-use-this */
-import {
-  LineSegments,
-  Object3D,
-  Raycaster,
-  Vector3,
-  Matrix4,
-  Euler,
-  Mesh,
-} from 'three';
+import { Object3D, Raycaster, Vector3, Color } from 'three';
 import { IListener, USER_EVENT } from '../Lib/sharedTypes';
-import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import { InteractionMode, Model } from '../Model/Model';
 import { Istructure } from '../Lib/Structure';
-import {
-  subtractRotation,
-  convertToObjSpace,
-  addRotation,
-} from '../Lib/Geometry';
+import { subtractRotation, convertToObjSpace } from '../Lib/Geometry';
+import * as MountUtils from '../Lib/Mounting/Utils';
+
+type tOnMountCB = (attachable: Istructure, attachedTo: Istructure) => void;
+
+type tOnUnmountCB = (attachable: Istructure, attachedTo: Istructure) => void;
 
 class PlacementControl implements IListener {
   offset: Vector3 | null;
@@ -24,6 +17,9 @@ class PlacementControl implements IListener {
   perspMeshes: Object3D[];
   raycaster: Raycaster;
   attachTo: Istructure | null;
+  initialColour: Color | null;
+  onMountCB: tOnMountCB | null;
+  onUnmountCB: tOnUnmountCB | null;
 
   constructor() {
     this.offset = null;
@@ -33,6 +29,9 @@ class PlacementControl implements IListener {
     this.planMeshes = [];
     this.perspMeshes = [];
     this.attachTo = null;
+    this.initialColour = null;
+    this.onMountCB = null;
+    this.onUnmountCB = null;
   }
 
   onUpdate(mouseEvent: USER_EVENT, model: Model) {
@@ -42,7 +41,7 @@ class PlacementControl implements IListener {
 
     switch (mouseEvent) {
       case USER_EVENT.MOUSE_DOWN:
-        // this.onMouseDown(model);
+        this.onMouseDown(model);
         break;
       case USER_EVENT.MOUSE_MOVE:
         this.setPosition(model);
@@ -68,66 +67,29 @@ class PlacementControl implements IListener {
   }
 
   onMouseDown(model: Model) {
-    const { SelectedStructure, uiEvent, elevationScene, planScene } = model;
+    const { SelectedStructure, uiEvent, elevationScene } = model;
     if (!SelectedStructure || !uiEvent || !elevationScene) {
       throw new Error('Structure not selected or no ui event!');
     }
     // get the structures in the scene...
     this.populateSceneStructures(model);
+
+    const currColour = SelectedStructure.Plan.Colour as Color;
+    this.initialColour = new Color(currColour);
     this.attachTo = null;
-    console.log('mouse down attach to is: ', this.attachTo);
 
-    // unmount what we have selected
-    const { transform: transformPlan, rotation: rotatePlan } =
-      SelectedStructure.Plan.Base;
-    const { transform: transformPersp } = SelectedStructure.Persp.Base;
-
-    const transformPlanMesh = transformPlan as Mesh;
-    const whatIsIt = transformPlanMesh.parent;
-    const isMounted = whatIsIt && whatIsIt.type !== 'Scene';
-
-    if (!isMounted) {
-      return;
+    if (MountUtils.isStructureMounted(SelectedStructure)) {
+      MountUtils.unMountFromParent(SelectedStructure, model);
     }
-
-    // get the world coords of mounted structure
-    const worldPos = new Vector3();
-    transformPlan.getWorldPosition(worldPos);
-
-    // get the rotation for the structure
-    // addRotation(rotatePlan.rotation, );
-
-    console.log('is mounted so transform back to scene...', whatIsIt);
-    transformPlan.removeFromParent();
-    planScene?.scene.add(transformPlan);
-    transformPlan.position.copy(worldPos);
-    transformPersp.position.copy(worldPos);
-
-    // get the object it is attached to
-    // set the parent to be the plan scene
   }
 
-  getRoofGeometry(structure: Istructure) {
-    const lineSegments = structure.Plan.Locations as LineSegments;
-    const vectors = structure.Plan.getRoofGeometry();
-    console.log('what : ', vectors, lineSegments);
-  }
-
-  setPosition(model: Model) {
-    const { SelectedStructure, uiEvent, structuresMap } = model;
-    if (!SelectedStructure || !uiEvent) {
-      throw new Error('Structure not selected or no ui event!');
-    }
-
-    console.log('mouse move attach to is: ', this.attachTo);
-    console.log('selected sutructure: ', SelectedStructure);
-
+  getEnclosingObject3D(selectedStructure: Istructure) {
     const { perspMeshes } = this;
 
-    const { AttachPoints, Base } = SelectedStructure.Persp;
+    const { AttachPoints, Base } = selectedStructure.Persp;
 
     if (AttachPoints.length === 0) {
-      return;
+      return null;
     }
 
     const left = AttachPoints[0];
@@ -139,98 +101,79 @@ class PlacementControl implements IListener {
 
     // mountable structure isn't intersecting with any buildings
     if (intersections.length === 0) {
-      return;
+      return null;
     }
 
     // need to get the highest building, not necessarily the 0th index?
     const platform = intersections[0];
-    const obj = platform.object as Mesh;
-    const id = obj.parent?.name;
-    if (!id) {
-      return;
-    }
-    const structure = structuresMap.get(id);
-    if (!structure) {
-      return;
-    }
-    this.attachTo = structure;
-    console.log('attach to set to structure: ', this.attachTo);
-
-    const { buildingPersp } = structure as BuildingModel;
-    const { rotation } = buildingPersp.structureBase;
-
-    const normalVec = platform.face?.normal;
-    const height = platform.distance > 100 ? 0 : platform.distance;
-
-    if (!normalVec) {
-      return;
-    }
-
-    // TODO this point triggers some complex behaviours within the app we need to implement
-    // we need access to all the scenes.
-    // we need access to the structure mounted onto plus any structure already mounted.
-    // we need access to the structure that mounted
-
-    // TODO at this point we've mounted the structure to another structure
-    // we need to add the structure mounted to, to the elevation scene in
-    // addition to this dormer and any other structures mounted too.
-
-    // TODO we need to create a mount point on the structure mounted to and attach
-    // this dormer at that position.
-
-    // TODO we also need to make the dormer visible in the perspective scene
-    // BUT we should be able to make it invisible again as soon as it is moved
-    // off another structure.
-
-    const { rotation: planRotate } = SelectedStructure.Plan.Base;
-    const { rotation: perspRotate, transform } = SelectedStructure.Persp.Base;
-
-    const newPosition = new Vector3(
-      transform.position.x,
-      height,
-      transform.position.z
-    );
-
-    // Create a rotation matrix that represents the current rotation of the mesh
-    const rotationMatrix = new Matrix4().makeRotationFromEuler(
-      rotation.rotation.clone()
-    );
-
-    // Transform the normal vector by the rotation matrix
-    const transformedNormal = normalVec.clone().applyMatrix4(rotationMatrix);
-
-    // Calculate the angle to rotate around the Y axis
-    let angle = Math.atan2(transformedNormal.x, transformedNormal.z);
-
-    // if y is positive then rotate angle by 180 degs?
-    angle = transformedNormal.y > 0 ? angle + Math.PI : angle;
-
-    // console.log('distance to roof and angle: ', angle, worldNormal);
-
-    // Create a rotation matrix around the Y axis
-    // const rotationMatrix = new Matrix4().makeRotationY(angle);
-
-    transform.position.copy(newPosition);
-    const euler = new Euler(0, angle, 0);
-    planRotate.rotation.copy(euler);
-    perspRotate.rotation.copy(euler);
+    return platform;
   }
 
-  onMouseUp(model: Model) {
-    let { attachTo } = this;
+  setPosition(model: Model) {
     const { SelectedStructure, uiEvent } = model;
     if (!SelectedStructure || !uiEvent) {
       throw new Error('Structure not selected or no ui event!');
     }
 
-    console.log('attach to : ', attachTo);
+    if (this.initialColour) {
+      SelectedStructure.Plan.Colour = this.initialColour;
+    }
 
+    this.attachTo = null;
+    const platform = this.getEnclosingObject3D(SelectedStructure);
+    if (!platform) {
+      return;
+    }
+
+    const structure = MountUtils.getParentStructure(platform, model);
+    if (!structure) {
+      return;
+    }
+
+    this.attachTo = structure;
+    SelectedStructure.Plan.Colour = 0x00aaff;
+
+    // calculate the new Euler rotation for the mounted structure
+    const normalVec = MountUtils.getPlatformNormal(platform);
+    if (!normalVec) {
+      return;
+    }
+    const euler = MountUtils.getMountedRotation(structure, normalVec);
+
+    // calculate the new Vector3 position for the mounted structure
+    const height = MountUtils.getPlatformHeight(platform);
+    const newPosition = MountUtils.getMountedPosition(
+      SelectedStructure,
+      height
+    );
+
+    // update the plan/perspective models
+    const { rotation: planRotate } = SelectedStructure.Plan.Base;
+    const { rotation: perspRotate, transform } = SelectedStructure.Persp.Base;
+
+    transform.position.copy(newPosition);
+    planRotate.rotation.copy(euler);
+    perspRotate.rotation.copy(euler);
+  }
+
+  onMouseUp(model: Model) {
+    const { SelectedStructure, uiEvent } = model;
+    if (!SelectedStructure || !uiEvent) {
+      throw new Error('Structure not selected or no ui event!');
+    }
+
+    this.setPosition(model);
+
+    let { attachTo } = this;
     if (!attachTo) {
+      SelectedStructure.Plan.Colour =
+        this.initialColour ?? SelectedStructure.Plan.Colour;
       return;
     }
 
     const { rotation: dormPlanRot } = SelectedStructure.Plan.Base;
     const { rotation: dormPerspRot } = SelectedStructure.Persp.Base;
+    const { rotation: dormElevRot } = SelectedStructure.Elevation.Base;
     const { rotation: attachToPlanRot } = attachTo.Plan.Base;
 
     // calculate the new rotation of the dormer
@@ -245,6 +188,7 @@ class PlacementControl implements IListener {
     // copy the rotation to the plan/perspective
     dormPlanRot.rotation.copy(resultEuler);
     dormPerspRot.rotation.copy(resultEuler);
+    dormElevRot.rotation.copy(resultEuler);
 
     // calculate the new position when we add it to the parent rotation object
     const { transform: selected } = SelectedStructure.Plan.Base;
@@ -254,9 +198,15 @@ class PlacementControl implements IListener {
 
     SelectedStructure.Plan.Base.transform.position.copy(newLocalPos);
     SelectedStructure.Persp.Base.transform.position.copy(newLocalPos);
+    SelectedStructure.Elevation.Base.transform.position.copy(newLocalPos);
 
     attachTo.Plan.Base.rotation.add(SelectedStructure.Plan.Base.transform);
     attachTo.Persp.Base.rotation.add(SelectedStructure.Persp.Base.transform);
+    attachTo.Elevation.Base.rotation.add(
+      SelectedStructure.Elevation.Base.transform
+    );
+
+    SelectedStructure.Plan.Colour = 0xcccccc;
     attachTo = null;
   }
 
