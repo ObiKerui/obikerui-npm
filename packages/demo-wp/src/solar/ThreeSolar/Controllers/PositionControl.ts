@@ -41,10 +41,11 @@ class PositionControl implements IListener {
       child.removeFromParent();
     });
 
-    // if the structure is mountable then we don't add it to the scene
-    // we don't want to show a dormer on its own
-    // when a dormer is 'attached' to a structure then we add both the structure
-    // and any attached dormers to the scene
+    // Check if this is mountable (dormer) or building
+    // if its a building add it to the scene
+    // if its a dormer:
+    // if the dormer is attached to a building add the buiding to the scene
+    // if it is not attached to anything don't add it
     if (structure.Type === STRUCTURE_TYPE.BUILDING) {
       console.log('add structure to building: ', structure);
       elevationScene.scene.add(structure.Elevation.Base.transform);
@@ -61,7 +62,7 @@ class PositionControl implements IListener {
     const { transform } = structureModel.Plan.Base;
     const { worldCoords } = uiEvent.positionData;
 
-    this.updateElevationSceneObject(structureModel, elevationScene);
+    // this.updateElevationSceneObject(structureModel, elevationScene);
 
     handleControl.removeFromScene();
     structureModel.Plan.addHandles(handleControl);

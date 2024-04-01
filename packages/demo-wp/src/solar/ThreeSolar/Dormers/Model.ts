@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable max-classes-per-file */
 import * as THREE from 'three';
 import Geometry from './Geometry';
 import DormerPlan from './Plan';
@@ -6,14 +8,34 @@ import DormerElev from './Elevation';
 import { IEventMgr, Istructure } from '../Lib/Structure';
 import { STRUCTURE_TYPE } from '../Lib/sharedTypes';
 import DormerEventControl from './EventControl';
+import { IMountable, IMountableBase } from '../Lib/Mounting/MountingControl';
 
-class DormerModel implements Istructure {
+class Mountable implements IMountableBase {
+  dormerModel: DormerModel;
+  parent: Istructure | null;
+
+  constructor(dormer: DormerModel) {
+    this.dormerModel = dormer;
+    this.parent = null;
+  }
+
+  get MountParent(): Istructure | null {
+    return this.parent;
+  }
+
+  set MountParent(parent: Istructure | null) {
+    this.parent = parent;
+  }
+}
+
+class DormerModel implements Istructure, IMountable {
   dormerPlan: DormerPlan;
   dormerPersp: DormerPersp;
   dormerElev: DormerElev;
   id: string;
   structureType: STRUCTURE_TYPE;
   eventMgr: DormerEventControl;
+  mountable: Mountable;
 
   constructor(id: string) {
     this.structureType = STRUCTURE_TYPE.DORMER;
@@ -44,10 +66,16 @@ class DormerModel implements Istructure {
     this.dormerElev = new DormerElev(this.id, elevMesh);
 
     this.eventMgr = new DormerEventControl(this);
+
+    this.mountable = new Mountable(this);
   }
 
   get EventMgr(): IEventMgr {
     return this.eventMgr;
+  }
+
+  get MountableBase(): IMountableBase {
+    return this.mountable;
   }
 
   get Type() {

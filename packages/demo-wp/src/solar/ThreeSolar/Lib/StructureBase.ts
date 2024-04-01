@@ -21,7 +21,7 @@ class StructureBase {
       color: 0x0000dd,
       wireframe: true,
       transparent: true,
-      opacity: 0,
+      opacity,
     });
 
     this.transform = new THREE.Mesh(transRotGeom, transRotMat);
@@ -33,7 +33,7 @@ class StructureBase {
       color: 0x0000ff,
       wireframe: true,
       transparent: true,
-      opacity,
+      opacity: 0,
     });
 
     const anchorGeom = new THREE.BoxGeometry(
@@ -47,7 +47,7 @@ class StructureBase {
       color: 0x00ccff,
       wireframe: true,
       transparent: true,
-      opacity,
+      opacity: 0,
     });
 
     const scaleGeom = new THREE.BoxGeometry(

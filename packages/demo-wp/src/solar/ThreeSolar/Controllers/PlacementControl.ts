@@ -5,6 +5,7 @@ import { InteractionMode, Model } from '../Model/Model';
 import { Istructure } from '../Lib/Structure';
 import { subtractRotation, convertToObjSpace } from '../Lib/Geometry';
 import * as MountUtils from '../Lib/Mounting/Utils';
+import { IMount, IMountable } from '../Lib/Mounting/MountingControl';
 
 type tOnMountCB = (attachable: Istructure, attachedTo: Istructure) => void;
 
@@ -192,19 +193,24 @@ class PlacementControl implements IListener {
 
     // calculate the new position when we add it to the parent rotation object
     const { transform: selected } = SelectedStructure.Plan.Base;
-    const { rotation: mountTo } = attachTo.Plan.Base;
 
-    const newLocalPos = convertToObjSpace(selected, mountTo);
+    // const { rotation: mountTo } = attachTo.Plan.Base;
+    const mountable = attachTo as unknown as IMount;
+    const base = mountable.MountBase;
+
+    const structureToMount = SelectedStructure as unknown as IMountable;
+    const mountableBase = structureToMount.MountableBase;
+    mountableBase.MountParent = attachTo;
+
+    const newLocalPos = convertToObjSpace(selected, base.Plan);
 
     SelectedStructure.Plan.Base.transform.position.copy(newLocalPos);
     SelectedStructure.Persp.Base.transform.position.copy(newLocalPos);
     SelectedStructure.Elevation.Base.transform.position.copy(newLocalPos);
 
-    attachTo.Plan.Base.rotation.add(SelectedStructure.Plan.Base.transform);
-    attachTo.Persp.Base.rotation.add(SelectedStructure.Persp.Base.transform);
-    attachTo.Elevation.Base.rotation.add(
-      SelectedStructure.Elevation.Base.transform
-    );
+    base.Plan.add(SelectedStructure.Plan.Base.transform);
+    base.Persp.add(SelectedStructure.Persp.Base.transform);
+    base.Elevation.add(SelectedStructure.Elevation.Base.transform);
 
     SelectedStructure.Plan.Colour = 0xcccccc;
     attachTo = null;

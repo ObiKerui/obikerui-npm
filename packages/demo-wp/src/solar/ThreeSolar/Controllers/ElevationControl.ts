@@ -3,6 +3,7 @@
 import { Object3D, OrthographicCamera, Vector3 } from 'three';
 import { IListener, UI_ACTION, USER_EVENT } from '../Lib/sharedTypes';
 import { BuildingModel, InteractionMode, Model } from '../Model/Model';
+import { IMount } from '../Lib/Mounting/MountingControl';
 
 class ElevationControl implements IListener {
   buildingModel: BuildingModel | null;
@@ -204,6 +205,34 @@ class ElevationControl implements IListener {
 
     buildingModel.buildingElev.setRoofGeometry(elevVectorsOnStart);
     buildingModel.buildingPersp.setRoofGeometry(elevVectorsOnStart);
+
+    // scaled y position used now for mount-base y position
+    // TODO - this shouldn't live here, move when working
+    const mountModel = buildingModel as IMount;
+    const { Plan, Elevation, Persp } = mountModel.MountBase;
+    const currPlanPosition = Plan.position;
+    const newPlanPosition = new Vector3(
+      currPlanPosition.x,
+      scaledYPosition,
+      currPlanPosition.z
+    );
+    Plan.position.copy(newPlanPosition);
+
+    const currPerspPosition = Persp.position;
+    const newPerspPosition = new Vector3(
+      currPerspPosition.x,
+      scaledYPosition,
+      currPerspPosition.z
+    );
+    Persp.position.copy(newPerspPosition);
+
+    const currElevPosition = Elevation.position;
+    const newElevPosition = new Vector3(
+      currElevPosition.x,
+      scaledYPosition,
+      currElevPosition.z
+    );
+    Elevation.position.copy(newElevPosition);
   }
 }
 

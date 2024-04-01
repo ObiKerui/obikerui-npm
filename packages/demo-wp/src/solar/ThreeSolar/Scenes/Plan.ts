@@ -8,7 +8,7 @@ import { tCallback } from '../Lib/sharedTypes';
 class Plan {
   scene: THREE.Scene;
   camera: THREE.Camera | null;
-  renderer: THREE.Renderer | null;
+  renderer: THREE.WebGLRenderer | null;
   container: HTMLDivElement | null;
   orbitControls: OrbitControls | null;
   mouseControls: MouseControls | null;
@@ -88,6 +88,7 @@ class Plan {
 
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(width, height);
+    this.renderer.setClearColor(0x444444, 1);
     this.container.appendChild(this.renderer.domElement);
 
     // this.dragControls = new DragControls()
@@ -105,8 +106,8 @@ class Plan {
 
     this.addControls();
 
-    this.mapTexture = new THREE.TextureLoader();
-    const imageTexture = this.mapTexture.load('../assets/mapScreenshot.png');
+    // this.mapTexture = new THREE.TextureLoader();
+    // const imageTexture = this.mapTexture.load('../assets/mapScreenshot.png');
     // const material = new THREE.MeshBasicMaterial({ map: imageTexture });
     // const material = new THREE.MeshBasicMaterial({ color: 0xffddee });
     // const geometry = new THREE.PlaneGeometry(5, 5, 5, 5); // Adjust size as needed
@@ -115,14 +116,14 @@ class Plan {
     // plane.rotation.copy(new THREE.Euler(Math.PI / 2, 0, 0));
     // this.scene.add(plane);
 
-    const box = new THREE.BoxGeometry(10, 0, 10);
-    const boxMat = new THREE.MeshBasicMaterial({
-      map: imageTexture,
-      transparent: true,
-      opacity: 0.2,
-    });
-    const boxMesh = new THREE.Mesh(box, boxMat);
-    this.scene.add(boxMesh);
+    // const box = new THREE.BoxGeometry(10, 0, 10);
+    // const boxMat = new THREE.MeshBasicMaterial({
+    //   map: imageTexture,
+    //   transparent: true,
+    //   opacity: 0.2,
+    // });
+    // const boxMesh = new THREE.Mesh(box, boxMat);
+    // this.scene.add(boxMesh);
   }
 
   addControls() {

@@ -26,6 +26,20 @@ class BuildingEventControl implements IEventMgr {
     this.elevation = new ElevationControl();
   }
 
+  updateElevationSceneObject(model: Model) {
+    const { elevationScene, SelectedStructure } = model;
+    if (!elevationScene || !SelectedStructure) {
+      throw new Error('Error - no elevation scene');
+    }
+
+    // remove all from elevation scene and add this if its a building?
+    const { children } = elevationScene.scene;
+    children.forEach((child) => {
+      child.removeFromParent();
+    });
+    elevationScene.scene.add(SelectedStructure.Elevation.Base.transform);
+  }
+
   onChangePosition(mouseEvent: USER_EVENT, model: Model) {
     this.position.onUpdate(mouseEvent, model);
   }
@@ -33,6 +47,7 @@ class BuildingEventControl implements IEventMgr {
   onUpdate(mouseEvent: USER_EVENT, model: Model) {
     switch (model.interaction) {
       case InteractionMode.POSITION:
+        this.updateElevationSceneObject(model);
         this.onChangePosition(mouseEvent, model);
         break;
       case InteractionMode.ROTATE:

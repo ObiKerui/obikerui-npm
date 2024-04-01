@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import { USER_EVENT } from '../Lib/sharedTypes';
 import { InteractionMode, Model } from '../Model/Model';
-import { IEventMgr } from '../Lib/Structure';
+import { IEventMgr, Istructure } from '../Lib/Structure';
 
 import PositionControl from '../Controllers/PositionControl';
 import PlacementControl from '../Controllers/PlacementControl';
@@ -9,7 +9,7 @@ import RotateControl from '../Controllers/RotateControl';
 import ScaleControl from '../Controllers/ScaleControl';
 import RoofControl from '../Controllers/RoofControl';
 import ElevationControl from '../Controllers/ElevationControl';
-import { MountingControl } from '../Lib/Mounting/MountingControl';
+import { IMountable, MountingControl } from '../Lib/Mounting/MountingControl';
 import DormerModel from './Model';
 
 class DormerEventControl implements IEventMgr {
@@ -33,9 +33,33 @@ class DormerEventControl implements IEventMgr {
     this.mountControl = new MountingControl();
   }
 
+  updateElevationSceneObject(model: Model) {
+    const { elevationScene, SelectedStructure } = model;
+    if (!elevationScene || !SelectedStructure) {
+      throw new Error('Error - no elevation scene');
+    }
+
+    // remove all from elevation scene and add this if its a building?
+    const { children } = elevationScene.scene;
+    children.forEach((child) => {
+      child.removeFromParent();
+    });
+
+    const mountable = SelectedStructure as unknown as IMountable;
+    const parent = mountable.MountableBase.MountParent;
+
+    if (!parent) {
+      return;
+    }
+
+    // if it is then get the structure mounted to and add it
+    elevationScene.scene.add(parent.Elevation.Base.transform);
+  }
+
   onChangePosition(mouseEvent: USER_EVENT, model: Model) {
     switch (mouseEvent) {
       case USER_EVENT.MOUSE_DOWN:
+        this.updateElevationSceneObject(model);
         this.position.onMouseDown(model);
         this.placer.onMouseDown(model);
         break;

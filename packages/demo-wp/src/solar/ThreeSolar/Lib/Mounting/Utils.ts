@@ -9,6 +9,7 @@ import {
 } from 'three';
 import { Istructure } from '../Structure';
 import { Model } from '../../Model/Model';
+import { IMount } from './MountingControl';
 
 function isStructureMounted(selectedStructure: Istructure) {
   const { transform: transformPlan } = selectedStructure.Plan.Base;
@@ -98,7 +99,9 @@ function getParentStructure(platform: Intersection<Object3D>, model: Model) {
   if (!id) {
     return null;
   }
-  return structuresMap.get(id);
+  const struct = structuresMap.get(id);
+  const toRet = struct ?? null;
+  return toRet;
 }
 
 export {

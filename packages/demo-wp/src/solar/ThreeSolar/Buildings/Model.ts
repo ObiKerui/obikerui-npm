@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable max-classes-per-file */
 import * as THREE from 'three';
 import BuildingPlan from './Plan';
 import BuildingPersp from './Perspective';
@@ -6,14 +8,54 @@ import { Istructure } from '../Lib/Structure';
 import Geometry from './Geometry';
 import { STRUCTURE_TYPE } from '../Lib/sharedTypes';
 import BuildingEventControl from './EventControl';
+import { IMount, IMountBase } from '../Lib/Mounting/MountingControl';
 
-class BuildingModel implements Istructure {
+class Mounting implements IMountBase {
+  buildingModel: BuildingModel;
+  planBase: THREE.Object3D;
+  perspBase: THREE.Object3D;
+  elevBase: THREE.Object3D;
+
+  constructor(buildingModel: BuildingModel) {
+    this.buildingModel = buildingModel;
+    const eavesHeight = 0.5; // need to figure this out
+    const position = new THREE.Vector3(0, eavesHeight, 0);
+
+    this.planBase = new THREE.Object3D();
+    this.planBase.position.copy(position);
+    const { structureBase: planBase } = this.buildingModel.Plan;
+    planBase.rotation.add(this.planBase);
+
+    this.perspBase = new THREE.Object3D();
+    this.perspBase.position.copy(position);
+    const { structureBase: perspBase } = this.buildingModel.Persp;
+    perspBase.rotation.add(this.perspBase);
+
+    this.elevBase = new THREE.Object3D();
+    this.elevBase.position.copy(position);
+    const { structureBase: elevBase } = this.buildingModel.Elevation;
+    elevBase.rotation.add(this.elevBase);
+  }
+
+  get Plan() {
+    return this.planBase;
+  }
+  get Persp() {
+    return this.perspBase;
+  }
+  get Elevation() {
+    return this.elevBase;
+  }
+}
+
+class BuildingModel implements Istructure, IMount {
   buildingPlan: BuildingPlan;
   buildingPersp: BuildingPersp;
   buildingElev: BuildingElev;
   id: string;
   structureType: STRUCTURE_TYPE;
   eventMgr: BuildingEventControl;
+  mountBase: IMountBase;
 
   constructor(id: string) {
     this.structureType = STRUCTURE_TYPE.BUILDING;
@@ -45,6 +87,7 @@ class BuildingModel implements Istructure {
     this.buildingElev = new BuildingElev(this.id, elevMesh);
 
     this.eventMgr = new BuildingEventControl(this);
+    this.mountBase = new Mounting(this);
   }
 
   get Type() {
@@ -73,6 +116,10 @@ class BuildingModel implements Istructure {
 
   get EventMgr() {
     return this.eventMgr;
+  }
+
+  get MountBase(): IMountBase {
+    return this.mountBase;
   }
 }
 
