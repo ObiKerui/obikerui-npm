@@ -16,6 +16,9 @@ import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
 import RoofPlot from './solar/RoofPlanner/RootPlot';
 
+import { Calculator as PropertyCalculator } from './properties/PropertyCalculator/Calculator';
+import { AppProvider as PropertyProvider } from './properties/Provider/Provider';
+
 import ThreeSolar from './solar/ThreeSolar';
 import { AppProvider } from './solar/ThreeSolar/Provider';
 
@@ -78,6 +81,16 @@ function ThreeSolarHolder() {
   );
 }
 
+function Properties() {
+  return (
+    <PropertyProvider>
+      <div>
+        <PropertyCalculator />
+      </div>
+    </PropertyProvider>
+  );
+}
+
 const router = createHashRouter([
   {
     path: '/',
@@ -99,6 +112,10 @@ const router = createHashRouter([
       {
         path: '/three-solar',
         element: <ThreeSolarHolder />,
+      },
+      {
+        path: '/properties',
+        element: <Properties />,
       },
     ],
   },

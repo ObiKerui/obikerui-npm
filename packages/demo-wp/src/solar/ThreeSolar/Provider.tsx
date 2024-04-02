@@ -10,7 +10,7 @@ import ScaleControl from './Controllers/ScaleControl';
 import PositionControl from './Controllers/PositionControl';
 import RotateControl from './Controllers/RotateControl';
 import RoofControl from './Controllers/RoofControl';
-import ElevationControl from './Controllers/ElevationControl';
+import { ElevationControl } from './Controllers/ElevationControl';
 
 /**
  * Interface Provider Stock Context
@@ -48,8 +48,6 @@ const scaleControl = new ScaleControl();
 const rotateControl = new RotateControl();
 const positionControl = new PositionControl();
 const roofControl = new RoofControl();
-// const handleControl = new HandleControl();
-// const elevationHandles = new CamHandles();
 const elevationControl = new ElevationControl();
 
 controller.model = model;
@@ -72,6 +70,8 @@ elevation.onCameraChange = uiController.onCameraChange;
 model.planScene = plan;
 model.perspectiveScene = perspective;
 model.elevationScene = elevation;
+// model.handleControl.planHudCamera = model.planScene.hudCamera;
+// model.handleControl.planHudScene = model.planScene.hudScene;
 
 // model.listeners.push(plan.onUpdateModel.bind(plan));
 // model.listeners.push(perspective.onUpdateModel.bind(perspective));

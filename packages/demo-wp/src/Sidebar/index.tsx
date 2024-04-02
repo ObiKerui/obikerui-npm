@@ -15,6 +15,9 @@ export default function () {
       <li>
         <Link to="three-solar">Three Solar</Link>
       </li>
+      <li>
+        <Link to="properties">Properties</Link>
+      </li>
     </ul>
   );
 }

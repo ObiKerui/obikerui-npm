@@ -1,14 +1,14 @@
 /* eslint-disable class-methods-use-this */
 import { USER_EVENT } from '../Lib/sharedTypes';
 import { InteractionMode, Model } from '../Model/Model';
-import { IEventMgr, Istructure } from '../Lib/Structure';
+import { IEventMgr } from '../Lib/Structure';
 
 import PositionControl from '../Controllers/PositionControl';
 import PlacementControl from '../Controllers/PlacementControl';
 import RotateControl from '../Controllers/RotateControl';
 import ScaleControl from '../Controllers/ScaleControl';
 import RoofControl from '../Controllers/RoofControl';
-import ElevationControl from '../Controllers/ElevationControl';
+import { ElevationControl } from '../Controllers/ElevationControl';
 import { IMountable, MountingControl } from '../Lib/Mounting/MountingControl';
 import DormerModel from './Model';
 

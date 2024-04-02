@@ -1,4 +1,8 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-use-before-define */
+/* eslint-disable max-classes-per-file */
 import * as THREE from 'three';
+import { convertToPoints } from '../Lib/Geometry';
 
 const width = 2;
 const left = (width / 2) * -1;
@@ -123,14 +127,103 @@ function constructOutline() {
   return geometry;
 }
 
+class GeometryModifier {
+  geometry: Geometry;
+  constructor(geometry: Geometry) {
+    this.geometry = geometry;
+  }
+
+  getGeometry() {
+    const { geometry } = this;
+    const positionGeometry = geometry.building.getAttribute('position');
+    const vectors = convertToPoints(positionGeometry as THREE.BufferAttribute);
+    return vectors;
+  }
+
+  setRoofGeometry(vectorPoints: THREE.Vector3[]) {
+    const { geometry } = this;
+    geometry.building.setFromPoints(vectorPoints);
+  }
+
+  getEavesHeightFromGround(vectors: THREE.Vector3[]) {
+    const eavePointIndex = 2;
+    const eavesHeight = vectors[eavePointIndex].y;
+    return eavesHeight;
+  }
+
+  getRoofHeightFromGround(vectors: THREE.Vector3[]) {
+    const roofPointIndex = 9;
+    const roofHeight = vectors[roofPointIndex].y;
+    return roofHeight;
+  }
+
+  getRoofHeightFromEaves(vectors: THREE.Vector3[]) {
+    const eavePointIndex = 2;
+    const roofPointIndex = 9;
+    const eavesHeight = vectors[eavePointIndex].y;
+    const roofHeight = vectors[roofPointIndex].y;
+    return roofHeight - eavesHeight;
+  }
+
+  setRoofHeightFromGround(vectors: THREE.Vector3[], newRoofHeight: number) {
+    const rootHipPoint1 = 9;
+    const rootHipPoint2 = 12;
+
+    const vecToTop = vectors[rootHipPoint1];
+    const vecToBottom = vectors[rootHipPoint2];
+
+    vecToTop.y = newRoofHeight;
+    vecToBottom.y = newRoofHeight;
+
+    return vectors;
+  }
+
+  // setRoofHeightFromEaves(newRoofHeight: number) {}
+
+  setEavesHeightFromGround(vectors: THREE.Vector3[], newEavesHeight: number) {
+    const veca = vectors[2];
+    const vecb = vectors[3];
+    const vecc = vectors[6];
+    const vecd = vectors[7];
+
+    const vece = vectors[8];
+    const vecf = vectors[9];
+    const vecg = vectors[10];
+    const vech = vectors[11];
+    const veci = vectors[12];
+    const vecj = vectors[13];
+
+    const scaledYPosition = newEavesHeight;
+    veca.y = scaledYPosition;
+    vecb.y = scaledYPosition;
+    vecc.y = scaledYPosition;
+    vecd.y = scaledYPosition;
+
+    // const roofHeight = this.getRoofHeightFromEaves(vectors);
+    const roofHeight = vecf.y - vece.y;
+    const newRoofHeight = scaledYPosition + roofHeight;
+
+    vece.y = scaledYPosition;
+    vecf.y = newRoofHeight;
+    vecg.y = scaledYPosition;
+    vech.y = scaledYPosition;
+    veci.y = newRoofHeight;
+    vecj.y = scaledYPosition;
+
+    return vectors;
+  }
+}
+
 // --------------
 class Geometry {
   building: THREE.BufferGeometry;
   outline: THREE.BufferGeometry;
+  modifier: GeometryModifier;
   constructor() {
     this.building = constructGeometry();
     this.outline = constructOutline();
+    this.modifier = new GeometryModifier(this);
   }
 }
 
-export default Geometry;
+export { Geometry, GeometryModifier };

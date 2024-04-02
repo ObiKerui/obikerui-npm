@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 import * as THREE from 'three';
 import Geometry from './Geometry';
@@ -11,10 +10,10 @@ import DormerEventControl from './EventControl';
 import { IMountable, IMountableBase } from '../Lib/Mounting/MountingControl';
 
 class Mountable implements IMountableBase {
-  dormerModel: DormerModel;
+  dormerModel: Istructure;
   parent: Istructure | null;
 
-  constructor(dormer: DormerModel) {
+  constructor(dormer: Istructure) {
     this.dormerModel = dormer;
     this.parent = null;
   }
