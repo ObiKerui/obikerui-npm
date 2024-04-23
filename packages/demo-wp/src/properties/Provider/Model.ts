@@ -1,28 +1,35 @@
 /* eslint-disable max-classes-per-file */
+enum eInputType {
+  PERCENTAGE,
+  CURRENCY,
+}
+
 type tInvestmentBlock = {
-  propertyValue: null | number;
-  depositAmount: null | number;
-  stampDuty: null | number;
-  renovationCosts: null | number;
-  mortgageAmount: null | number;
-  interestRate: null | number;
-  legalFees: null | number;
+  propertyValue: number;
+  depositAmount: number;
+  isAdditionalProperty: boolean;
+  stampDuty: number;
+  renovationCosts: number;
+  mortgageAmount: number;
+  interestRate: number;
+  legalFees: number;
 };
 
 type tYields = {
-  gross: null | number;
-  net: null | number;
+  gross: number;
+  net: number;
 };
 
 const ROIModel = {
   investment: {
-    propertyValue: null,
-    depositAmount: null,
-    stampDuty: null,
-    renovationCosts: null,
-    mortgageAmount: null,
-    interestRate: null,
-    legalFees: null,
+    propertyValue: 0,
+    depositAmount: 0,
+    isAdditionalProperty: false,
+    stampDuty: 0,
+    renovationCosts: 0,
+    mortgageAmount: 0,
+    interestRate: 0,
+    legalFees: 0,
   } as tInvestmentBlock,
   monthlyExpenses: {
     mortgage: 0,
@@ -33,6 +40,10 @@ const ROIModel = {
   },
   monthlyIncome: {
     rent: 0,
+  },
+  cashflow: {
+    annualProfit: 0,
+    annualCost: 0,
   },
   yields: {
     gross: 0,
@@ -59,6 +70,10 @@ const PropertyModel = {
   legalFees: 0,
   bills: 0,
   managementFees: 0,
+  cashflow: {
+    annualProfit: 0,
+    annualCost: 0,
+  },
   yields: {
     gross: 0,
     net: 0,
@@ -70,13 +85,14 @@ type tModel = typeof PropertyModel;
 function createROIModel() {
   const propertyModel = {
     investment: {
-      propertyValue: null,
-      depositAmount: null,
-      stampDuty: null,
-      renovationCosts: null,
-      mortgageAmount: null,
-      interestRate: null,
-      legalFees: null,
+      propertyValue: 0,
+      depositAmount: 0,
+      isAdditionalProperty: false,
+      stampDuty: 0,
+      renovationCosts: 0,
+      mortgageAmount: 0,
+      interestRate: 0,
+      legalFees: 0,
     } as tInvestmentBlock,
     monthlyExpenses: {
       mortgage: 0,
@@ -87,6 +103,10 @@ function createROIModel() {
     },
     monthlyIncome: {
       rent: 0,
+    },
+    cashflow: {
+      annualProfit: 0,
+      annualCost: 0,
     },
     yields: {
       gross: 0,
@@ -102,8 +122,8 @@ function createROIModel() {
 
 function createModel() {
   const propertyModel = {
-    propertyPrice: null,
-    depositAmount: null,
+    propertyPrice: 0,
+    depositAmount: 0,
     stampDuty: 0,
     renovationCosts: 0,
     mortgageAmount: 0,
@@ -122,5 +142,5 @@ function createModel() {
   return propertyModel;
 }
 
-export { createModel, createROIModel };
+export { createModel, createROIModel, eInputType };
 export type { tModel, tROIModel };

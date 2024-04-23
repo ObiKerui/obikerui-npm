@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode, useMemo, useState } from 'react';
 import { type tROIModel } from './Model';
-import { Controller } from './Controller';
+import { Controller } from './Controllers/Controller';
 
 /**
  * Interface Provider Stock Context
@@ -32,16 +32,17 @@ const controller = new Controller();
 export function AppProvider({ children }: IAppProvider) {
   const [model, setModel] = useState<tROIModel>(controller.model);
 
-  console.log('provider controller model: ', controller.model);
-
   const updateModel = () => {
+    controller.calculateInvestment();
     controller.yields.calculateGrossYield();
     controller.yields.calculatorNetYield();
+    controller.mortgage.calculateMonthlyPayments();
     const updated = controller.model;
     setModel({ ...updated });
   };
 
   controller.notify = updateModel;
+  controller.deposit.notify = updateModel;
 
   const value: IAppContext = useMemo(
     () => ({

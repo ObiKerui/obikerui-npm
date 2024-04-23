@@ -1,5 +1,5 @@
 import { useAppProvider } from '../Provider/Provider';
-import { Input } from './Input';
+import { CurrencyInput } from './Inputs/Currency';
 
 function RentalFields() {
   const { controller } = useAppProvider();
@@ -9,7 +9,7 @@ function RentalFields() {
         <tr>
           <td>Rental Income</td>
           <td>
-            <Input
+            <CurrencyInput
               placeholder="Value"
               onUpdate={(newValue) => controller.updateRentalIncome(newValue)}
             />
@@ -18,7 +18,7 @@ function RentalFields() {
         <tr>
           <td>Rental Voids</td>
           <td>
-            <Input
+            <CurrencyInput
               placeholder="Value"
               onUpdate={(newValue) => controller.updateRentalVoids(newValue)}
             />
@@ -27,7 +27,7 @@ function RentalFields() {
         <tr>
           <td>Gas & Electricity</td>
           <td>
-            <Input
+            <CurrencyInput
               placeholder="Value"
               onUpdate={(newValue) => controller.updateBills(newValue)}
             />
@@ -46,7 +46,7 @@ function OtherFees() {
         <tr>
           <td>Management Fees</td>
           <td>
-            <Input
+            <CurrencyInput
               placeholder="Value"
               onUpdate={(newValue) => controller.updateManagementFees(newValue)}
             />
@@ -55,7 +55,7 @@ function OtherFees() {
         <tr>
           <td>Maintenance Costs</td>
           <td>
-            <Input
+            <CurrencyInput
               placeholder="Value"
               onUpdate={(newValue) => controller.updateMaintenance(newValue)}
             />
@@ -66,14 +66,51 @@ function OtherFees() {
   );
 }
 
+// function RentalSection() {
+//   return (
+//     <div className="bg-base-200 collapse">
+//       <input type="checkbox" className="peer" />
+//       <div className="collapse-title">Rental Details</div>
+//       <div className="collapse-content">
+//         <RentalFields />
+//         <OtherFees />
+//       </div>
+//     </div>
+//   );
+// }
+
 function RentalSection() {
+  const { model, controller } = useAppProvider();
+  const summaryData = controller.summary.getSummary(model);
+
   return (
-    <div className="bg-base-200 collapse">
+    <div className="collapse">
       <input type="checkbox" className="peer" />
-      <div className="collapse-title">Rental Details</div>
+      <div className="collapse-title text-sm font-semibold">
+        <table className="table">
+          <tbody>
+            <tr>
+              <td>Rental</td>
+              <td />
+              <td />
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div className="collapse-content">
         <RentalFields />
         <OtherFees />
+      </div>
+      <div className="pl-4 pr-4">
+        <table className="table text-sm font-semibold">
+          <tbody>
+            <tr>
+              <td>Total</td>
+              <td>{summaryData.totalInvestment}</td>
+              <td />
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

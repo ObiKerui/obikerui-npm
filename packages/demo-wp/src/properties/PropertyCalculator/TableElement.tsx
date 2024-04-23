@@ -1,11 +1,11 @@
-import { CustomInput } from './Input';
+import { CurrencyInput } from './Inputs/Currency';
 
 function TableElement() {
   return (
     <tr>
       <td>label</td>
       <td>
-        <CustomInput />
+        <CurrencyInput />
       </td>
       <td />
     </tr>

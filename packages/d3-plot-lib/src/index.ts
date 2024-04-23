@@ -3,7 +3,9 @@ import { BarChart } from './plots/bar';
 import Polygon from './plots/polygon';
 import TextPlot from './plots/text';
 import Line from './plots/line';
+import Heatmap from './plots/heatmap';
 import Scatter from './plots/scatter';
+import Markers from './plots/markers';
 import { Scaler } from './scaler';
 import Legend from './legend';
 import AxLine from './plots/axLine';
@@ -24,7 +26,9 @@ export {
   Scaler,
   Legend,
   Scatter,
+  Markers,
   Line,
+  Heatmap,
   Polygon,
   TrackingPolygon,
   TextPlot,

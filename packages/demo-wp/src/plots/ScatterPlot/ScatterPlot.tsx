@@ -49,8 +49,8 @@ function ScatterPlot({ data }: Props): JSX.Element {
         <div className="plot plot--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Scatter plot is for rendering such n such. Good for which types of visual, bad for these
-            others..etc.
+            Scatter plot is for rendering such n such. Good for which types of
+            visual, bad for these others..etc.
           </p>
         </div>
       </div>
@@ -73,7 +73,10 @@ function ScatterPlotContainer(): JSX.Element {
       const csvresult = await d3.csv('assets/iris.csv');
       const xs = np.linspace(0, 160, 160);
       const keys = Object.keys(csvresult[0]);
-      const obj: any = keys.reduce((accumulator, value) => ({ ...accumulator, [value]: [] }), {});
+      const obj: any = keys.reduce(
+        (accumulator, value) => ({ ...accumulator, [value]: [] }),
+        {}
+      );
 
       csvresult.forEach((elem: { [x: string]: any }) => {
         keys.forEach((e) => {
@@ -93,6 +96,7 @@ function ScatterPlotContainer(): JSX.Element {
   }, []);
 
   if (data.length > 0) {
+    console.log('data for scatter plot: ', data);
     return <ScatterPlot data={data} />;
   }
   return <div>loading...</div>;

@@ -1,79 +1,43 @@
 /* eslint-disable max-classes-per-file */
-import { type tROIModel, createROIModel } from './Model';
-import { YieldCalculator } from './YieldCalculator';
-
-class Yields {
-  model: tROIModel;
-  notify: ((model: tROIModel) => void) | null;
-  yieldCalculator: YieldCalculator;
-
-  constructor(model: tROIModel) {
-    this.model = model;
-    this.notify = null;
-    this.yieldCalculator = new YieldCalculator();
-  }
-  calculateGrossYield() {
-    const { model, notify, yieldCalculator } = this;
-    const grossYield = yieldCalculator.calculateGrossYield(model);
-    model.yields.gross = grossYield;
-    if (notify) {
-      notify(model);
-    }
-  }
-
-  calculatorNetYield() {
-    const { model, notify, yieldCalculator } = this;
-    const netYield = yieldCalculator.calculatorNetYield(model);
-    model.yields.net = netYield;
-    if (notify) {
-      notify(model);
-    }
-  }
-}
-
-class Summary {
-  getSummary(model: tROIModel) {
-    const { investment } = model;
-    const {
-      propertyValue,
-      depositAmount,
-      legalFees,
-      renovationCosts,
-      stampDuty,
-    } = investment;
-
-    const totalInv =
-      (propertyValue ?? 0) +
-      (depositAmount ?? 0) +
-      (legalFees ?? 0) +
-      (renovationCosts ?? 0) +
-      (stampDuty ?? 0);
-
-    return {
-      totalInvestment: totalInv,
-      totalMonthlyExpenditure: 0,
-      totalMonthlyProfit: 0,
-    };
-  }
-}
+import { calculateSDLT } from '../../Utils';
+import { type tROIModel, createROIModel } from '../Model';
+import { Deposit } from './Deposit';
+import { Mortgage } from './Mortgage';
+import { Summary } from './Summary';
+import { YieldRangeCalculator } from './YieldCalculator';
+import { Yields } from './Yields';
 
 class Controller {
   model: tROIModel;
   notify: ((model: tROIModel) => void) | null;
   summary: Summary;
   yields: Yields;
+  mortgage: Mortgage;
+  deposit: Deposit;
+  yieldCalculator: YieldRangeCalculator;
 
   constructor() {
     this.model = createROIModel();
     this.notify = null;
     this.summary = new Summary();
     this.yields = new Yields(this.model);
+    this.mortgage = new Mortgage(this.model);
+    this.deposit = new Deposit(this.model);
+    this.yieldCalculator = new YieldRangeCalculator();
+  }
+
+  calculateInvestment() {
+    const { model } = this;
+    const isAdditional = model.investment.isAdditionalProperty;
+    const deposit = model.investment.depositAmount;
+    const propVal = model.investment.propertyValue;
+    model.investment.stampDuty = calculateSDLT(propVal, isAdditional);
+    model.investment.mortgageAmount = propVal - deposit;
   }
 
   // eslint-disable-next-line class-methods-use-this
   updatePropertyPrice(newPrice: number) {
     const { model, notify } = this;
-
     model.investment.propertyValue = newPrice;
 
     if (notify) {
@@ -81,10 +45,9 @@ class Controller {
     }
   }
 
-  updateDeposit(newDeposit: number) {
+  updateAdditionalProperty(isAdditional: boolean) {
     const { model, notify } = this;
-    model.investment.depositAmount = newDeposit;
-
+    model.investment.isAdditionalProperty = isAdditional;
     if (notify) {
       notify(model);
     }
@@ -99,9 +62,12 @@ class Controller {
     }
   }
 
-  updateMortgage(newValue: number) {
+  updateMortgage(_newValue: number) {
     const { model, notify } = this;
-    model.investment.mortgageAmount = newValue;
+    const { investment } = model;
+    const { depositAmount, propertyValue } = investment;
+    const mortgageAmount = propertyValue - (depositAmount ?? 0);
+    model.investment.mortgageAmount = mortgageAmount;
 
     if (notify) {
       notify(model);

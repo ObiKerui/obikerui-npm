@@ -1,18 +1,25 @@
 import { useAppProvider } from '../Provider/Provider';
-import { BalanceSheet } from './Balance';
-import { MortgageSection } from './MortgageSection';
-import { PropertySection } from './PropertySection';
-import { RentalSection } from './RentalSection';
+import { NewBalance } from './NewBalance';
+
+// function Calculator() {
+//   const { model } = useAppProvider();
+
+//   return (
+//     <div className="flex flex-col gap-1">
+//       <PropertySection />
+//       <MortgageSection />
+//       <RentalSection />
+//       <BalanceSheet />
+//     </div>
+//   );
+// }
 
 function Calculator() {
   const { model } = useAppProvider();
 
   return (
     <div className="flex flex-col gap-1">
-      <PropertySection />
-      <MortgageSection />
-      <RentalSection />
-      <BalanceSheet />
+      <NewBalance />
     </div>
   );
 }

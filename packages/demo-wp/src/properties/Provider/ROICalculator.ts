@@ -47,6 +47,8 @@ class ROICalculator {
 
     // ((gross profit) ÷ cost of investment) × 100 = Gross ROI
     // ((Monthly Rental Income × 12) ÷ Property Value) × 100 = Gross Rental Yield
+    const grossProfit = model.cashflow.annualProfit;
+    const costOfInvestment = 0; // cost of investment
 
     if (notify) {
       notify(model);
