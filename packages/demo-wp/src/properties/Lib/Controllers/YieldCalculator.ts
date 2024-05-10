@@ -51,17 +51,16 @@ class YieldCalculator {
 }
 
 type tYieldRangeParams = {
-  startProfit: number;
-  endProfit: number;
-  profitInc: number;
-  cost: number;
+  startBalance: number;
+  endBalance: number;
+  balanceInc: number;
   startInvest: number;
   endInvest: number;
   investInc: number;
 };
 
 type tYield = {
-  profit: number;
+  balance: number;
   investment: number;
   yieldValue: number;
 };
@@ -74,11 +73,11 @@ class YieldRangeCalculator {
   calculateRange(args: tYieldRangeParams) {
     const yields = [] as tYield[];
 
-    for (let i = args.startProfit; i < args.endProfit; i += args.profitInc) {
+    for (let i = args.startBalance; i < args.endBalance; i += args.balanceInc) {
       for (let j = args.startInvest; j < args.endInvest; j += args.investInc) {
-        const yieldValue = this.calculate(i, args.cost, j);
+        const yieldValue = this.calculate(i * 12, 0, j);
         yields.push({
-          profit: i,
+          balance: i,
           investment: j,
           yieldValue,
         });
@@ -87,6 +86,28 @@ class YieldRangeCalculator {
     return yields;
   }
 }
+
+// class YieldRangeCalculator {
+//   calculate(yearRent: number, yearCost: number, propertyValue: number) {
+//     return ((yearRent - yearCost) / propertyValue) * 100.0;
+//   }
+
+//   calculateRange(args: tYieldRangeParams) {
+//     const yields = [] as tYield[];
+
+//     for (let i = args.startProfit; i < args.endProfit; i += args.profitInc) {
+//       for (let j = args.startInvest; j < args.endInvest; j += args.investInc) {
+//         const yieldValue = this.calculate(i, args.cost, j);
+//         yields.push({
+//           profit: i,
+//           investment: j,
+//           yieldValue,
+//         });
+//       }
+//     }
+//     return yields;
+//   }
+// }
 
 export { YieldCalculator, YieldRangeCalculator };
 export type { tYieldRangeParams, tYield };

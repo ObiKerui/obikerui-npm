@@ -1,41 +1,45 @@
-// import * as d3 from 'd3';
-import { useEffect, useRef, useState, useLayoutEffect } from 'react';
-import createPlot, { type tEntry } from './createROI';
-import { useAppProvider } from '../../Provider/Provider';
-import { type tYield } from '../../Provider/Controllers/YieldCalculator';
+import { useEffect, useRef } from 'react';
+import { Controls } from './Controls';
+import { useChartData } from '../Provider/Provider';
 
-interface Props {
-  data?: tYield[];
-}
-
-function HeatPlot({ data }: Props): JSX.Element {
+function LinePlot(): JSX.Element {
+  const { model, controller } = useChartData();
   const ref = useRef<HTMLDivElement | null>(null);
-  const plotCreated = useRef(false);
 
-  useLayoutEffect(() => {
-    if (plotCreated.current === false && ref.current && data) {
-      // eslint-disable-next-line no-console
-      const converted = data.map(
-        (elem) =>
-          ({
-            x: elem.profit,
-            y: elem.investment,
-            v: elem.yieldValue,
-          } as tEntry)
-      );
-      createPlot(ref.current, converted).catch(console.error);
+  useEffect(() => {
+    if (ref.current) {
+      controller.updatePageElement({
+        ...model.pageElements,
+        linePlotDiv: ref.current,
+      });
     }
-    return () => {
-      plotCreated.current = true;
-    };
-  }, [data]);
+  }, []);
 
   return (
     <div>
-      <div>
-        <h3 id="heat-plot">ROI Plot</h3>
-        <div ref={ref} />
-      </div>
+      <h3 id="line-plot">Line Plot</h3>
+      <div ref={ref} />
+    </div>
+  );
+}
+
+function HeatPlot(): JSX.Element {
+  const { model, controller } = useChartData();
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      controller.updatePageElement({
+        ...model.pageElements,
+        roiPlotDiv: ref.current,
+      });
+    }
+  }, []);
+
+  return (
+    <div>
+      <h3 id="heat-plot">ROI Plot</h3>
+      <div ref={ref} />
     </div>
   );
 }
@@ -45,33 +49,15 @@ HeatPlot.defaultProps = {
 };
 
 function LinePlotContainer(): JSX.Element {
-  const [data, setData] = useState<tYield[]>([]);
-  const { controller } = useAppProvider();
-
-  const calculator = controller.yieldCalculator;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const yieldData = calculator.calculateRange({
-        startProfit: 100 * 12,
-        endProfit: 1500 * 12,
-        profitInc: 100 * 12,
-        startInvest: 50000,
-        endInvest: 200000,
-        investInc: 10000,
-        cost: 500 * 12,
-      });
-      setData(yieldData);
-    };
-
-    // eslint-disable-next-line no-console
-    fetchData().catch(console.error);
-  }, []);
-
-  if (data.length > 0) {
-    return <HeatPlot data={data} />;
-  }
-  return <div>loading...</div>;
+  return (
+    <div className="flex gap-2">
+      <div className="inline-flex flex-col">
+        <HeatPlot />
+        <Controls />
+        <LinePlot />
+      </div>
+    </div>
+  );
 }
 
-export { createPlot, HeatPlot as LinePlot, LinePlotContainer };
+export { HeatPlot as LinePlot, LinePlotContainer };

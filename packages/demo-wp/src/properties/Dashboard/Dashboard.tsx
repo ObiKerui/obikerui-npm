@@ -1,9 +1,26 @@
-import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Calculator } from '../PropertyCalculator/Calculator';
 import { Dashboard as ChartDashboard } from '../Charts/Dashboard';
+import { Calculator } from '../PropertyCalculator/Calculator';
+import { TempRoadmap } from './Roadmap';
 
-function Dashboard() {
+function PropertyList() {
+  return (
+    <div className="flex flex-grow flex-col gap-1">
+      <div className="">
+        <span>Current Properties</span>
+      </div>
+      <div>
+        <ul>
+          <li>property 1</li>
+          <li>property 2</li>
+          <li>property 3</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function PropertyOptions() {
   const [searchParams, setSearchParams] = useSearchParams({
     tab: 'calculator',
   });
@@ -35,7 +52,7 @@ function Dashboard() {
         role="tabpanel"
         className="tab-content bg-base-100 border-base-300 rounded-box p-6"
       >
-        This will be a property details or map?
+        <TempRoadmap />
       </div>
 
       <input
@@ -90,6 +107,16 @@ function Dashboard() {
         className="tab-content bg-base-100 border-base-300 rounded-box p-6"
       >
         <ChartDashboard />
+      </div>
+    </div>
+  );
+}
+
+function Dashboard() {
+  return (
+    <div className="flex min-w-full flex-row gap-1">
+      <div className="flex flex-grow">
+        <PropertyOptions />
       </div>
     </div>
   );

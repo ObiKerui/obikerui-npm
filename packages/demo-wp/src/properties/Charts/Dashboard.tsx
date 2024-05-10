@@ -1,10 +1,11 @@
+import { ChartDataProvider } from './Provider/Provider';
 import { LinePlotContainer } from './ROI/Chart';
 
 function Dashboard() {
   return (
-    <div>
+    <ChartDataProvider>
       <LinePlotContainer />
-    </div>
+    </ChartDataProvider>
   );
 }
 

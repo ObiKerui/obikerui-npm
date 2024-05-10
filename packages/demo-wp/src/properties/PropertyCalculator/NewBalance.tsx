@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { useAppProvider } from '../Provider/Provider';
 import { CurrencyInput } from './Inputs/Currency';
-import { Optional } from './Inputs/Option';
-import { PercentInput } from './Inputs/Percentage';
+// import { Optional } from './Inputs/Option';
 import {
   calculateSDLTPct,
   convertToCurrency,
   convertToPercentage,
 } from '../Utils';
 import { SDTLInfo } from './Inputs/SDTLInfo';
-import { tUpdateDepositArgs } from '../Provider/Controllers/Deposit';
+// import { tUpdateDepositArgs } from '../Provider/Controllers/Deposit';
 import { PropertyField } from './PropertyInput';
+import { MortgageField } from './MortgageInput';
+import { DepositField } from './DepositInput';
 
 function Investment() {
   const { model, controller } = useAppProvider();
@@ -43,7 +44,8 @@ function Investment() {
         </td>
         <td />
       </tr>
-      <tr
+      <DepositField />
+      {/* <tr
         onMouseEnter={() => setMouseOverRow('deposit')}
         onMouseLeave={() => setMouseOverRow(null)}
       >
@@ -63,7 +65,7 @@ function Investment() {
           />
         </td>
         <td />
-      </tr>
+      </tr> */}
     </tbody>
   );
 }
@@ -72,21 +74,7 @@ function Mortgage() {
   const { model, controller } = useAppProvider();
   return (
     <tbody>
-      <tr>
-        <td>Mortgage Amount</td>
-        <td className="flex flex-row items-center">
-          <CurrencyInput
-            value={model.investment.mortgageAmount}
-            placeholder="Mortgage Amount"
-            onUpdate={(newValue) => controller.updateMortgage(newValue)}
-          />
-          <span className="pr-4 font-extralight">at</span>
-          <PercentInput
-            placeholder="Interest Rate"
-            onUpdate={(newValue) => controller.updateInterestRate(newValue)}
-          />
-        </td>
-      </tr>
+      <MortgageField />
       <tr>
         <td>Legal Fees</td>
         <td>

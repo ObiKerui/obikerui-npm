@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode, useMemo, useState } from 'react';
-import { type tROIModel } from './Model';
-import { Controller } from './Controllers/Controller';
+import { type tROIModel } from '../Lib/Model';
+import { Controller } from '../Lib/Controllers/Controller';
 
 /**
  * Interface Provider Stock Context
@@ -42,7 +42,6 @@ export function AppProvider({ children }: IAppProvider) {
   };
 
   controller.notify = updateModel;
-  controller.deposit.notify = updateModel;
 
   const value: IAppContext = useMemo(
     () => ({

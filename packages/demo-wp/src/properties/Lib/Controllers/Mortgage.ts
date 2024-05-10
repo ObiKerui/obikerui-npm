@@ -11,8 +11,8 @@ class Mortgage {
   calculateMonthlyPayments() {
     const { notify, model } = this;
     const { investment, monthlyExpenses } = model;
-    const { mortgageAmount, depositAmount, interestRate } = investment;
-    const borrowPeriod = 25;
+    const { mortgageAmount, interestRate, mortgageTerm } = investment;
+    const borrowPeriod = mortgageTerm;
 
     if (mortgageAmount === 0) {
       monthlyExpenses.mortgage = 0;
@@ -22,7 +22,8 @@ class Mortgage {
       return;
     }
 
-    const principle = (mortgageAmount ?? 0) - (depositAmount ?? 0);
+    // const principle = (mortgageAmount ?? 0) - (depositAmount ?? 0);
+    const principle = mortgageAmount ?? 0;
     const monthlyInterest = (interestRate ?? 0) / 100 / 12.0;
     const totalMonthsBorrowed = borrowPeriod * 12;
 

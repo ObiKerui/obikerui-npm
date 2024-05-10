@@ -18,6 +18,18 @@ import ContainerAttrs from './attributes/container';
 
 import AttrsGenerator from './generators/attributeGenerator';
 
+// new class based objects
+import { CContainer } from './classbased/Container/Container';
+import { CHeatmap } from './classbased/Plots/Heatmap';
+import { CMarkers } from './classbased/Plots/Markers';
+import { CText } from './classbased/Plots/Text';
+import { CLines } from './classbased/Plots/Line';
+import { CHistogram } from './classbased/Plots/Histogram';
+import { CFillArea } from './classbased/Plots/FillArea';
+import { CGroupedBar } from './classbased/Plots/GroupedBar';
+
+import { CLegend } from './classbased/Metadata/Legend';
+
 export {
   ContainerAttrs,
   AttrsGenerator,
@@ -36,4 +48,13 @@ export {
   Brush,
   Interactor,
   IntersectDetector,
+  CContainer,
+  CHeatmap,
+  CMarkers,
+  CText,
+  CLines,
+  CHistogram,
+  CFillArea,
+  CGroupedBar,
+  CLegend,
 };

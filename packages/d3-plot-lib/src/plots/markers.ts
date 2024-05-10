@@ -8,7 +8,7 @@ import plotAttributes from '../attributes/plot';
 import plotSvgGenerator from '../generators/plotSvgGenerator';
 import AttrsGenerator from '../generators/attributeGenerator';
 
-const colorScheme = ['red', 'green', 'blue', 'grey'];
+const colorScheme = ['black', 'green', 'blue', 'grey'];
 // type tPairType = { elem: unknown; i: number };
 
 export default function () {
@@ -31,7 +31,7 @@ export default function () {
 
     const { xs, ys } = obj;
     const { xScale, yScale, svg } = container;
-    const colours = obj.colours ?? ['red', 'green', 'blue', 'gray', 'black'];
+    const colours = obj.colours ?? ['black', 'green', 'blue', 'gray', 'black'];
 
     if (!xScale || !yScale || !svg) {
       return;
@@ -82,7 +82,7 @@ export default function () {
         return result || 0;
       })
       .attr('r', 5.5)
-      .style('fill', () => 'black');
+      .style('fill', (_d: any, ith: number) => colours[ith] ?? 'black');
   }
 
   function toExport(_container: tContainerAttrs) {

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { CurrencyInput } from './Currency';
 import { PercentInput } from './Percentage';
 import { Toggle } from './Toggle';
-import { eInputType } from '../../Provider/Model';
+import { eInputType } from '../../Lib/Model';
 
 type tUpdateArgs = {
   inputType: eInputType;

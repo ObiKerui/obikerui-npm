@@ -66,7 +66,7 @@ function PropertyField() {
                 className="btn btn-xs m-0"
                 onClick={toggleCollapse}
               >
-                Toggle it
+                Options
               </button>
             </FieldToggle>
           </FieldCosts>

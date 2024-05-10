@@ -11,10 +11,8 @@ function convertToCurrency(value: number) {
 }
 
 function convertToPercentage(value: number) {
-  const percentString = `${value}`;
-  const fixedPrecisionPercent = percentString.replace(/\.(\d)$/, '.$10');
-  console.log('fixed prec pct: ', fixedPrecisionPercent);
-  return `${fixedPrecisionPercent}%`;
+  const percentString = `${value.toFixed(2)}`;
+  return `${percentString}%`;
 }
 
 function calculateSDLTPct(propertyValue: number, isAdditional: boolean) {

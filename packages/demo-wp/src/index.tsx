@@ -17,17 +17,18 @@ import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
 import RoofPlot from './solar/RoofPlanner/RootPlot';
 
 import { Dashboard as PropertyDashboard } from './properties/Dashboard/Dashboard';
-import { Calculator as PropertyCalculator } from './properties/PropertyCalculator/Calculator';
 import { AppProvider as PropertyProvider } from './properties/Provider/Provider';
 
 import ThreeSolar from './solar/ThreeSolar';
 import { AppProvider } from './solar/ThreeSolar/Provider';
 
 import './style.css';
+import { Histogram } from './plots/Histogram/Component';
+import { GroupedBar } from './plots/GroupedBar/Component';
 
 function Root() {
   return (
-    <div className="container mx-auto">
+    <div className="bg-base-200 mx-auto min-h-screen">
       <div className="flex flex-row flex-wrap py-4">
         <aside className="w-full px-2 sm:w-1/3 md:w-1/6">
           <div className="sticky top-0 w-full p-4">
@@ -44,12 +45,14 @@ function Root() {
 
 function Plots() {
   return (
-    <div>
+    <div className="bg-base-100 p-4">
       <BarPlotContainer />
       <ScatterPlotContainer />
       <LinePlotContainer />
       <LinePlotContainerB />
       <DynamicPlotContainer />
+      <Histogram />
+      <GroupedBar />
     </div>
   );
 }

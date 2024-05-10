@@ -12,6 +12,8 @@ type tInvestmentBlock = {
   renovationCosts: number;
   mortgageAmount: number;
   interestRate: number;
+  mortgageTerm: number;
+  interestOnlyMortgage: boolean;
   legalFees: number;
 };
 
@@ -28,7 +30,9 @@ const ROIModel = {
     stampDuty: 0,
     renovationCosts: 0,
     mortgageAmount: 0,
-    interestRate: 0,
+    interestRate: 4,
+    mortgageTerm: 25,
+    interestOnlyMortgage: true,
     legalFees: 0,
   } as tInvestmentBlock,
   monthlyExpenses: {
@@ -57,31 +61,6 @@ const ROIModel = {
 
 type tROIModel = typeof ROIModel;
 
-const PropertyModel = {
-  propertyPrice: 0,
-  depositAmount: 0,
-  stampDuty: 0,
-  renovationCosts: 0,
-  mortgageAmount: 0,
-  interestRate: 0,
-  rentalIncome: 0,
-  rentalVoids: 0,
-  maintenanceCosts: 0,
-  legalFees: 0,
-  bills: 0,
-  managementFees: 0,
-  cashflow: {
-    annualProfit: 0,
-    annualCost: 0,
-  },
-  yields: {
-    gross: 0,
-    net: 0,
-  },
-};
-
-type tModel = typeof PropertyModel;
-
 function createROIModel() {
   const propertyModel = {
     investment: {
@@ -91,7 +70,9 @@ function createROIModel() {
       stampDuty: 0,
       renovationCosts: 0,
       mortgageAmount: 0,
-      interestRate: 0,
+      interestRate: 4,
+      mortgageTerm: 25,
+      interestOnlyMortgage: true,
       legalFees: 0,
     } as tInvestmentBlock,
     monthlyExpenses: {
@@ -120,27 +101,5 @@ function createROIModel() {
   return propertyModel;
 }
 
-function createModel() {
-  const propertyModel = {
-    propertyPrice: 0,
-    depositAmount: 0,
-    stampDuty: 0,
-    renovationCosts: 0,
-    mortgageAmount: 0,
-    interestRate: 0,
-    rentalIncome: 0,
-    rentalVoids: 0,
-    maintenanceCosts: 0,
-    legalFees: 0,
-    bills: 0,
-    managementFees: 0,
-    yields: {
-      gross: 0,
-      net: 0,
-    },
-  };
-  return propertyModel;
-}
-
-export { createModel, createROIModel, eInputType };
-export type { tModel, tROIModel };
+export { createROIModel, eInputType };
+export type { tROIModel };

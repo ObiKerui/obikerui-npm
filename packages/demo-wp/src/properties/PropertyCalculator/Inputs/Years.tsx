@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable max-len */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type tPercentInput = {
   value?: number;
@@ -9,25 +9,20 @@ type tPercentInput = {
 };
 
 function defaultOnUpdate(arg: number) {
-  console.log('percent entered: ', arg);
+  console.log('years entered: ', arg);
 }
 
 function convertValue(arg: string) {
-  return `${arg}%`;
+  return `${arg} years`;
 }
 
-function PercentInput({
+function YearsInput({
   value = 0,
-  placeholder = 'Enter percentage',
+  placeholder = 'Enter years',
   onUpdate = defaultOnUpdate,
 }: tPercentInput) {
   const [inputValue, setInputValue] = useState<number>(value);
   const [displayValue, setDisplayValue] = useState<string>('');
-
-  useEffect(() => {
-    setInputValue(value);
-    setDisplayValue(convertValue(`${value}`));
-  }, [value]);
 
   const handleBlur = () => {
     const pctVal = convertValue(`${inputValue}`);
@@ -61,4 +56,4 @@ function PercentInput({
   );
 }
 
-export { PercentInput };
+export { YearsInput };

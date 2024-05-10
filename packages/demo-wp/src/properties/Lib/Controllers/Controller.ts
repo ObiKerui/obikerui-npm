@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { calculateSDLT } from '../../Utils';
 import { type tROIModel, createROIModel } from '../Model';
-import { Deposit } from './Deposit';
 import { Mortgage } from './Mortgage';
 import { Summary } from './Summary';
 import { YieldRangeCalculator } from './YieldCalculator';
@@ -13,7 +12,6 @@ class Controller {
   summary: Summary;
   yields: Yields;
   mortgage: Mortgage;
-  deposit: Deposit;
   yieldCalculator: YieldRangeCalculator;
 
   constructor() {
@@ -22,7 +20,6 @@ class Controller {
     this.summary = new Summary();
     this.yields = new Yields(this.model);
     this.mortgage = new Mortgage(this.model);
-    this.deposit = new Deposit(this.model);
     this.yieldCalculator = new YieldRangeCalculator();
   }
 
@@ -35,10 +32,21 @@ class Controller {
     model.investment.mortgageAmount = propVal - deposit;
   }
 
+  calculateExpenditure() {}
+
   // eslint-disable-next-line class-methods-use-this
   updatePropertyPrice(newPrice: number) {
     const { model, notify } = this;
     model.investment.propertyValue = newPrice;
+
+    if (notify) {
+      notify(model);
+    }
+  }
+
+  updateDepositAmount(newAmount: number) {
+    const { model, notify } = this;
+    model.investment.depositAmount = newAmount;
 
     if (notify) {
       notify(model);
@@ -69,6 +77,14 @@ class Controller {
     const mortgageAmount = propertyValue - (depositAmount ?? 0);
     model.investment.mortgageAmount = mortgageAmount;
 
+    if (notify) {
+      notify(model);
+    }
+  }
+
+  updateMortgageTerm(newValue: number) {
+    const { model, notify } = this;
+    model.investment.mortgageTerm = newValue;
     if (notify) {
       notify(model);
     }
