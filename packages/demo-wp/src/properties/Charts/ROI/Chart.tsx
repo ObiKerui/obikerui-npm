@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Controls } from './Controls';
 import { useChartData } from '../Provider/Provider';
+import useActiveTab from './useActiveTab';
 
 function LinePlot(): JSX.Element {
   const { model, controller } = useChartData();
@@ -27,6 +29,23 @@ function HeatPlot(): JSX.Element {
   const { model, controller } = useChartData();
   const ref = useRef<HTMLDivElement | null>(null);
 
+  const { isActive } = useActiveTab({
+    key: 'tab',
+    name: 'charts',
+  });
+  // const [searchParams] = useSearchParams();
+  // const currTab = searchParams.get('tab');
+  // console.log('curr tab is: ', currTab);
+
+  // useEffect(() => {
+  //   if (ref.current) {
+  //     controller.updatePageElement({
+  //       ...model.pageElements,
+  //       roiPlotDiv: ref.current,
+  //     });
+  //   }
+  // }, []);
+
   useEffect(() => {
     if (ref.current) {
       controller.updatePageElement({
@@ -34,7 +53,7 @@ function HeatPlot(): JSX.Element {
         roiPlotDiv: ref.current,
       });
     }
-  }, []);
+  }, [isActive]);
 
   return (
     <div>

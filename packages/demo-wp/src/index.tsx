@@ -25,6 +25,8 @@ import { AppProvider } from './solar/ThreeSolar/Provider';
 import './style.css';
 import { Histogram } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
+import { LeafletMap } from './maps/LeafletMap/Component';
+import { DensityMap } from './maps/DensityMap/Component';
 
 function Root() {
   return (
@@ -60,7 +62,9 @@ function Plots() {
 function Maps() {
   return (
     <div>
-      <MapPlotContainer />
+      {/* <MapPlotContainer /> */}
+      <LeafletMap />
+      <DensityMap />
     </div>
   );
 }

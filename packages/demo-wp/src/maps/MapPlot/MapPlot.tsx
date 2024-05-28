@@ -26,8 +26,8 @@ function MapPlot({ data }: Props): JSX.Element {
         <div className="plot map--area" ref={ref} />
         <div className="plot plot--description">
           <p>
-            Map plot is for rendering such n such. Good for which types of visual, bad for these
-            others..etc.
+            Map plot is for rendering such n such. Good for which types of
+            visual, bad for these others..etc.
           </p>
         </div>
       </div>
@@ -51,7 +51,6 @@ function MapPlotContainer(): JSX.Element {
     const yLineData = [2, 5];
 
     const fetchData = async () => {
-      console.log('fetching chart container data...');
       const receivedData = [xs, bars, yLineData];
       setData(receivedData);
     };

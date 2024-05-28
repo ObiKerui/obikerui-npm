@@ -57,12 +57,19 @@ class CContainer {
 
   buildSVG(container: HTMLElement) {
     const { attrs } = this;
-    if (!attrs.svg) {
+    const result = d3.select(container).select('svg');
+    const recreate = result.node() === null;
+
+    if (recreate) {
       attrs.svg = d3
         .select(container)
         .append('svg')
         .classed('jschart-container', true);
       this.buildContainerGroups(attrs.svg);
+    }
+
+    if (!attrs.svg) {
+      throw new Error('Could not create the svg');
     }
     attrs.svg.attr('width', attrs.width).attr('height', attrs.height);
   }

@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { Dashboard as ChartDashboard } from '../Charts/Dashboard';
 import { Calculator } from '../PropertyCalculator/Calculator';
-import { TempRoadmap } from './Roadmap';
+import { PropertyMap } from './Roadmap';
 
 function PropertyList() {
   return (
@@ -52,7 +52,7 @@ function PropertyOptions() {
         role="tabpanel"
         className="tab-content bg-base-100 border-base-300 rounded-box p-6"
       >
-        <TempRoadmap />
+        <PropertyMap checked={currTab === 'property'} />
       </div>
 
       <input
