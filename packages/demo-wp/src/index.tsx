@@ -22,11 +22,14 @@ import { AppProvider as PropertyProvider } from './properties/Provider/Provider'
 import ThreeSolar from './solar/ThreeSolar';
 import { AppProvider } from './solar/ThreeSolar/Provider';
 
+import { AppProvider as VPPAppProvider } from './vpp/Provider/Provider';
+
 import './style.css';
 import { Histogram } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
 import { LeafletMap } from './maps/LeafletMap/Component';
 import { DensityMap } from './maps/DensityMap/Component';
+import { Dashboard as VPPDashboard } from './vpp/Dashboard/Dashboard';
 
 function Root() {
   return (
@@ -99,6 +102,16 @@ function Properties() {
   );
 }
 
+function VPP() {
+  return (
+    <VPPAppProvider>
+      <div>
+        <VPPDashboard />
+      </div>
+    </VPPAppProvider>
+  );
+}
+
 const router = createHashRouter([
   {
     path: '/',
@@ -124,6 +137,10 @@ const router = createHashRouter([
       {
         path: '/properties',
         element: <Properties />,
+      },
+      {
+        path: '/virtual-power-plant',
+        element: <VPP />,
       },
     ],
   },

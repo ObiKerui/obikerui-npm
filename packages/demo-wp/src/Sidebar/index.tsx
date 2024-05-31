@@ -42,6 +42,13 @@ export default function () {
       >
         <Link to="properties">Properties</Link>
       </li>
+      <li
+        className={cn({
+          'font-semibold': pathname === '/virtual-power-plant',
+        })}
+      >
+        <Link to="virtual-power-plant">Virtual Power Plant</Link>
+      </li>
     </ul>
   );
 }
