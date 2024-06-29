@@ -1,11 +1,11 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Outlet, RouterProvider, createHashRouter } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import React from 'react';
 import ErrorPage from './ErrorPage';
 import Sidebar from './Sidebar';
 import './index.css';
-import { MapPlotContainer } from './maps/MapPlot/MapPlot';
+
 import { BarPlotContainer } from './plots/BarPlot/BarPlot';
 import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
 import { LinePlotContainer } from './plots/LinePlot/LinePlot';
@@ -20,31 +20,58 @@ import { Dashboard as PropertyDashboard } from './properties/Dashboard/Dashboard
 import { AppProvider as PropertyProvider } from './properties/Provider/Provider';
 
 import ThreeSolar from './solar/ThreeSolar';
-import { AppProvider } from './solar/ThreeSolar/Provider';
+import { AppProvider as ThreeSolarAppProvider } from './solar/ThreeSolar/Provider';
 
 import { AppProvider as VPPAppProvider } from './vpp/Provider/Provider';
 
 import './style.css';
 import { Histogram } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
+import { StackedPlot } from './plots/StackedPlot/Component';
 import { LeafletMap } from './maps/LeafletMap/Component';
 import { DensityMap } from './maps/DensityMap/Component';
 import { Dashboard as VPPDashboard } from './vpp/Dashboard/Dashboard';
 
+import { AppProvider, useAppProvider } from './AppProvider/Provider';
+
 function Root() {
+  const { model, controller } = useAppProvider();
+
   return (
-    <div className="bg-base-200 mx-auto min-h-screen">
+    <div data-theme={model.theme} className="bg-base-200 mx-auto min-h-screen">
       <div className="flex flex-row flex-wrap py-4">
         <aside className="w-full px-2 sm:w-1/3 md:w-1/6">
           <div className="sticky top-0 w-full p-4">
+            <div className="pb-4">
+              <button
+                type="button"
+                className="btn btn-sm border-black"
+                onClick={() =>
+                  controller.updateTheme(
+                    model.theme === 'light' ? 'dark' : 'light'
+                  )
+                }
+              >
+                set theme
+              </button>
+            </div>
+
             <Sidebar />
           </div>
         </aside>
-        <main role="main" className="w-full px-2 pt-1 sm:w-2/3 md:w-5/6">
+        <main role="main" className="flex w-full px-2 pt-1 sm:w-2/3 md:w-5/6">
           <Outlet />
         </main>
       </div>
     </div>
+  );
+}
+
+function RootContainer() {
+  return (
+    <AppProvider>
+      <Root />
+    </AppProvider>
   );
 }
 
@@ -58,6 +85,7 @@ function Plots() {
       <DynamicPlotContainer />
       <Histogram />
       <GroupedBar />
+      <StackedPlot />
     </div>
   );
 }
@@ -84,11 +112,11 @@ function Solar() {
 
 function ThreeSolarHolder() {
   return (
-    <AppProvider>
+    <ThreeSolarAppProvider>
       <div>
         <ThreeSolar />
       </div>
-    </AppProvider>
+    </ThreeSolarAppProvider>
   );
 }
 
@@ -115,7 +143,7 @@ function VPP() {
 const router = createHashRouter([
   {
     path: '/',
-    element: <Root />,
+    element: <RootContainer />,
     errorElement: <ErrorPage />,
     children: [
       {

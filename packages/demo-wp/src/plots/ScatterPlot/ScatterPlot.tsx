@@ -96,7 +96,6 @@ function ScatterPlotContainer(): JSX.Element {
   }, []);
 
   if (data.length > 0) {
-    console.log('data for scatter plot: ', data);
     return <ScatterPlot data={data} />;
   }
   return <div>loading...</div>;

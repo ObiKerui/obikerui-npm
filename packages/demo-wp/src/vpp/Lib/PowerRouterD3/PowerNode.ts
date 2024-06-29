@@ -1,122 +1,114 @@
 import * as d3 from 'd3';
-import { tD3Model } from './Model';
+import { tD3Model, tPowerNode, tPowerNodeID } from './Model';
+import { importSVG } from '../SVG/Importer';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-class PowerNode {
-  model: tD3Model;
-  path: unknown;
-  circle: unknown;
-  index: number;
+type tSelection = d3.Selection<d3.BaseType, tPowerNode, SVGGElement, unknown>;
+type tTextSelect = d3.Selection<SVGGElement, tPowerNode, SVGGElement, unknown>;
+type tSVGTextGroup = d3.BaseType[] | d3.ArrayLike<d3.BaseType>;
 
-  constructor(model: tD3Model, ith: number) {
+class PowerNode {
+  id: tPowerNodeID;
+  model: tD3Model;
+  border: unknown;
+  headerText: unknown;
+  icon: unknown;
+  bottomText: unknown;
+
+  constructor(id: tPowerNodeID, model: tD3Model) {
+    this.id = id;
     this.model = model;
-    this.path = null;
-    this.circle = null;
-    this.index = ith;
+    this.border = null;
+    this.icon = null;
+    this.bottomText = null;
   }
 
-  update(newModel: tD3Model) {
-    const { svg, height, xScale, yScale, powerLines } = newModel;
-    const { coordinates, duration, flow } = powerLines[this.index];
+  async update(newModel: tD3Model) {
+    const { svg, powerNodeMap } = newModel;
+    const powerNode = powerNodeMap.get(this.id);
 
-    const xScaleCast = xScale as any;
-    const yScaleCast = yScale as any;
-
-    if (!svg) {
+    if (!powerNode || !svg) {
       return;
     }
 
-    const lineId = `lines-${this.index}`;
-    const circleId = `circle-${this.index}`;
+    const {
+      coordinates,
+      label,
+      iconPath,
+      icon,
+      stroke,
+      strokeWidth,
+      width,
+      height,
+      fill,
+      rx,
+      ry,
+    } = powerNode;
 
-    let lines = svg.selectAll(`.${lineId}`).data([coordinates]);
+    const iconPathStr = await importSVG(`${iconPath}/${icon}` ?? '');
 
-    // Exit - remove data points if current data.length < data.length last time this ftn was called
-    lines.exit().style('opacity', 0).remove();
+    const nodeId = `node-${this.id}`;
+    const gAllPowerNodes = svg.select<SVGGElement>(`g.power-nodes`);
 
-    // Enter - add the shapes to this data point
-    const enterGroup = lines
-      .enter()
-      .append('path')
-      .classed(lineId, true)
-      .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
-      .attr('stroke-width', 1.5);
+    const gPowerNode = gAllPowerNodes
+      .selectAll<SVGGElement, number>(`g.${nodeId}`)
+      .data([powerNode]);
 
-    // join the new data points with existing
-    lines = lines.merge(enterGroup as any);
+    // Handle entering elements
+    const nodeEnter = gPowerNode.enter().append('g').classed(`${nodeId}`, true);
+    nodeEnter.append('rect').classed('border', true);
 
-    lines
-      .attr('d', (dth: any) => {
-        const line = d3
-          .line()
-          // .defined(definedFtn)
-          // .curve(curveType)
-          .x((d: any) => xScaleCast(d[0]) || 0)
-          .y((d: any) => yScaleCast(d[1]) || 0);
+    const iconNodeEnter = nodeEnter.append('g').classed('icon', true).node();
 
-        return line(dth);
-      })
-      // .attr('clip-path', `url(#${attrs.clipPathID})`)
-      .attr('stroke', (_d: any, _i: number) => 'black');
-    // .style(
-    //   'opacity',
-    //   (_d: any, i: number) =>
-    //     // console.log('alpha / d / i ', alpha, d, i)
-    //     alpha[i] ?? 1
-    // );
-
-    let circle = svg.selectAll(circleId).data([0]);
-
-    // Exit - remove data points if current data.length < data.length last time this ftn was called
-    circle.exit().style('opacity', 0).remove();
-
-    // Enter - add the shapes to this data point
-    const enterCircle = circle
-      .enter()
-      .append('circle')
-      .classed(circleId, true)
-      .attr('r', () => 6.5)
-      .attr('transform', `translate(0,${-height / 3})`);
-    // .attr('fill', 'none')
-    // .attr('stroke', 'steelblue')
-    // .attr('stroke-width', 1.5);
-
-    // join the new data points with existing
-    circle = circle.merge(enterCircle as any);
-
-    // const circle = svg
-    //   .append('circle')
-    //   .attr('r', 6.5)
-    //   .attr('transform', `translate(0,${-height / 3})`);
-
-    // Returns an attrTween for translating along the specified path element.
-    function translateAlong(pathElem: SVGPathElement) {
-      const l = pathElem.getTotalLength();
-      return function () {
-        return function (t: number) {
-          const point = flow === 'negative' ? 1 - t : t;
-          const p = pathElem.getPointAtLength(point * l);
-          return `translate(${p.x},${p.y})`;
-        };
-      };
+    if (iconNodeEnter) {
+      iconNodeEnter.appendChild(iconPathStr);
     }
 
-    this.circle = circle;
-    this.path = lines;
+    nodeEnter.merge(gPowerNode);
 
-    function transition() {
-      circle
-        .transition()
-        .duration(duration)
-        .attrTween('transform', translateAlong((lines as any).node()))
-        .on('end', transition);
+    gPowerNode.attr(
+      'transform',
+      `translate(${coordinates[0]},${coordinates[1]})`
+    );
+
+    gPowerNode
+      .select('rect.border')
+      .attr('stroke', stroke)
+      .attr('stroke-width', strokeWidth)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', fill)
+      .attr('rx', rx) // Set the x-axis radius of the rounded corners
+      .attr('ry', ry); // Set the y-axis radius of the rounded corners
+
+    const iconGroup = gPowerNode
+      .select('g.icon')
+      .attr('transform', `translate(${15},${20})`);
+
+    const svgNode = iconGroup.select('svg').node() as SVGElement;
+    const gNode = iconGroup.node() as SVGGElement;
+
+    if (gNode && svgNode) {
+      gNode.replaceChild(iconPathStr, svgNode);
     }
-    transition();
+
+    gPowerNode.exit().style('opacity', 0).exit();
+  }
+
+  updateAlignment(
+    _powerNode: tPowerNode,
+    ith: number,
+    htmlGroup: tSVGTextGroup
+  ) {
+    const textNode = htmlGroup[ith] as SVGTextElement;
+    const horizAlign = 0;
+    if (textNode) {
+      // const bbox = textNode.getBBox();
+      // horizAlign = bbox.width / 2;
+    }
+    return `translate(${horizAlign},0)`;
   }
 }
-
-// export type { tPowerConnection };
 
 export { PowerNode };

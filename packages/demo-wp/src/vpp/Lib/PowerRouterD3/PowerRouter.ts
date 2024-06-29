@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-classes-per-file */
 import * as d3 from 'd3';
-import { VPPModel } from '../Model';
 import { PowerLine } from './PowerLine';
-import { powerLineData, powerNodes, tD3Model } from './Model';
+import { tPowerNodeID, VPPModel } from './Model';
 import { PowerNode } from './PowerNode';
+import { TextNode } from './TextNode';
 
 // const path = {
 //     cursor: pointer;
@@ -19,69 +19,74 @@ import { PowerNode } from './PowerNode';
 //     stroke-width: 1.5px;
 //   }
 
+type tSelection<T extends d3.BaseType> = d3.Selection<T, unknown, null, any>;
+
+type tBaseSelection = tSelection<d3.BaseType>;
+type tSVGSelection = tSelection<SVGElement>;
+
 class PowerRouterD3 {
-  model: VPPModel;
-  d3Model: tD3Model;
+  d3Model: VPPModel;
   powerLines: PowerLine[];
-  powerNodes: PowerNode[];
+  powerNodeObjMap: Map<tPowerNodeID, PowerNode>;
+  textNodeObjMap: Map<tPowerNodeID, TextNode>;
 
   constructor(model: VPPModel) {
-    this.model = model;
-    this.d3Model = {
-      container: null,
-      svg: null,
-      width: 500,
-      height: 500,
-      xScale: d3.scaleLinear().domain([0, 100]).range([0, 500]),
-      yScale: d3.scaleLinear().domain([0, 100]).range([500, 0]),
-      powerLines: powerLineData,
-      powerNodes,
-    };
-
+    this.d3Model = model;
     this.powerLines = [];
-    powerLineData.forEach((_powerLine, ith) => {
-      this.powerLines.push(new PowerLine(this.d3Model, ith));
+
+    const { powerLines, powerNodeMap } = model.modelData;
+
+    powerLines.forEach((_powerLine, ith) => {
+      this.powerLines.push(new PowerLine(model.modelData, ith));
     });
 
-    this.powerNodes = [];
-    powerNodes.forEach((_powerNode, ith) => {
-      this.powerNodes.push(new PowerNode(this.d3Model, ith));
+    this.powerNodeObjMap = new Map();
+    this.textNodeObjMap = new Map();
+
+    Array.from(powerNodeMap.keys()).forEach((key) => {
+      this.powerNodeObjMap.set(key, new PowerNode(key, model.modelData));
+      this.textNodeObjMap.set(key, new TextNode(key, model.modelData));
     });
   }
 
-  update(newModel: tD3Model) {
-    const { container } = newModel;
-
-    this.powerLines.forEach((pl) => {
-      pl.update(newModel);
-    });
-
-    this.powerNodes.forEach((pn) => {
-      pn.update(newModel);
-    });
+  // update(newModel: tD3Model) {
+  update() {
+    const { modelData } = this.d3Model;
+    const { container, width, height } = modelData;
 
     if (!container) {
       return;
     }
 
-    this.d3Model = {
-      ...this.d3Model,
-      ...newModel,
-    };
+    const svgElement = d3.select(container).select('svg.power-router');
 
-    const { width, height, svg } = this.d3Model;
+    if (svgElement.empty()) {
+      const svg = d3
+        .select(container)
+        .append('svg')
+        .classed('power-router', true)
+        .attr('width', 500)
+        .attr('height', 500);
 
-    if (svg) {
-      return;
+      svg.append('g').classed('power-lines', true);
+      svg.append('g').classed('power-nodes', true);
+
+      this.d3Model.modelData.svg = svg;
     }
 
-    this.d3Model.svg = d3
-      .select(container)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .append('g');
-    // .attr('transform', `translate(${width / 2},${height / 2})`);
+    svgElement.attr('width', width).attr('height', height);
+
+    this.powerLines.forEach((pl) => {
+      pl.update(modelData);
+    });
+
+    Array.from(this.powerNodeObjMap.keys()).forEach(async (key) => {
+      const pn = this.powerNodeObjMap.get(key);
+      await pn?.update(modelData);
+
+      const pl = this.textNodeObjMap.get(key);
+      await pl?.update(modelData);
+    });
   }
 }
 

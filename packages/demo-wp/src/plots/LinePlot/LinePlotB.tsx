@@ -74,7 +74,6 @@ LinePlot.defaultProps = {
 
 async function createPlot(ref: HTMLDivElement, data: unknown[]) {
   const [xs, ys] = data;
-  console.log('what was passed as xs? ', xs);
 
   const lines = d3PlotLib //
     .Line()

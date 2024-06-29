@@ -16,9 +16,70 @@ class PowerLine {
     this.index = ith;
   }
 
+  // const nodeId = `node-${this.id}`;
+  // const nodeGroup = svg
+  //   .selectAll<SVGGElement, number>(`g.${nodeId}`)
+  //   .data([powerNode]);
+
+  // // Handle entering elements
+  // const nodeEnter = nodeGroup.enter().append('g').classed(`${nodeId}`, true);
+  // nodeEnter.append('rect').classed('border', true);
+  // nodeEnter.append('text').classed('label', true);
+  // const iconNodeEnter = nodeEnter.append('g').classed('icon', true).node();
+
+  // if (iconNodeEnter) {
+  //   iconNodeEnter.appendChild(iconPath);
+  // }
+
+  // nodeEnter.merge(nodeGroup);
+
+  // nodeGroup.attr(
+  //   'transform',
+  //   `translate(${coordinates[0]},${coordinates[1]})`
+  // );
+
+  // nodeGroup
+  //   .select('rect.border')
+  //   .attr('stroke', stroke)
+  //   .attr('stroke-width', strokeWidth)
+  //   .attr('width', width)
+  //   .attr('height', height)
+  //   .attr('fill', fill)
+  //   .attr('rx', rx) // Set the x-axis radius of the rounded corners
+  //   .attr('ry', ry); // Set the y-axis radius of the rounded corners
+
+  // nodeGroup
+  //   .select('text.label')
+  //   .attr('x', 4)
+  //   .attr('y', 15)
+  //   .attr('font-family', 'sans-serif') // Font family
+  //   .attr('font-size', '15px') // Font size
+  //   .attr('fill', stroke) // Text color
+  //   .text(label);
+
+  // const iconGroup = nodeGroup
+  //   .select('g.icon')
+  //   .attr('transform', `translate(${15},${20})`);
+
+  // const svgNode = iconGroup.select('svg').node() as SVGElement;
+  // const gNode = iconGroup.node() as SVGGElement;
+
+  // if (gNode && svgNode) {
+  //   gNode.replaceChild(iconPath, svgNode);
+  // }
+
+  // nodeGroup.exit().style('opacity', 0).exit();
+
   update(newModel: tD3Model) {
     const { svg, height, xScale, yScale, powerLines } = newModel;
-    const { coordinates, duration, flow } = powerLines[this.index];
+    const powerLine = powerLines[this.index];
+
+    if (!powerLine) {
+      return;
+    }
+
+    const { coordinates, duration, flow, fill, stroke, strokeWidth } =
+      powerLine;
 
     const xScaleCast = xScale as any;
     const yScaleCast = yScale as any;
@@ -30,66 +91,52 @@ class PowerLine {
     const lineId = `lines-${this.index}`;
     const circleId = `circle-${this.index}`;
 
-    let lines = svg.selectAll(`.${lineId}`).data([coordinates]);
+    const gPowerLines = svg.select<SVGGElement>('g.power-lines');
 
-    // Exit - remove data points if current data.length < data.length last time this ftn was called
-    lines.exit().style('opacity', 0).remove();
-
-    // Enter - add the shapes to this data point
-    const enterGroup = lines
-      .enter()
-      .append('path')
-      .classed(lineId, true)
-      .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
-      .attr('stroke-width', 1.5);
+    let lines = gPowerLines.selectAll(`path.${lineId}`).data([coordinates]);
+    const enterGroup = lines.enter().append('path').classed(lineId, true);
 
     // join the new data points with existing
     lines = lines.merge(enterGroup as any);
+
+    // Exit - remove data points if current data.len/gth < data.length last time this ftn was called
+    lines.exit().style('opacity', 0).remove();
 
     lines
       .attr('d', (dth: any) => {
         const line = d3
           .line()
-          // .defined(definedFtn)
-          // .curve(curveType)
+          // .curve(d3.curveBasis)
           .x((d: any) => xScaleCast(d[0]) || 0)
           .y((d: any) => yScaleCast(d[1]) || 0);
 
         return line(dth);
       })
       // .attr('clip-path', `url(#${attrs.clipPathID})`)
-      .attr('stroke', (_d: any, _i: number) => 'black');
-    // .style(
-    //   'opacity',
-    //   (_d: any, i: number) =>
-    //     // console.log('alpha / d / i ', alpha, d, i)
-    //     alpha[i] ?? 1
-    // );
+      .attr('stroke', () => 'black')
+      .attr('fill', 'none')
+      .attr('stroke', stroke)
+      .attr('stroke-width', strokeWidth);
 
-    let circle = svg.selectAll(circleId).data([0]);
+    let circle = gPowerLines
+      .selectAll<SVGCircleElement, number>(`circle.${circleId}`)
+      .data([0]);
+
+    // Enter - add the shapes to this data point
+    const enterCircle = circle.enter().append('circle').classed(circleId, true);
 
     // Exit - remove data points if current data.length < data.length last time this ftn was called
     circle.exit().style('opacity', 0).remove();
 
-    // Enter - add the shapes to this data point
-    const enterCircle = circle
-      .enter()
-      .append('circle')
-      .classed(circleId, true)
-      .attr('r', () => 6.5)
-      .attr('transform', `translate(0,${-height / 3})`);
-    // .attr('fill', 'none')
-    // .attr('stroke', 'steelblue')
-    // .attr('stroke-width', 1.5);
-
     // join the new data points with existing
-    circle = circle.merge(enterCircle as any);
+    circle = circle.merge(enterCircle);
 
-    // const circle = svg
-    //   .append('circle')
-    //   .attr('r', 6.5)
-    //   .attr('transform', `translate(0,${-height / 3})`);
+    circle
+      .attr('r', () => 6.5)
+      .attr('transform', `translate(0,${-height / 3})`)
+      .attr('fill', stroke)
+      .attr('stroke', stroke)
+      .attr('stroke-width', strokeWidth);
 
     // Returns an attrTween for translating along the specified path element.
     function translateAlong(pathElem: SVGPathElement) {

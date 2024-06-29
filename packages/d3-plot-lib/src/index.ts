@@ -27,6 +27,7 @@ import { CLines } from './classbased/Plots/Line';
 import { CHistogram } from './classbased/Plots/Histogram';
 import { CFillArea } from './classbased/Plots/FillArea';
 import { CGroupedBar } from './classbased/Plots/GroupedBar';
+import { CStacked } from './classbased/Plots/StackedPlot';
 
 import { CLegend } from './classbased/Metadata/Legend';
 
@@ -57,4 +58,5 @@ export {
   CFillArea,
   CGroupedBar,
   CLegend,
+  CStacked,
 };

@@ -1,3 +1,6 @@
+import * as d3 from 'd3';
+import { Series } from 'd3';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultPlotAttrs = {
   plotID: null as string | null,
@@ -45,11 +48,21 @@ const GroupedBarAttrs = {
   subgroups: [] as string[],
 };
 
+const stackedAttrs = {
+  stackedDataset: [] as Series<
+    {
+      [key: string]: number;
+    },
+    string
+  >[],
+};
+
 const PlotAttrs = {
   ...defaultPlotAttrs,
   ...HistogramAttrs,
   ...FillAttrs,
   ...GroupedBarAttrs,
+  ...stackedAttrs,
 };
 
 export default PlotAttrs;

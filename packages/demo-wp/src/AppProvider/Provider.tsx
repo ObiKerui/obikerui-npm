@@ -1,22 +1,17 @@
-import {
-  createContext,
-  useContext,
-  ReactNode,
-  useMemo,
-  useState,
-  useEffect,
-} from 'react';
-import { Controller } from '../Lib/Controller';
+import { createContext, useContext, ReactNode, useMemo, useState } from 'react';
+import { AppController } from './Controller';
+import { tAppModel } from './Model';
 
-import { useAppProvider as useGlobalAppProvider } from '../../AppProvider/Provider';
-import { VPPModel } from '../Lib/PowerRouterD3/Model';
+const controller = new AppController({
+  theme: 'light',
+} as tAppModel);
 
 /**
  * Interface Provider Stock Context
  */
 interface IAppContext {
-  model: VPPModel;
-  controller: Controller;
+  model: tAppModel;
+  controller: AppController;
 }
 
 /**
@@ -27,7 +22,7 @@ const AppContext = createContext<IAppContext | undefined>(undefined);
 export const useAppProvider = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useAppContext must be used within a VPPProvider');
+    throw new Error('useAppContext must be used within an AppProvider');
   }
   return context;
 };
@@ -36,24 +31,14 @@ interface IAppProvider {
   children: ReactNode;
 }
 
-const controller = new Controller();
-
 export function AppProvider({ children }: IAppProvider) {
-  const [model, setModel] = useState<VPPModel>(controller.model);
-  const { model: globalAppModel } = useGlobalAppProvider();
+  const [model, setModel] = useState<tAppModel>(controller.model);
 
   const updateModel = () => {
-    controller.update();
+    // controller.update();
     const updated = controller.model;
     setModel({ ...updated });
   };
-
-  useEffect(() => {
-    controller.themeController.updateTheme(
-      globalAppModel.theme as 'light' | 'dark'
-    );
-    updateModel();
-  }, [globalAppModel]);
 
   controller.notify = updateModel;
 
