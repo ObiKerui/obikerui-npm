@@ -15,6 +15,7 @@ import {
 import { Path } from './classbased/Plots/Path';
 import { Markers as CMarkers } from './classbased/Plots/Markers';
 import { CMapLayer } from './classbased/Plots/MapLayer';
+import { CPosition } from './classbased/Plots/Position';
 
 export {
   MapMarkers,
@@ -27,4 +28,5 @@ export {
   Path,
   CMarkers,
   CMapLayer,
+  CPosition,
 };

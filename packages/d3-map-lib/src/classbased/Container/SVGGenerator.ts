@@ -10,8 +10,6 @@ class SVGGenerator {
       return;
     }
 
-    console.log('what are margins: ', margins);
-
     // const mapContainerNode = d3
     //   .select(html)
     //   .append('div')

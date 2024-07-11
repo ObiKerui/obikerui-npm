@@ -1,10 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useLayoutEffect, useRef, useState } from 'react';
-import * as d3MapLib from '@obikerui/d3-map-lib';
 import * as d3 from 'd3';
+import { useEffect, useRef } from 'react';
+import { useDensityMap, Projections } from './Map';
+import { cn } from '../../Utils/CSS';
 
-type tData = {
+// const mapProperties = atom({
+//   zoom: 140,
+//   translate: [450, 250] as [number, number],
+// });
+
+// const densityMapObj = new DensityMapObj();
+
+type tLoadedMapData = {
   states: unknown;
   counties: unknown;
 };
@@ -12,16 +20,29 @@ type tData = {
 async function loadData() {
   // create the states geojson
   const statesGeojson: any = await d3.json('assets/us-states.geojson');
-  const featuresArr = statesGeojson.features;
+  // const statesGeojson: any = await d3.json(
+  //   'https://gist.githubusercontent.com/d3indepth/f28e1c3a99ea6d84986f35ac8646fac7/raw/c58cede8dab4673c91a3db702d50f7447b373d98/ne_110m_land.json'
+  // );
+
+  // const fixedData = turf.rewind(statesGeojson, {
+  //   reverse: true,
+  //   mutate: true,
+  // }) as any;
+  // const featuresArr = fixedData;
 
   // filter out Alaska, Hawaii and Puerto Rico to fit on Canvas
-  const filteredFeaturesArr = featuresArr.filter((elem: any) => {
-    const { name } = elem.properties;
-    return name !== 'Alaska' && name !== 'Hawaii' && name !== 'Puerto Rico';
-  }) as unknown[];
+  // const filteredFeaturesArr = featuresArr.filter((elem: any) => {
+  //   const { name } = elem.properties;
+  //   return name !== 'Alaska' && name !== 'Hawaii' && name !== 'Puerto Rico';
+  // }) as unknown[];
 
-  const statesGeojsonCopy = { ...statesGeojson };
-  statesGeojsonCopy.features = filteredFeaturesArr;
+  // const filteredFeaturesArr = featuresArr.filter((elem: any) => {
+  //   const { name } = elem.properties;
+  //   return true;
+  // }) as unknown[];
+
+  // const statesGeojsonCopy = { ...statesGeojson };
+  // statesGeojsonCopy.features = filteredFeaturesArr;
 
   // create the counties geojson
   const countiesGeojson: any = await d3.json('assets/us-counties.geojson');
@@ -67,7 +88,7 @@ async function loadData() {
   }
 
   return {
-    states: statesGeojsonCopy,
+    states: statesGeojson,
     counties: countiesGeojsonCopy,
   };
 
@@ -101,89 +122,130 @@ async function loadData() {
   //     .plot(counties)
 }
 
-function createChart() {
-  const container = new d3MapLib.BaseContainer();
-  container.addPlot(new d3MapLib.CMapLayer());
-  // container.addPlot(new d3MapLib.CMapLayer());
+function Controls() {
+  const {
+    zoom,
+    setZoom,
+    translate,
+    setTranslate,
+    projection,
+    setProjection,
+    reposition,
+    setReposition,
+  } = useDensityMap();
 
-  container.attrs = {
-    ...container.attrs,
+  const setZoomFtn = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(changeEvent.target.value);
+    setZoom(+changeEvent.target.value);
   };
-  container.update();
-  return container;
+
+  const setXPosition = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(changeEvent.target.value);
+    setTranslate([+changeEvent.target.value, translate[1]]);
+  };
+
+  const setYPosition = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(changeEvent.target.value);
+    setTranslate([translate[0], +changeEvent.target.value]);
+  };
+
+  const setProjectionFtn = (proj: string) => {
+    setProjection(proj as keyof typeof Projections);
+  };
+
+  return (
+    <div>
+      <div className="flex flex-row">
+        <details className="dropdown">
+          <summary className="btn m-1">{projection as string}</summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+            {Projections.map((proj, id) => (
+              <li key={id}>
+                <button type="button" onClick={() => setProjectionFtn(proj)}>
+                  {proj}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+
+        <div>
+          <button
+            type="button"
+            className={cn('btn', {
+              'btn-active': reposition,
+            })}
+            onClick={() => setReposition(!reposition)}
+          >
+            Reposition Map
+          </button>
+        </div>
+      </div>
+
+      <input
+        type="range"
+        min={0}
+        max="450"
+        value={zoom}
+        className="range"
+        onChange={setZoomFtn}
+      />
+      <input
+        type="range"
+        min={0}
+        max="1000"
+        value={translate[0]}
+        className="range"
+        onChange={setXPosition}
+      />
+      <input
+        type="range"
+        min={0}
+        max="600"
+        value={translate[1]}
+        className="range"
+        onChange={setYPosition}
+      />
+    </div>
+  );
 }
 
-function updateChart(
-  chart: d3MapLib.BaseContainer,
-  html: HTMLDivElement,
-  data: tData
-) {
-  console.log('data for density map: ', data);
+function MapState() {
+  const { zoom, translate } = useDensityMap();
 
-  const geojson = data.states as { features: unknown[] };
-  // const restrictedStates = geojson.features.slice(0, 44);
-  const restrictedStates = geojson.features.slice(0, 44);
-  console.log('what is problem feature: ', geojson.features[45]);
-  const newGeojson = {
-    type: 'FeatureCollection',
-    features: restrictedStates,
-  } as any;
-
-  console.log('states vs restricted: ', data.states, newGeojson);
-
-  const states = chart.getPlots()[0];
-  states.attrs = {
-    ...states.attrs,
-    geojson: newGeojson,
-    style: 'stroke: Orange; stroke-width: 1px; fill-opacity: .1; fill: blue;',
-  } as d3MapLib.tPlotAttrs;
-
-  // const counties = chart.getPlots()[1];
-  // counties.attrs = {
-  //   ...counties.attrs,
-  //   json: data.counties,
-  //   //   onDrawMarker: () => d3.symbol().type(d3.symbolCircle).size(45)(),
-  // } as d3MapLib.tPlotAttrs;
-
-  const updatedAttrs = {
-    ...chart.attrs,
-    html,
-    chartWidth: 1000,
-    chartHeight: 500,
-  } as d3MapLib.tContainerAttrs;
-  // eslint-disable-next-line no-param-reassign
-  chart.attrs = updatedAttrs;
-  chart.update();
-
-  return chart;
+  return (
+    <div>
+      <span>
+        scale: <pre>{JSON.stringify(zoom)}</pre>
+      </span>
+      <span>
+        transform: <pre>{JSON.stringify(translate)}</pre>
+      </span>
+    </div>
+  );
 }
 
 function DensityMap() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const chart = useRef<d3MapLib.BaseContainer>(createChart());
-  const [chartAttrs, setChartAttrs] = useState<d3MapLib.tContainerAttrs | null>(
-    null
-  );
 
-  useLayoutEffect(() => {
-    if (ref.current === null) {
-      return;
-    }
+  const { setHTML, setStatesGeojson } = useDensityMap();
 
-    loadData()
-      .then((data) => {
-        if (!ref.current) {
-          return;
-        }
-        const updated = updateChart(chart.current, ref.current, data);
-        setChartAttrs(updated.attrs);
-      })
-      .catch(console.error);
+  useEffect(() => {
+    setHTML(ref.current);
+  }, [ref.current]);
+
+  useEffect(() => {
+    const setLoadedMapData = (loadedMapData: tLoadedMapData) => {
+      setStatesGeojson(loadedMapData.states);
+    };
+    loadData().then(setLoadedMapData).catch(console.error);
   }, []);
 
   return (
     <div>
       <span>Density Map</span>
+      <Controls />
+      <MapState />
       <div className="flex">
         <div className="h-[400px] w-[800px]" ref={ref} />
       </div>

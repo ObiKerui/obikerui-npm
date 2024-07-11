@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import * as d3 from 'd3-array';
 
 type tData = {
   date: string;
@@ -32,6 +33,32 @@ function sortToMonths(data: tData[]): Map<string, tData[]> {
       groupedData.set(month, arr);
     }
   });
+
+  const groupedAnother = d3.group(data, (entry) => {
+    const month = dayjs(entry.date).format('YYYY-MM');
+    return month;
+  });
+
+  const result = d3.rollup(
+    data,
+    (entries) => {
+      const totalEntries = entries.length;
+      const totalConsumption = entries.reduce(
+        (sum, entry) => sum + entry.consumption,
+        0
+      );
+      const totalExport = entries.reduce((sum, entry) => sum + entry.export, 0);
+      const totalPpkwh = entries.reduce((sum, entry) => sum + entry.ppkwh, 0);
+      return {
+        avgConsumption: totalConsumption / totalEntries,
+        avgExport: totalExport / totalEntries,
+        avgPPKWH: totalPpkwh / totalEntries,
+      } as tAveraged;
+    },
+    (entry) => dayjs(entry.date).format('YYYY-MM')
+  );
+  console.log('result: ', result);
+
   return groupedData;
 }
 

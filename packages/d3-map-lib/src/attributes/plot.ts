@@ -15,4 +15,4 @@ const plotAttributes = {
 };
 
 export default plotAttributes;
-export type tPlotAttrs = typeof plotAttributes;
+export type tPlotAttrsOld = typeof plotAttributes;

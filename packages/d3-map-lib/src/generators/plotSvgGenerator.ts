@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { tContainerAttrs } from '../attributes/container';
-import { tPlotAttrs } from '../attributes/plot';
+import { tPlotAttrsOld as tPlotAttrs } from '../attributes/plot';
 
 function plotSvgGenerator() {
   let obj: tPlotAttrs | null = null;

@@ -53,8 +53,6 @@ class Plot {
     const dataGen = d3.stack().keys(categories).order(d3.stackOrderAscending);
     const stackedData = dataGen(plotData as { [key: string]: number }[]);
 
-    // console.log('labels: ', labels, plotData, stackedData);
-
     container.attrs = {
       ...container.attrs,
       html: plotContainer,
@@ -77,7 +75,6 @@ class Plot {
     } as d3PlotLib.tPlotAttrs;
 
     container.update();
-    console.log('updated the container...');
   }
 }
 
