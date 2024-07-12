@@ -1,52 +1,48 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { atom, useAtom, useAtomValue } from 'jotai';
-import { Plot as StackedPlotObj, tModel } from './Plot';
-import { DataGrouper, tData } from './DataGrouper';
+import { Plot as StackedPlotObj } from './Plot';
+import { DataGrouper, tData, useChartData } from './DataGrouper';
 import { cn } from '../../Utils/CSS';
 
-const buttonStateAtom = atom<string>('years');
-const dataAtom = atom<tData[]>([]);
-
 function Options() {
-  const [buttonState, setButtonState] = useAtom(buttonStateAtom);
+  const { sorting, setSorting } = useChartData();
 
   return (
     <div className="flex gap-1">
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': buttonState === 'years',
+          'btn-active': sorting === 'months',
         })}
-        onClick={() => setButtonState('years')}
+        onClick={() => setSorting('months')}
       >
-        by Year
+        by Month
       </button>
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': buttonState === 'weeks',
+          'btn-active': sorting === 'weeks',
         })}
-        onClick={() => setButtonState('weeks')}
+        onClick={() => setSorting('weeks')}
       >
         by Week
       </button>
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': buttonState === 'days',
+          'btn-active': sorting === 'days',
         })}
-        onClick={() => setButtonState('days')}
+        onClick={() => setSorting('days')}
       >
         by Day
       </button>
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': buttonState === 'hours',
+          'btn-active': sorting === 'hours',
         })}
-        onClick={() => setButtonState('hours')}
+        onClick={() => setSorting('hours')}
       >
         by Hour
       </button>
@@ -57,53 +53,51 @@ function Options() {
 const stackedPlotInst = new StackedPlotObj();
 const grouper = new DataGrouper();
 
+useChartData.subscribe((newState) => {
+  stackedPlotInst.update(newState);
+});
+
 function StackedPlot() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [data, setData] = useAtom(dataAtom);
-  const timeFrame = useAtomValue(buttonStateAtom);
+  const { dataSeries, setDataSeries, sorting, setGroupedData, setChartRef } =
+    useChartData();
 
   useEffect(() => {
     let grouped = null;
-    switch (timeFrame) {
-      case 'years':
-        grouped = grouper.groupByMonths(data);
+    switch (sorting) {
+      case 'months':
+        grouped = grouper.groupByMonths(dataSeries);
         break;
       case 'weeks':
-        grouped = grouper.groupByWeeks(data);
+        grouped = grouper.groupByWeeks(dataSeries);
         break;
       case 'days':
-        grouped = grouper.groupByDays(data);
+        grouped = grouper.groupByDays(dataSeries);
         break;
       case 'hours':
-        grouped = grouper.groupByHours(data);
+        grouped = grouper.groupByHours(dataSeries);
         break;
       default:
-        grouped = grouper.groupByMonths(data);
+        grouped = grouper.groupByMonths(dataSeries);
     }
-    const { model } = stackedPlotInst;
-    const newModel = {
-      ...model,
-      container: ref.current,
-      plotData: grouped.data,
-      labels: grouped.labels,
-      colours: grouped.colours,
-      minMax: grouped.minMax,
-      categories: grouped.categories,
-    } as tModel;
 
-    stackedPlotInst.update(newModel);
-  }, [data, timeFrame]);
+    setGroupedData(grouped);
+  }, [sorting, dataSeries]);
 
   useEffect(() => {
     async function loadData() {
       const jsonData = (await d3.json(
         './assets/ConsumptionData/output.json'
       )) as unknown[];
-      setData(jsonData as tData[]);
+      setDataSeries(jsonData as tData[]);
     }
 
     loadData().catch(console.error);
   }, []);
+
+  useEffect(() => {
+    setChartRef(ref.current);
+  }, [ref.current]);
 
   return (
     <div>

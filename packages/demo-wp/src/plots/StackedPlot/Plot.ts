@@ -1,29 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
 import * as d3PlotLib from '@obikerui/d3-plot-lib';
-
-type tModel = {
-  container: HTMLDivElement | null;
-  plotData: unknown[];
-  minMax: [number, number];
-  labels: string[];
-  colours: string[];
-  categories: string[];
-};
+import { tChartData } from './DataGrouper';
 
 class Plot {
   container: d3PlotLib.CContainer;
-  model: tModel;
   constructor() {
-    this.model = {
-      container: null,
-      plotData: [],
-      minMax: [0, 0],
-      colours: [],
-      labels: [],
-      categories: [],
-    };
-
     const container = new d3PlotLib.CContainer();
     container.addPlot(new d3PlotLib.CStacked());
 
@@ -40,18 +22,19 @@ class Plot {
     this.container = container;
   }
 
-  update(model: tModel) {
+  update(model: tChartData) {
     const { container } = this;
-    const {
-      container: plotContainer,
-      plotData,
-      labels,
-      categories,
-      colours,
-    } = model;
+    const { chartRef: plotContainer, groupedData } = model;
+
+    if (!groupedData) {
+      return;
+    }
+    const { data: plotData, labels, categories, colours } = groupedData;
 
     const dataGen = d3.stack().keys(categories).order(d3.stackOrderAscending);
-    const stackedData = dataGen(plotData as { [key: string]: number }[]);
+    const stackedData = dataGen(
+      plotData as unknown as { [key: string]: number }[]
+    );
 
     container.attrs = {
       ...container.attrs,
@@ -78,5 +61,4 @@ class Plot {
   }
 }
 
-export type { tModel };
 export { Plot };

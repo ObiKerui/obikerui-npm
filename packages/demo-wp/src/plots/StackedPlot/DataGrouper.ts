@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import * as d3 from 'd3-array';
+import { create } from 'zustand';
 
 type tData = {
   date: string;
@@ -15,7 +16,40 @@ type tAveraged = {
   avgPPKWH: number;
 };
 
+type tGroupedData = {
+  labels: string[];
+  colours: string[];
+  categories: string[];
+  minMax: [number, number];
+  data: tAveraged[];
+};
+
 type tMonths = Map<string, tData[]>;
+
+const periods = ['months', 'weeks', 'days', 'hours'] as const;
+type tPeriod = (typeof periods)[number];
+
+type tChartData = {
+  chartRef: HTMLDivElement | null;
+  setChartRef: (newRef: HTMLDivElement | null) => void;
+  dataSeries: tData[];
+  setDataSeries: (newSeries: tData[]) => void;
+  sorting: tPeriod;
+  setSorting: (newSorting: tPeriod) => void;
+  groupedData: tGroupedData | null;
+  setGroupedData: (newData: tGroupedData) => void;
+};
+
+const useChartData = create<tChartData>((set) => ({
+  chartRef: null,
+  setChartRef: (newRef) => set({ chartRef: newRef }),
+  dataSeries: [],
+  setDataSeries: (newSeries) => set({ dataSeries: newSeries }),
+  sorting: 'months',
+  setSorting: (newSorting) => set({ sorting: newSorting }),
+  groupedData: null,
+  setGroupedData: (newData) => set({ groupedData: newData }),
+}));
 
 function sortToMonths(data: tData[]): Map<string, tData[]> {
   const groupedData = new Map<string, tData[]>();
@@ -119,26 +153,6 @@ function sortToHours(data: tData[]): Map<string, tData[]> {
   return groupedData;
 }
 
-// function sortToWeeks(data: tData[]): Map<string, tData[]> {
-//   const groupedData = new Map<string, tData[]>();
-
-//   // Group data by month using dayjs
-//   data.forEach((entry) => {
-//     const month = dayjs(entry.date).format('YYYY-MM');
-
-//     if (!groupedData.get(month)) {
-//       groupedData.set(month, []);
-//     }
-//     const arr = groupedData.get(month);
-//     if (arr) {
-//       arr.push(entry);
-//       groupedData.set(month, arr);
-//     }
-//   });
-
-//   return groupedData;
-// }
-
 function averageData(data: tMonths) {
   const result = Array.from(data).map(([key, entries]) => {
     const totalEntries = entries.length;
@@ -173,7 +187,7 @@ class DataGrouper {
       categories: ['avgConsumption', 'avgExport'],
       minMax: [0, 0],
       data: averaged,
-    };
+    } as tGroupedData;
   }
 
   groupByWeeks(data: tData[]) {
@@ -192,7 +206,7 @@ class DataGrouper {
       categories: ['avgConsumption', 'avgExport'],
       minMax: [0, 0],
       data: averaged,
-    };
+    } as tGroupedData;
   }
 
   groupByDays(data: tData[]) {
@@ -211,7 +225,7 @@ class DataGrouper {
       categories: ['avgConsumption', 'avgExport'],
       minMax: [0, 0],
       data: averaged,
-    };
+    } as tGroupedData;
   }
 
   groupByHours(data: tData[]) {
@@ -230,9 +244,9 @@ class DataGrouper {
       categories: ['avgConsumption', 'avgExport'],
       minMax: [0, 0],
       data: averaged,
-    };
+    } as tGroupedData;
   }
 }
 
-export type { tData };
-export { DataGrouper };
+export type { tData, tPeriod, tChartData };
+export { DataGrouper, useChartData };
