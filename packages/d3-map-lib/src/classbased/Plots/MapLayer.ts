@@ -29,7 +29,7 @@ class CMapLayer extends PlotBase {
       return;
     }
 
-    const { geojson } = attrs;
+    const { geojson, onGetSelections, visible } = attrs;
 
     if (!geojson || !geojson.features || geojson.features.length === 0) {
       return;
@@ -59,7 +59,12 @@ class CMapLayer extends PlotBase {
     boundaries
       .attr('d', pathCreator as any)
       .style('fill', 'blue')
-      .style('stroke', 'black');
+      .style('stroke', 'black')
+      .style('visibility', visible ? 'visible' : 'hidden');
+
+    if (onGetSelections) {
+      onGetSelections(boundaries);
+    }
 
     let graticulePath = mapGroup.select('.graticule path').datum(graticule());
 

@@ -1,21 +1,9 @@
 import * as d3MapLib from '@obikerui/d3-map-lib';
+import * as d3 from 'd3';
 import { create } from 'zustand';
 
-const Projections = [
-  'AzimuthalEqualArea',
-  'AzimuthalEquidistant',
-  'Gnomonic',
-  'Orthographic',
-  'Stereographic',
-  'Albers',
-  'ConicConformal',
-  'ConicEqualArea',
-  'ConicEquidistant',
-  'Equirectangular',
-  'Stereographic',
-  'Mercator',
-  'TransverseMercator',
-] as const;
+const Metrics = ['unemployment'] as const;
+const Groupings = ['By State', 'By County'] as const;
 
 type tMapModel = {
   html: HTMLDivElement | null;
@@ -24,27 +12,45 @@ type tMapModel = {
   setZoom: (newZoom: number) => void;
   translate: [number, number];
   setTranslate: (newTranslate: [number, number]) => void;
-  projection: keyof typeof Projections;
-  setProjection: (newProjection: keyof typeof Projections) => void;
+  metric: keyof typeof Metrics;
+  setMetric: (newValue: keyof typeof Metrics) => void;
+  grouping: keyof typeof Groupings;
+  setGrouping: (newValue: keyof typeof Groupings) => void;
   statesGeojson: unknown;
   setStatesGeojson: (newValue: unknown) => void;
-  reposition: boolean;
-  setReposition: (newValue: boolean) => void;
+  unemploymentCSV: unknown;
+  setUnemploymentCSV: (newValue: unknown) => void;
+  countiesGeojson: unknown;
+  setCountiesGeojson: (newValue: unknown) => void;
+  groupedMetricByCounties: Map<string, number>;
+  setGroupedMetricByCounties: (newValue: Map<string, number>) => void;
+  groupedMetricByStates: Map<string, number>;
+  setGroupedMetricByStates: (newValue: Map<string, number>) => void;
 };
 
 const useDensityMap = create<tMapModel>((set) => ({
   html: null,
   setHTML: (newHTML) => set({ html: newHTML }),
-  zoom: 140,
+  zoom: 430,
   setZoom: (newZoom) => set({ zoom: newZoom }),
-  translate: [450, 250] as [number, number],
+  translate: [1000, 460] as [number, number],
   setTranslate: (newTranslate) => set({ translate: newTranslate }),
-  projection: 'Mercator' as keyof typeof Projections,
-  setProjection: (newProjection) => set({ projection: newProjection }),
+  metric: 'unemployment' as keyof typeof Metrics,
+  setMetric: (newValue) => set({ metric: newValue }),
+  grouping: 'By County' as keyof typeof Groupings,
+  setGrouping: (newValue) => set({ grouping: newValue }),
   statesGeojson: null,
   setStatesGeojson: (newValue) => set({ statesGeojson: newValue }),
-  reposition: false,
-  setReposition: (newValue) => set({ reposition: newValue }),
+  unemploymentCSV: null,
+  setUnemploymentCSV: (newValue) => set({ unemploymentCSV: newValue }),
+  countiesGeojson: null,
+  setCountiesGeojson: (newValue) => set({ countiesGeojson: newValue }),
+  groupedMetricByCounties: new Map<string, number>(),
+  setGroupedMetricByCounties: (newValue: Map<string, number>) =>
+    set({ groupedMetricByCounties: newValue }),
+  groupedMetricByStates: new Map<string, number>(),
+  setGroupedMetricByStates: (newValue: Map<string, number>) =>
+    set({ groupedMetricByStates: newValue }),
 }));
 
 type tFeatureCollection = {
@@ -58,7 +64,7 @@ class DensityMap {
   constructor() {
     this.container = new d3MapLib.BaseContainer();
     this.container.addPlot(new d3MapLib.CMapLayer());
-    this.container.addPlot(new d3MapLib.CPosition());
+    this.container.addPlot(new d3MapLib.CMapLayer());
 
     this.container.attrs = {
       ...this.container.attrs,
@@ -66,11 +72,53 @@ class DensityMap {
     this.container.update();
   }
 
-  // update(model: tModel) {
+  computeMinMaxRate(groupedData: Map<string, number>) {
+    const extentRate = d3.extent(Array.from(groupedData.values()));
+    return [extentRate[0] ?? 0, extentRate[1] ?? 0] as [number, number];
+  }
+
+  getColourScale(minMax: [number, number]) {
+    const colorScale = d3
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .scaleSequential((t: any) =>
+        // return d3.interpolateViridis(t)
+        d3.interpolateReds(t)
+      )
+      .domain(minMax);
+
+    return colorScale;
+  }
+
+  getCountyMetric(dataPoint: unknown, groupedData: Map<string, number>) {
+    const dpoint = dataPoint as {
+      properties: {
+        GEOID: string;
+      };
+    };
+    return groupedData.get(dpoint.properties.GEOID);
+  }
+
+  getStateMetric(dataPoint: unknown, groupedData: Map<string, number>) {
+    const dpoint = dataPoint as {
+      properties: {
+        name: string;
+      };
+    };
+    return groupedData.get(dpoint.properties.name);
+  }
+
   update(model: tMapModel) {
-    const { statesGeojson, html, zoom, translate, projection, reposition } =
-      model;
-    const { container } = this;
+    const {
+      statesGeojson,
+      countiesGeojson,
+      html,
+      zoom,
+      translate,
+      groupedMetricByStates,
+      groupedMetricByCounties,
+      grouping,
+    } = model;
+    const { container, getCountyMetric, getStateMetric } = this;
 
     let mapData = {
       type: 'FeatureCollection',
@@ -81,63 +129,60 @@ class DensityMap {
       mapData = statesGeojson as tFeatureCollection;
     }
 
-    const states = this.container.getPlots()[0];
+    let countyData = {
+      type: 'FeatureCollection',
+      features: [] as unknown[],
+    } as tFeatureCollection;
+
+    if (countiesGeojson) {
+      countyData = countiesGeojson as tFeatureCollection;
+    }
+
+    const countyMinMax = this.computeMinMaxRate(groupedMetricByCounties);
+    const countyColourScale = this.getColourScale(countyMinMax);
+
+    const stateMinMax = this.computeMinMaxRate(groupedMetricByStates);
+    const stateColourScale = this.getColourScale(stateMinMax);
+
+    const states = container.getPlots()[0];
     states.attrs = {
       ...states.attrs,
       zoom,
       position: translate,
       geojson: mapData,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      projectionType: projection as any,
-      style: 'stroke: Orange; stroke-width: 1px; fill-opacity: .1; fill: blue;',
-      onMouseDown: (pos) => {
-        states.attrs.mouseDownOffset = pos;
-        states.attrs.mouseDownPosition = states.attrs.position;
-      },
-      onDrag: (pos) => {
-        const offset = states.attrs.mouseDownOffset;
-        const oldPosition = states.attrs.mouseDownPosition;
-
-        const offsetX = pos[0] - offset[0];
-        const offsetY = pos[1] - offset[1];
-
-        const newPosX = oldPosition[0] + offsetX;
-        const newPosY = oldPosition[1] + offsetY;
-
-        container.update();
-        const { setTranslate } = useDensityMap.getState();
-        setTranslate([newPosX, newPosY]);
+      projectionType: 'Mercator' as any,
+      onGetSelections: (selections) => {
+        selections.style('fill', (data) => {
+          const value = getStateMetric(data, groupedMetricByStates);
+          const colour = stateColourScale(value as unknown as number);
+          return colour ?? 'none';
+        });
       },
     };
 
-    const positionLayer = this.container.getPlots()[1];
-    positionLayer.attrs = {
-      ...positionLayer.attrs,
-      active: reposition,
-      onMouseDown: (pos) => {
-        if (states.attrs.onMouseDown) states.attrs.onMouseDown(pos);
-      },
-      onDrag: (pos) => {
-        if (states.attrs.onDrag) states.attrs.onDrag(pos);
-      },
-      onZoomIn: () => {
-        states.attrs.zoom += 1;
-        container.update();
-
-        const { setZoom } = useDensityMap.getState();
-        setZoom(states.attrs.zoom);
-      },
-      onZoomOut: () => {
-        states.attrs.zoom -= 1;
-        container.update();
-
-        const { setZoom } = useDensityMap.getState();
-        setZoom(states.attrs.zoom);
+    const counties = container.getPlots()[1];
+    counties.attrs = {
+      ...counties.attrs,
+      zoom,
+      position: translate,
+      geojson: countyData,
+      visible: grouping === ('By County' as keyof typeof Groupings),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      projectionType: 'Mercator' as any,
+      onGetSelections: (selections) => {
+        selections
+          .style('fill', (data) => {
+            const value = getCountyMetric(data, groupedMetricByCounties);
+            const colour = countyColourScale(value as unknown as number);
+            return colour ?? 'none';
+          })
+          .style('stroke', 'none');
       },
     };
 
     const updatedAttrs = {
-      ...this.container.attrs,
+      ...container.attrs,
       html,
       chartWidth: 1000,
       chartHeight: 500,
@@ -156,14 +201,8 @@ class DensityMap {
 const densityMapObj = new DensityMap();
 
 // Subscribe to store updates
-// const unsubscribe = useMapProperties.subscribe((newState) => {
-//   // console.log('State changed:', prevState, '->', newState);
-//   densityMapObj.update(newState);
-// });
-
-// Subscribe to store updates
 useDensityMap.subscribe((newState) => {
   densityMapObj.update(newState);
 });
 
-export { Projections, DensityMap, useDensityMap };
+export { Metrics, Groupings, DensityMap, useDensityMap };

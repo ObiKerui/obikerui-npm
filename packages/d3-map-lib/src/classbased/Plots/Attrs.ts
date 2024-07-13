@@ -55,6 +55,16 @@ const LayerAttrs = {
   position: [0, 0] as [number, number],
   centre: [0, 0] as [number, number],
   rotation: [0.1, 0, 0] as [number, number, number],
+  visible: true as boolean,
+};
+
+type tSVGPathSelectionsCallback = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  selections: d3.Selection<SVGPathElement, unknown, SVGElement, any>
+) => void;
+
+const InteractionAttrs = {
+  onGetSelections: null as tSVGPathSelectionsCallback | null,
 };
 
 type tCallback = (position: [number, number]) => void;
@@ -79,6 +89,7 @@ const PlotAttrs = {
   ...defaultPlotAttrs,
   ...MarkerAttrs,
   ...LayerAttrs,
+  ...InteractionAttrs,
   ...PositionAttrs,
 };
 

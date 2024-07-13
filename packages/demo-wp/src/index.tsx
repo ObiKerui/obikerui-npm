@@ -28,8 +28,11 @@ import './style.css';
 import { Histogram } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
 import { StackedPlot } from './plots/StackedPlot/Component';
+
 import { LeafletMap } from './maps/LeafletMap/Component';
+import { BasicMap } from './maps/BasicMap/Component';
 import { DensityMap } from './maps/DensityMap/Component';
+
 import { Dashboard as VPPDashboard } from './vpp/Dashboard/Dashboard';
 
 import { AppProvider, useAppProvider } from './AppProvider/Provider';
@@ -95,6 +98,7 @@ function Maps() {
     <div>
       {/* <MapPlotContainer /> */}
       <LeafletMap />
+      <BasicMap />
       <DensityMap />
     </div>
   );
