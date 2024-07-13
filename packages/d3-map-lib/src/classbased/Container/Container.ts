@@ -7,6 +7,7 @@ import { GridGenerator } from './GridGenerator';
 import { tContainerAttrs, tMetadata, tPlot } from '../sharedTypes';
 import { LeafletGenerator } from './LeafletGenerator';
 import { SVGGenerator } from './SVGGenerator';
+import { ClipPathGenerator } from './ClipPathGenerator';
 
 class CContainer {
   attrs: tContainerAttrs;
@@ -16,6 +17,8 @@ class CContainer {
   gridGenerator: GridGenerator;
 
   labelGenerator: LabelGenerator;
+
+  clipPathGenerator: ClipPathGenerator;
 
   plots: tPlot[];
 
@@ -28,6 +31,7 @@ class CContainer {
     this.axisGenerator = new AxisGenerator(this);
     this.gridGenerator = new GridGenerator(this);
     this.labelGenerator = new LabelGenerator(this);
+    this.clipPathGenerator = new ClipPathGenerator(this);
   }
 
   update() {
@@ -63,6 +67,7 @@ class CContainer {
       plot.update(attrs);
     });
 
+    this.clipPathGenerator.update();
     this.axisGenerator.update();
     this.labelGenerator.update();
     this.gridGenerator.update();
