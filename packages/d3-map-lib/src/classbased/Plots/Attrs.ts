@@ -85,14 +85,28 @@ const PositionAttrs = {
   onZoomIn: null as tCallback | null,
 };
 
+type tMapFeature = { coords: [number, number]; data: unknown };
+type tComputeColourScaleCB = (extent: [number, number]) => CallableFunction;
+
+const FeatureAttrs = {
+  mapFeatures: [] as tMapFeature[],
+};
+
+const HexMapAttrs = {
+  radius: 1 as number,
+  onComputeColourScale: null as tComputeColourScaleCB | null,
+};
+
 const PlotAttrs = {
   ...defaultPlotAttrs,
   ...MarkerAttrs,
   ...LayerAttrs,
   ...InteractionAttrs,
   ...PositionAttrs,
+  ...FeatureAttrs,
+  ...HexMapAttrs,
 };
 
 type tPlotAttrs = typeof PlotAttrs;
-export type { tPlotAttrs, tFeatureCollection, tProjection };
+export type { tPlotAttrs, tFeatureCollection, tProjection, tMapFeature };
 export { PlotAttrs, Projections };

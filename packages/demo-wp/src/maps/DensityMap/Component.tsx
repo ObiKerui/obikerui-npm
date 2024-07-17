@@ -37,20 +37,6 @@ async function loadData() {
   // add the unemployment rate data
   const unemploymentCsv = await d3.csv('assets/unemployment-x.csv');
 
-  console.log('what is unemployment csv: ', unemploymentCsv);
-
-  //   const minMaxUnemploymentRate = d3.extent(
-  //     unemploymentCsv,
-  //     (elem: any) => +elem.rate
-  //   );
-
-  //   const colorScale = d3
-  //     .scaleSequential((t: any) =>
-  //       // return d3.interpolateViridis(t)
-  //       d3.interpolateReds(t)
-  //     )
-  //     .domain([minMaxUnemploymentRate[0], minMaxUnemploymentRate[1]])
-
   // match up the unemployment rate with the county
   for (let i = 0; i < countiesGeojsonCopy.features.length; i += 1) {
     const county = countiesGeojsonCopy.features[i];

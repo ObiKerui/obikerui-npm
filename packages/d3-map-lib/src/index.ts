@@ -15,6 +15,8 @@ import {
 import { Path } from './classbased/Plots/Path';
 import { Markers as CMarkers } from './classbased/Plots/Markers';
 import { CMapLayer } from './classbased/Plots/MapLayer';
+import { CHexLayer } from './classbased/Plots/HexLayer';
+import { CHexMask } from './classbased/Plots/HexMask';
 import { CPosition } from './classbased/Plots/Position';
 
 export {
@@ -28,5 +30,7 @@ export {
   Path,
   CMarkers,
   CMapLayer,
+  CHexLayer,
+  CHexMask,
   CPosition,
 };

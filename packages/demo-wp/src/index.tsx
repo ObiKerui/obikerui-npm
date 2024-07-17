@@ -36,6 +36,7 @@ import { DensityMap } from './maps/DensityMap/Component';
 import { Dashboard as VPPDashboard } from './vpp/Dashboard/Dashboard';
 
 import { AppProvider, useAppProvider } from './AppProvider/Provider';
+import { HexbinMap } from './maps/HexbinMap/Component';
 
 function Root() {
   const { model, controller } = useAppProvider();
@@ -96,10 +97,10 @@ function Plots() {
 function Maps() {
   return (
     <div>
-      {/* <MapPlotContainer /> */}
       <LeafletMap />
       <BasicMap />
       <DensityMap />
+      <HexbinMap />
     </div>
   );
 }
