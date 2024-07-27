@@ -39,6 +39,10 @@ class Plot {
     container.attrs = {
       ...container.attrs,
       html: plotContainer,
+      xAxisText: {
+        rotation: 45,
+        onRender: (d) => d,
+      },
       onGetXScale: (chartWidth: number) =>
         d3
           .scaleBand()

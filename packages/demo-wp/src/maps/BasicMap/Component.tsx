@@ -5,13 +5,6 @@ import { useEffect, useRef } from 'react';
 import { useDensityMap, Projections } from './Map';
 import { cn } from '../../Utils/CSS';
 
-// const mapProperties = atom({
-//   zoom: 140,
-//   translate: [450, 250] as [number, number],
-// });
-
-// const densityMapObj = new DensityMapObj();
-
 type tLoadedMapData = {
   states: unknown;
   counties: unknown;
@@ -20,29 +13,12 @@ type tLoadedMapData = {
 async function loadData() {
   // create the states geojson
   const statesGeojson: any = await d3.json('assets/us-states.geojson');
-  // const statesGeojson: any = await d3.json(
-  //   'https://gist.githubusercontent.com/d3indepth/f28e1c3a99ea6d84986f35ac8646fac7/raw/c58cede8dab4673c91a3db702d50f7447b373d98/ne_110m_land.json'
-  // );
-
-  // const fixedData = turf.rewind(statesGeojson, {
-  //   reverse: true,
-  //   mutate: true,
-  // }) as any;
-  // const featuresArr = fixedData;
 
   // filter out Alaska, Hawaii and Puerto Rico to fit on Canvas
   // const filteredFeaturesArr = featuresArr.filter((elem: any) => {
   //   const { name } = elem.properties;
   //   return name !== 'Alaska' && name !== 'Hawaii' && name !== 'Puerto Rico';
   // }) as unknown[];
-
-  // const filteredFeaturesArr = featuresArr.filter((elem: any) => {
-  //   const { name } = elem.properties;
-  //   return true;
-  // }) as unknown[];
-
-  // const statesGeojsonCopy = { ...statesGeojson };
-  // statesGeojsonCopy.features = filteredFeaturesArr;
 
   // create the counties geojson
   const countiesGeojson: any = await d3.json('assets/us-counties.geojson');
@@ -57,18 +33,6 @@ async function loadData() {
 
   // add the unemployment rate data
   const unemploymentCsv = await d3.csv('assets/unemployment-x.csv');
-
-  //   const minMaxUnemploymentRate = d3.extent(
-  //     unemploymentCsv,
-  //     (elem: any) => +elem.rate
-  //   );
-
-  //   const colorScale = d3
-  //     .scaleSequential((t: any) =>
-  //       // return d3.interpolateViridis(t)
-  //       d3.interpolateReds(t)
-  //     )
-  //     .domain([minMaxUnemploymentRate[0], minMaxUnemploymentRate[1]])
 
   // match up the unemployment rate with the county
   for (let i = 0; i < countiesGeojsonCopy.features.length; i += 1) {
@@ -91,35 +55,6 @@ async function loadData() {
     states: statesGeojson,
     counties: countiesGeojsonCopy,
   };
-
-  //   const projector = d3PlotLib.DevMapProjection().projection(d3.geoAlbers())
-
-  //   const counties = (d3PlotLib.DevMapLayer() as any)
-  //     .geojson(statesGeojsonCopy)
-  //     .onStyle(() => `stroke: Brown; stroke-width: .4; fill-opacity: 0;`)
-
-  //   const unemployment = (d3PlotLib.DevMapLayer() as any)
-  //     .geojson(countiesGeojsonCopy)
-  //     .onStyle((args: any) => {
-  //       const { elem } = args
-  //       const { rate } = elem.properties
-  //       const colour = colorScale(rate)
-  //       return `
-  //         stroke: Orange;
-  //         stroke-width: .1;
-  //         fill-opacity: 1;
-  //         fill: ${colour};
-  //       `
-  //     })
-
-  //   const zoomer = d3PlotLib.DevZoom()
-
-  //   const container = (d3PlotLib.DevMapContainer() as any)
-  //     .margin({ left: 10, right: 10, top: 10, bottom: 10 })
-  //     .zoomer(zoomer)
-  //     .projector(projector)
-  //     .plot(unemployment)
-  //     .plot(counties)
 }
 
 function Controls() {

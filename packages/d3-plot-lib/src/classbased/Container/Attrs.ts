@@ -19,6 +19,7 @@ const ContainerAttrs = {
   xAxisShow: true,
   xAxisText: {
     rotation: 0 as number,
+    onRender: null as ((d: unknown, ith: number) => unknown) | null,
   },
   xAxisLabelOffset: 50,
   xScale: null as AxisScale<AxisDomain> | null,

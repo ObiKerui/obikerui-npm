@@ -20,6 +20,7 @@ import AttrsGenerator from './generators/attributeGenerator';
 
 // new class based objects
 import { CContainer } from './classbased/Container/Container';
+import { CBar } from './classbased/Plots/Bar';
 import { CHeatmap } from './classbased/Plots/Heatmap';
 import { CMarkers } from './classbased/Plots/Markers';
 import { CText } from './classbased/Plots/Text';
@@ -28,6 +29,7 @@ import { CHistogram } from './classbased/Plots/Histogram';
 import { CFillArea } from './classbased/Plots/FillArea';
 import { CGroupedBar } from './classbased/Plots/GroupedBar';
 import { CStacked } from './classbased/Plots/StackedPlot';
+import { CScatter } from './classbased/Plots/Scatter';
 
 import { CLegend } from './classbased/Metadata/Legend';
 
@@ -50,6 +52,7 @@ export {
   Interactor,
   IntersectDetector,
   CContainer,
+  CBar,
   CHeatmap,
   CMarkers,
   CText,
@@ -59,4 +62,5 @@ export {
   CGroupedBar,
   CLegend,
   CStacked,
+  CScatter,
 };

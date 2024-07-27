@@ -77,9 +77,12 @@ class AxisGenerator {
         .attr('transform', `translate(0,${attrs.chartHeight})`)
         .call(attrs.xAxis as any);
 
+      const renderCBFtn = attrs.xAxisText.onRender;
+
       attrs.svg
         .select('.x-axis-group.axis')
         .selectAll('text')
+        .text((d: any, ith: number) => (renderCBFtn ? renderCBFtn(d, ith) : d))
         .style('font', '10px Arial, sans-serif')
         .style('text-anchor', xAxisTextAnchor)
         .attr('dx', xAxisTextDX)

@@ -9,7 +9,7 @@ const defaultPlotAttrs = {
   xs: [] as d3.AxisDomain[],
   ys: [] as d3.AxisDomain[] | d3.AxisDomain[][],
   values: [] as number[],
-  alpha: 0,
+  alpha: 1,
   labels: [] as string[],
   colours: [] as string[],
   colourScale: null as unknown,
@@ -30,6 +30,24 @@ const defaultPlotAttrs = {
   onGetXScale: null as ((chartWidth: number) => unknown) | null,
   onGetYScale: null as ((chartHeight: number) => unknown) | null,
   onGetColourScale: null as (() => CallableFunction) | null,
+};
+
+type tScatterGroupSelection = d3.Selection<
+  SVGGElement,
+  unknown,
+  d3.BaseType,
+  any
+>;
+
+const ScatterAttrs = {
+  onSetPlotGroupAttrs: null as
+    | ((selection: tScatterGroupSelection) => void)
+    | null,
+};
+
+const BarAttrs = {
+  onGetLabel: null as ((data: unknown, ith: number) => string) | null,
+  onGetValue: null as ((data: unknown, ith: number) => number) | null,
 };
 
 const HistogramAttrs = {
@@ -59,6 +77,8 @@ const stackedAttrs = {
 
 const PlotAttrs = {
   ...defaultPlotAttrs,
+  ...ScatterAttrs,
+  ...BarAttrs,
   ...HistogramAttrs,
   ...FillAttrs,
   ...GroupedBarAttrs,
@@ -67,4 +87,4 @@ const PlotAttrs = {
 
 export default PlotAttrs;
 type tPlotAttrs = typeof PlotAttrs;
-export type { tPlotAttrs, tConditionParam };
+export type { tPlotAttrs, tConditionParam, tScatterGroupSelection };

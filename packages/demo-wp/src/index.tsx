@@ -6,11 +6,14 @@ import ErrorPage from './ErrorPage';
 import Sidebar from './Sidebar';
 import './index.css';
 
-import { BarPlotContainer } from './plots/BarPlot/BarPlot';
+// import { BarPlotContainer } from './plots/BarPlot/BarPlot';
+
+import { BarPlot } from './plots/BarPlot/Component';
+
 import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
 import { LinePlotContainer } from './plots/LinePlot/LinePlot';
 import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
-import { ScatterPlotContainer } from './plots/ScatterPlot/ScatterPlot';
+// import { ScatterPlot } from './plots/ScatterPlot/ScatterPlot';
 // import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
@@ -28,6 +31,7 @@ import './style.css';
 import { Histogram } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
 import { StackedPlot } from './plots/StackedPlot/Component';
+import { ScatterPlot } from './plots/ScatterPlot/Component';
 
 import { LeafletMap } from './maps/LeafletMap/Component';
 import { BasicMap } from './maps/BasicMap/Component';
@@ -82,8 +86,8 @@ function RootContainer() {
 function Plots() {
   return (
     <div className="bg-base-100 p-4">
-      <BarPlotContainer />
-      <ScatterPlotContainer />
+      <BarPlot />
+      <ScatterPlot />
       <LinePlotContainer />
       <LinePlotContainerB />
       <DynamicPlotContainer />

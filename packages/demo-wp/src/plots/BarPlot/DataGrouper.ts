@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import * as d3 from 'd3-array';
-import { create } from 'zustand';
 
 type tData = {
   date: string;
@@ -26,30 +25,30 @@ type tGroupedData = {
 
 type tMonths = Map<string, tData[]>;
 
-const periods = ['months', 'weeks', 'days', 'hours'] as const;
-type tPeriod = (typeof periods)[number];
+const TimePeriods = ['months', 'weeks', 'days', 'hours'] as const;
+type tPeriod = (typeof TimePeriods)[number];
+
+const Metric = ['Avg Consumption', 'Avg Export', 'Avg Price Per KwH'] as const;
+type tMetric = (typeof Metric)[number];
 
 type tChartData = {
   chartRef: HTMLDivElement | null;
-  setChartRef: (newRef: HTMLDivElement | null) => void;
   dataSeries: tData[];
-  setDataSeries: (newSeries: tData[]) => void;
   sorting: tPeriod;
-  setSorting: (newSorting: tPeriod) => void;
   groupedData: tGroupedData | null;
-  setGroupedData: (newData: tGroupedData) => void;
+  metric: tMetric;
 };
 
-const useChartData = create<tChartData>((set) => ({
-  chartRef: null,
-  setChartRef: (newRef) => set({ chartRef: newRef }),
-  dataSeries: [],
-  setDataSeries: (newSeries) => set({ dataSeries: newSeries }),
-  sorting: 'months',
-  setSorting: (newSorting) => set({ sorting: newSorting }),
-  groupedData: null,
-  setGroupedData: (newData) => set({ groupedData: newData }),
-}));
+// const useChartData = create<tChartData>((set) => ({
+//   chartRef: null,
+//   setChartRef: (newRef) => set({ chartRef: newRef }),
+//   dataSeries: [],
+//   setDataSeries: (newSeries) => set({ dataSeries: newSeries }),
+//   sorting: 'months',
+//   setSorting: (newSorting) => set({ sorting: newSorting }),
+//   groupedData: null,
+//   setGroupedData: (newData) => set({ groupedData: newData }),
+// }));
 
 function sortToMonths(data: tData[]): Map<string, tData[]> {
   const groupedData = new Map<string, tData[]>();
@@ -248,5 +247,5 @@ class DataGrouper {
   }
 }
 
-export type { tData, tPeriod, tChartData };
-export { DataGrouper, useChartData };
+export type { tData, tPeriod, tGroupedData, tChartData, tAveraged, tMetric };
+export { DataGrouper, TimePeriods, Metric };
