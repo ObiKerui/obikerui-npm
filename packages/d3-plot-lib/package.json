@@ -1,6 +1,6 @@
 {
   "name": "@obikerui/d3-plot-lib",
-  "version": "3.0.0-alpha.1",
+  "version": "4.0.0-alpha.1",
   "main": "dist/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack --config webpack.config.js",
