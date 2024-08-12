@@ -21,7 +21,6 @@ function DNOMap() {
   useEffect(() => {
     loadData()
       .then((geojson: unknown) => {
-        console.log('set the geojson: ', geojson);
         setStatesGeojson(geojson);
       })
       .catch(console.error);
@@ -29,7 +28,7 @@ function DNOMap() {
 
   return (
     <div className="relative flex flex-row border border-blue-900">
-      <div className="h-[2000px] w-[700px] min-w-[700px]" ref={mapRef} />
+      <div className="h-[750px] w-[700px] min-w-[700px]" ref={mapRef} />
     </div>
   );
 }

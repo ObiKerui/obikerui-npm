@@ -21,9 +21,6 @@ class CScatter extends PlotBase {
     //   .domain(labels)
     //   .range(['blue']);
 
-    // BAR implementation starts...
-    console.log('in scatter what is data / labels?: ', data, labels);
-
     // select all rect in svg.chart-group with the class bar
     let plotGroups = chartGroup
       .selectAll<SVGGElement, number>('g.plot-groups')

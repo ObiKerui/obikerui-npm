@@ -24,6 +24,11 @@ type tGroupedData = {
   data: tAveraged[];
 };
 
+type tAverageData = {
+  key: string;
+  value: number;
+};
+
 type tMonths = Map<string, tData[]>;
 
 const periods = ['months', 'weeks', 'days', 'hours'] as const;
@@ -38,6 +43,8 @@ type tChartData = {
   setSorting: (newSorting: tPeriod) => void;
   groupedData: tGroupedData | null;
   setGroupedData: (newData: tGroupedData) => void;
+  averageData: tAverageData[];
+  setAverageData: (newData: tAverageData[]) => void;
 };
 
 const useChartData = create<tChartData>((set) => ({
@@ -49,6 +56,8 @@ const useChartData = create<tChartData>((set) => ({
   setSorting: (newSorting) => set({ sorting: newSorting }),
   groupedData: null,
   setGroupedData: (newData) => set({ groupedData: newData }),
+  averageData: [],
+  setAverageData: (newData) => set({ averageData: newData }),
 }));
 
 function sortToMonths(data: tData[]): Map<string, tData[]> {
@@ -248,5 +257,20 @@ class DataGrouper {
   }
 }
 
-export type { tData, tPeriod, tChartData };
-export { DataGrouper, useChartData };
+class LineData {
+  averaged(groupedData: tGroupedData) {
+    const { data } = groupedData;
+    const transformed = data.map((elem) => {
+      const value =
+        (elem.avgConsumption + elem.avgExport + elem.avgPPKWH) / 3.0;
+      return {
+        key: elem.key,
+        value: value + Math.random() * 4,
+      };
+    });
+    return transformed;
+  }
+}
+
+export type { tData, tPeriod, tChartData, tAverageData };
+export { DataGrouper, LineData, useChartData };

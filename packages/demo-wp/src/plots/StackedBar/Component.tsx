@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { Plot as StackedPlotObj } from './Plot';
-import { DataGrouper, tData, useChartData } from './DataGrouper';
+import { DataGrouper, LineData, tData, useChartData } from './DataGrouper';
 import { cn } from '../../Utils/CSS';
 
 function Options() {
@@ -52,6 +52,7 @@ function Options() {
 
 const stackedPlotInst = new StackedPlotObj();
 const grouper = new DataGrouper();
+const lineData = new LineData();
 
 useChartData.subscribe((newState) => {
   stackedPlotInst.update(newState);
@@ -59,11 +60,18 @@ useChartData.subscribe((newState) => {
 
 function StackedPlot() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const { dataSeries, setDataSeries, sorting, setGroupedData, setChartRef } =
-    useChartData();
+  const {
+    dataSeries,
+    setDataSeries,
+    sorting,
+    setGroupedData,
+    setChartRef,
+    setAverageData,
+  } = useChartData();
 
   useEffect(() => {
     let grouped = null;
+
     switch (sorting) {
       case 'months':
         grouped = grouper.groupByMonths(dataSeries);
@@ -81,7 +89,10 @@ function StackedPlot() {
         grouped = grouper.groupByMonths(dataSeries);
     }
 
+    const lineDataArr = lineData.averaged(grouped);
+
     setGroupedData(grouped);
+    setAverageData(lineDataArr);
   }, [sorting, dataSeries]);
 
   useEffect(() => {

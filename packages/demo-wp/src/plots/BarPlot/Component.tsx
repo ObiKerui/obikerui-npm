@@ -10,6 +10,8 @@ import {
   Metric,
 } from './DataGrouper';
 
+import { Codesandbox as CSBIcon } from '../../Utils/CodeSandboxLink';
+
 const BarPlotAtom = atom<tChartData>({
   chartRef: null,
   dataSeries: [],
@@ -89,7 +91,6 @@ function BarPlot() {
   const { sorting, dataSeries } = barPlot;
 
   useEffect(() => {
-    console.log('sorting or data series changed: ', sorting, dataSeries);
     let grouped = null;
     switch (sorting) {
       case 'months':
@@ -136,10 +137,21 @@ function BarPlot() {
 
   return (
     <div>
-      <span>Bar Plot</span>
+      <h1 className="text-lg font-bold">Bar Plot</h1>
       <Controls />
       <div className="flex gap-4">
         <div className="w-[800px]" ref={ref} />
+      </div>
+      <div>
+        <a
+          className="link"
+          href="https://codesandbox.io/p/sandbox/angry-frog-rk34ym"
+        >
+          <span className="flex flex-row text-center align-middle">
+            <CSBIcon />
+            <span className="text-xl">Edit in Codesandbox</span>
+          </span>
+        </a>
       </div>
     </div>
   );

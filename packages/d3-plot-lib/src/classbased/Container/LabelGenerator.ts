@@ -40,6 +40,7 @@ class LabelGenerator {
         .attr('y', attrs.yAxisLabelOffset)
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(270 0 0)')
+        .style('fill', 'currentColor')
         .text(attrs.yAxisLabel);
     }
 
@@ -56,6 +57,7 @@ class LabelGenerator {
         .attr('text-anchor', 'middle')
         .classed('x-axis-label-text', true)
         .attr('x', attrs.chartWidth / 2)
+        .style('fill', 'currentColor')
         .text(attrs.xAxisLabel);
     }
   }

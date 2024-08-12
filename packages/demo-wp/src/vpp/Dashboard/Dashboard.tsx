@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { Frame as PowerRouter } from '../PowerRouter/Frame';
+import { PowerDiagram } from '../PowerDiagram/PowerDiagram';
 import { DNOMap } from '../DNOMap/DNOMap';
 
 function SiteOptions() {
@@ -61,6 +62,32 @@ function SiteOptions() {
         className="tab-content bg-base-100 border-base-300 rounded-box p-6"
       >
         <DNOMap />
+      </div>
+
+      <input
+        type="radio"
+        name="my_tabs_2"
+        role="tab"
+        className="tab"
+        aria-label="Power Router 2"
+        onChange={() =>
+          setSearchParams(
+            (prev) => {
+              prev.set('tab', 'power-router-b');
+              return prev;
+            },
+            {
+              replace: true,
+            }
+          )
+        }
+        checked={currTab === 'power-router-b'}
+      />
+      <div
+        role="tabpanel"
+        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+      >
+        <PowerDiagram />
       </div>
     </div>
   );

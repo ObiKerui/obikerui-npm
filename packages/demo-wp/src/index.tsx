@@ -1,5 +1,10 @@
 import ReactDOM from 'react-dom/client';
-import { Outlet, RouterProvider, createHashRouter } from 'react-router-dom';
+import {
+  Outlet,
+  RouterProvider,
+  createHashRouter,
+  useSearchParams,
+} from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import React from 'react';
 import ErrorPage from './ErrorPage';
@@ -30,7 +35,8 @@ import { AppProvider as VPPAppProvider } from './vpp/Provider/Provider';
 import './style.css';
 import { Histogram } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
-import { StackedPlot } from './plots/StackedPlot/Component';
+import { StackedPlot } from './plots/StackedBar/Component';
+import { StackedArea } from './plots/StackedArea/Component';
 import { ScatterPlot } from './plots/ScatterPlot/Component';
 
 import { LeafletMap } from './maps/LeafletMap/Component';
@@ -38,15 +44,29 @@ import { BasicMap } from './maps/BasicMap/Component';
 import { DensityMap } from './maps/DensityMap/Component';
 
 import { Dashboard as VPPDashboard } from './vpp/Dashboard/Dashboard';
-
-import { AppProvider, useAppProvider } from './AppProvider/Provider';
 import { HexbinMap } from './maps/HexbinMap/Component';
 
 function Root() {
-  const { model, controller } = useAppProvider();
+  const [searchParams, setSearchParams] = useSearchParams({
+    theme: 'light',
+  });
+
+  const currTheme = searchParams.get('theme');
+
+  const setTheme = () => {
+    setSearchParams(
+      (prev) => {
+        prev.set('theme', currTheme === 'light' ? 'dark' : 'light');
+        return prev;
+      },
+      {
+        replace: true,
+      }
+    );
+  };
 
   return (
-    <div data-theme={model.theme} className="bg-base-200 mx-auto min-h-screen">
+    <div data-theme={currTheme} className="bg-base-200 mx-auto min-h-screen">
       <div className="flex flex-row flex-wrap py-4">
         <aside className="w-full px-2 sm:w-1/3 md:w-1/6">
           <div className="sticky top-0 w-full p-4">
@@ -54,11 +74,7 @@ function Root() {
               <button
                 type="button"
                 className="btn btn-sm border-black"
-                onClick={() =>
-                  controller.updateTheme(
-                    model.theme === 'light' ? 'dark' : 'light'
-                  )
-                }
+                onClick={() => setTheme()}
               >
                 set theme
               </button>
@@ -75,14 +91,6 @@ function Root() {
   );
 }
 
-function RootContainer() {
-  return (
-    <AppProvider>
-      <Root />
-    </AppProvider>
-  );
-}
-
 function Plots() {
   return (
     <div className="bg-base-100 p-4">
@@ -94,6 +102,7 @@ function Plots() {
       <Histogram />
       <GroupedBar />
       <StackedPlot />
+      <StackedArea />
     </div>
   );
 }
@@ -152,7 +161,7 @@ function VPP() {
 const router = createHashRouter([
   {
     path: '/',
-    element: <RootContainer />,
+    element: <Root />,
     errorElement: <ErrorPage />,
     children: [
       {

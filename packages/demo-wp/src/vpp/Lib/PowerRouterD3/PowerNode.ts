@@ -46,8 +46,6 @@ class PowerNode {
       ry,
     } = powerNode;
 
-    const iconPathStr = await importSVG(`${iconPath}/${icon}` ?? '');
-
     const nodeId = `node-${this.id}`;
     const gAllPowerNodes = svg.select<SVGGElement>(`g.power-nodes`);
 
@@ -59,6 +57,7 @@ class PowerNode {
     const nodeEnter = gPowerNode.enter().append('g').classed(`${nodeId}`, true);
     nodeEnter.append('rect').classed('border', true);
 
+    const iconPathStr = await importSVG(`${iconPath}/${icon}` ?? '');
     const iconNodeEnter = nodeEnter.append('g').classed('icon', true).node();
 
     if (iconNodeEnter) {
@@ -82,9 +81,12 @@ class PowerNode {
       .attr('rx', rx) // Set the x-axis radius of the rounded corners
       .attr('ry', ry); // Set the y-axis radius of the rounded corners
 
+    const iconWidth = 50;
+    const middleX = width * 0.5 - iconWidth * 0.5;
+
     const iconGroup = gPowerNode
       .select('g.icon')
-      .attr('transform', `translate(${15},${20})`);
+      .attr('transform', `translate(${middleX},${20})`);
 
     const svgNode = iconGroup.select('svg').node() as SVGElement;
     const gNode = iconGroup.node() as SVGGElement;

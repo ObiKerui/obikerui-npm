@@ -12,6 +12,7 @@ const defaultPlotAttrs = {
   alpha: 1,
   labels: [] as string[],
   colours: [] as string[],
+  opacity: [] as number[],
   colourScale: null as unknown,
   curve: null as d3.CurveFactory | null,
   tag: null as string | null,
@@ -75,6 +76,11 @@ const stackedAttrs = {
   >[],
 };
 
+const StackedAreaAttrs = {
+  onGetY0: null as null | CallableFunction,
+  onGetY1: null as null | CallableFunction,
+};
+
 const PlotAttrs = {
   ...defaultPlotAttrs,
   ...ScatterAttrs,
@@ -83,6 +89,7 @@ const PlotAttrs = {
   ...FillAttrs,
   ...GroupedBarAttrs,
   ...stackedAttrs,
+  ...StackedAreaAttrs,
 };
 
 export default PlotAttrs;

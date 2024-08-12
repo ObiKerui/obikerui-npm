@@ -1,14 +1,5 @@
-import {
-  createContext,
-  useContext,
-  ReactNode,
-  useMemo,
-  useState,
-  useEffect,
-} from 'react';
+import { createContext, useContext, ReactNode, useMemo, useState } from 'react';
 import { Controller } from '../Lib/Controller';
-
-import { useAppProvider as useGlobalAppProvider } from '../../AppProvider/Provider';
 import { VPPModel } from '../Lib/PowerRouterD3/Model';
 
 /**
@@ -40,20 +31,12 @@ const controller = new Controller();
 
 export function AppProvider({ children }: IAppProvider) {
   const [model, setModel] = useState<VPPModel>(controller.model);
-  const { model: globalAppModel } = useGlobalAppProvider();
 
   const updateModel = () => {
     controller.update();
     const updated = controller.model;
     setModel({ ...updated });
   };
-
-  useEffect(() => {
-    controller.themeController.updateTheme(
-      globalAppModel.theme as 'light' | 'dark'
-    );
-    updateModel();
-  }, [globalAppModel]);
 
   controller.notify = updateModel;
 

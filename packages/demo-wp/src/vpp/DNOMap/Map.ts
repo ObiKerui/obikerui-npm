@@ -35,9 +35,9 @@ type tMapModel = {
 const useDensityMap = create<tMapModel>((set) => ({
   html: null,
   setHTML: (newHTML) => set({ html: newHTML }),
-  zoom: 1500,
+  zoom: 1800,
   setZoom: (newZoom) => set({ zoom: newZoom }),
-  translate: [450, 2000] as [number, number],
+  translate: [450, 2450] as [number, number],
   setTranslate: (newTranslate) => set({ translate: newTranslate }),
   projection: 'Mercator' as keyof typeof Projections,
   setProjection: (newProjection) => set({ projection: newProjection }),
@@ -108,6 +108,11 @@ class DensityMap {
         const { setTranslate } = useDensityMap.getState();
         setTranslate([newPosX, newPosY]);
       },
+      onGetSelections: (selections) => {
+        selections.style('fill', 'grey');
+        selections.style('opacity', 0.3);
+        selections.attr('stroke-opacity', 0.6);
+      },
     };
 
     const positionLayer = this.container.getPlots()[1];
@@ -139,8 +144,8 @@ class DensityMap {
     const updatedAttrs = {
       ...this.container.attrs,
       html,
-      chartWidth: 1000,
-      chartHeight: 2000,
+      width: 1000,
+      height: 1000,
       margins: {
         ...this.container.attrs.margins,
         left: 10,
