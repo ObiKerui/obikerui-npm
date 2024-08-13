@@ -102,7 +102,6 @@ class ROIPlot {
     } as d3PlotLib.tPlotAttrs;
 
     container.update();
-    console.log('updated the container...');
   }
 }
 
