@@ -70,17 +70,14 @@ function Controls() {
   } = useDensityMap();
 
   const setZoomFtn = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(changeEvent.target.value);
     setZoom(+changeEvent.target.value);
   };
 
   const setXPosition = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(changeEvent.target.value);
     setTranslate([+changeEvent.target.value, translate[1]]);
   };
 
   const setYPosition = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(changeEvent.target.value);
     setTranslate([translate[0], +changeEvent.target.value]);
   };
 
