@@ -1,16 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [],
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "dependsOn": ["^build"]
-    },
-    "test": {
-      "outputs": ["coverage/**"],
-      "dependsOn": ["build"],
-      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"],
-      "outputMode": "full"
     },
     "lint": {}
   }

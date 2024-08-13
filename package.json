@@ -2,6 +2,7 @@
   "name": "obikerui",
   "version": "1.0.0",
   "description": "",
+  "packageManager": "pnpm@8.15.3",
   "main": "index.js",
   "scripts": {
     "d3-map-lib": "pnpm --filter d3-map-lib",
