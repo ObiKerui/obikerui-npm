@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '20.11.1'
+          cache: 'pnpm' # Cache pnpm packages
 
       - name: Install pnpm
         run: npm install -g pnpm
