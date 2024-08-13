@@ -1,0 +1,59 @@
+{
+  "property": "property name",
+  "surfaces": [
+    {
+      "id": "roof-1",
+      "angle": "30",
+      "orientation": "340",
+      "coordinates": [
+        [5, 5],
+        [5, 95],
+        [15, 95],
+        [15, 35],
+        [40, 35],
+        [40, 95],
+        [95, 95],
+        [95, 5],
+        [5, 5]
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "mountable-area",
+      "coordinates": [
+        [8, 10],
+        [8, 30],
+        [44, 30],
+        [44, 90],
+        [92, 90],
+        [92, 10],
+        [8, 10]
+      ]
+    }
+  ],
+  "newPanel": [
+    {
+      "id": "new-panel",
+      "coordinates": [
+        [0, 0],
+        [0, 25],
+        [12, 25],
+        [12, 0],
+        [0, 0]
+      ]
+    }
+  ],
+  "obstructions": [
+    {
+      "id": "windows",
+      "coordinates": [
+        [70, 40],
+        [70, 70],
+        [85, 70],
+        [85, 40],
+        [70, 40]
+      ]
+    }
+  ]
+}
