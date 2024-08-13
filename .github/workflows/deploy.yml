@@ -22,7 +22,7 @@ jobs:
 
       - name: Install
         run: |
-          pnpm ci
+          pnpm install --frozen-lockfile          
           pnpm run build:all
 
       - name: Deploy
