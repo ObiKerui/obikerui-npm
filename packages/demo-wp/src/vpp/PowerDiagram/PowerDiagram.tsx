@@ -63,6 +63,7 @@ function PowerDiagram() {
     usePowerRouter();
   const [searchParams, setSearchParams] = useSearchParams({
     detail: 'battery',
+    timeFrame: 'days',
   });
 
   const currTheme = searchParams.get('theme');

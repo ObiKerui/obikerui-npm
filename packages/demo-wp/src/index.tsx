@@ -196,13 +196,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const clientId =
-  '506002570270-6cqvj29r485c5b38f10fbutnnmviohs5.apps.googleusercontent.com';
-
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={clientId}>
-      <RouterProvider router={router} />
-    </GoogleOAuthProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
