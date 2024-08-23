@@ -5,8 +5,8 @@ import { useSearchParams } from 'react-router-dom';
 import { usePowerRouter } from '../Solax/Store';
 import { tNode, tPowerNodeID, tSolaxData } from '../Solax/Types';
 import { PowerRouter } from './PowerRouter';
-import { ChartContainer } from './Chart/ChartContainer';
-import { Controls } from './Chart/Controls';
+import { ChartContainer } from './BatteryChart/ChartContainer';
+import { Controls } from './BatteryChart/Controls';
 
 const powerRouterObj = new PowerRouter();
 

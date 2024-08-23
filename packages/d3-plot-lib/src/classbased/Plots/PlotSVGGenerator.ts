@@ -20,7 +20,7 @@ class PlotSVGGenerator {
 
     plotAttrs.index = children.size();
     plotAttrs.plotID = `plot-${plotAttrs.index}`;
-    plotAttrs.clipPathID = plotAttrs.plotID;
+    // plotAttrs.clipPathID = plotAttrs.plotID;
     chartGroup.append('g').classed(`${plotAttrs.plotID}`, true);
   }
 }

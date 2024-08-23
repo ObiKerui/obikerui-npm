@@ -63,6 +63,11 @@ class GridGenerator {
         .call(attrs.yGrid);
 
       yGrid.style('opacity', 0.3);
+      attrs.svg
+        .select('.y-axis-group.grid')
+        .selectAll('g.tick')
+        .select('text')
+        .style('display', 'none');
     }
   }
 

@@ -55,10 +55,7 @@ class Plot {
       xs: labels,
       colours,
       stackedDataset: stackedData,
-      onGetLabel: (d: any, ith: number) => {
-        console.log('what is it? ', d, ith, d.data.key);
-        return d.data.key;
-      },
+      onGetLabel: (d: any) => d.data.key,
       // onGetY0: (d: tAverageData) => d.value,
       // onGetY1: (d: tAverageData) => d.value,
     } as d3PlotLib.tPlotAttrs;

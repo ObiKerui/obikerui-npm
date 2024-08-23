@@ -1,6 +1,11 @@
 import * as d3 from 'd3';
 import { Series } from 'd3';
 
+type tFill = {
+  colour: string;
+  opacity: number;
+};
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const defaultPlotAttrs = {
   plotID: null as string | null,
@@ -17,6 +22,7 @@ const defaultPlotAttrs = {
   curve: null as d3.CurveFactory | null,
   tag: null as string | null,
   lineStyles: null as string[] | null,
+  fill: [] as tFill[],
   data: null as any,
   onClick: null as any,
   onMouseDown: null as any,
@@ -81,6 +87,10 @@ const StackedAreaAttrs = {
   onGetY1: null as null | CallableFunction,
 };
 
+const BrushAttrs = {
+  timeFrame: [0, 0] as [d3.NumberValue, d3.NumberValue],
+};
+
 const PlotAttrs = {
   ...defaultPlotAttrs,
   ...ScatterAttrs,
@@ -90,8 +100,9 @@ const PlotAttrs = {
   ...GroupedBarAttrs,
   ...stackedAttrs,
   ...StackedAreaAttrs,
+  ...BrushAttrs,
 };
 
 export default PlotAttrs;
 type tPlotAttrs = typeof PlotAttrs;
-export type { tPlotAttrs, tConditionParam, tScatterGroupSelection };
+export type { tPlotAttrs, tConditionParam, tScatterGroupSelection, tFill };

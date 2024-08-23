@@ -34,6 +34,8 @@ class BarPlot {
 
     const { labels } = groupedData;
 
+    console.log('what is grouped data / data? ', groupedData.data);
+
     this.container.attrs = {
       ...this.container.attrs,
       html: chartRef,

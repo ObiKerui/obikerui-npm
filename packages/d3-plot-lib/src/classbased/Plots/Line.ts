@@ -4,19 +4,53 @@ import { v4 as uuidv4 } from 'uuid';
 import { tContainerAttrs, tScaling } from '../sharedTypes';
 import { DataFormatter } from '../../dataFormatter';
 import { PlotBase } from './PlotBase';
+import { tFill, tPlotAttrs } from './PlotAttrs';
 
 const colorScheme = ['red', 'green', 'blue', 'grey'];
 
+const defaultFill = {
+  colour: 'none',
+  opacity: 0,
+} as tFill;
+
 class CLines extends PlotBase {
+  // eslint-disable-next-line class-methods-use-this
+  updateClipPath(attrs: tPlotAttrs, container: tContainerAttrs) {
+    const { svg, chartWidth, chartHeight } = container;
+    if (!svg) return;
+
+    const chartGroup = svg.select(`.${attrs.plotID}`);
+
+    // eslint-disable-next-line no-param-reassign
+    if (!attrs.clipPathID) {
+      attrs.clipPathID = `attrs.plotID-${uuidv4()}`;
+    }
+
+    const clipData = chartGroup.select<SVGDefsElement>('defs');
+    if (clipData.empty()) {
+      chartGroup.append('defs').append('clipPath').append('rect');
+    }
+
+    chartGroup
+      .select<SVGDefsElement>('defs')
+      .select<SVGClipPathElement>('clipPath')
+      .attr('id', `${attrs.clipPathID}`)
+      .select<SVGRectElement>('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', chartWidth)
+      .attr('height', chartHeight);
+  }
+
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
-    const { xs, ys } = attrs;
-    const { svg, chartHeight, chartWidth } = container;
+    const { xs, ys, fill } = attrs;
+    const { svg } = container;
     const colours = attrs.colours.length > 0 ? attrs.colours : colorScheme;
     const curveType = attrs.curve ?? d3.curveLinear;
     const alpha = [1.0];
 
-    // console.log('in line ftn what is xs/ys? ', xs, ys);
+    // console.log('in line ftn what is xs/ys? ', ys);
 
     if (!svg) {
       return;
@@ -28,21 +62,12 @@ class CLines extends PlotBase {
     const ysFormatted = dataFormatter.ysFormatted();
 
     const chartGroup = svg.select(`.${attrs.plotID}`);
-
-    // try adding a clip path to the svg
-    attrs.clipPathID = `attrs.plotID-${uuidv4()}`;
-    chartGroup
-      .append('defs')
-      .append('clipPath')
-      .attr('id', `${attrs.clipPathID}`)
-      .append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', chartWidth) // Adjust the width as needed
-      .attr('height', chartHeight); // Adjust the height as needed
+    this.updateClipPath(attrs, container);
 
     // select all rect in svg.chart-group with the class bar
-    let lines = chartGroup.selectAll('.lines').data(ysFormatted);
+    let lines = chartGroup
+      .selectAll<SVGPathElement, number>('.lines')
+      .data(ysFormatted);
 
     // Exit - remove data points if current data.length < data.length last time this ftn was called
     lines.exit().style('opacity', 0).remove();
@@ -52,12 +77,19 @@ class CLines extends PlotBase {
       .enter()
       .append('path')
       .classed('lines', true)
-      .attr('fill', 'none')
+      .attr('fill', (_d, ith) => {
+        const fillInfo = fill[ith] ?? defaultFill;
+        return fillInfo.colour;
+      })
+      .attr('fill-opacity', (_d, ith) => {
+        const fillInfo = fill[ith] ?? defaultFill;
+        return fillInfo.opacity;
+      })
       .attr('stroke', 'steelblue')
       .attr('stroke-width', 1.5);
 
     // join the new data points with existing
-    lines = lines.merge(enterGroup as any);
+    lines = lines.merge(enterGroup);
 
     function definedFtn(d: any) {
       return d >= -0.2;
@@ -70,24 +102,19 @@ class CLines extends PlotBase {
     }
 
     lines
-      .attr('d', (dth: any, ith: number) => {
+      .attr('d', (dth, ith) => {
         const line = d3
           .line()
           .defined(definedFtn)
           .curve(curveType)
-          .x((d: any, i: number) => xScale(getXValue(d, i, dth, ith)) || 0)
-          .y((d: any) => yScale(d) || 0);
+          .x((d, i) => xScale(getXValue(d, i, dth, ith)) || 0)
+          .y((d) => yScale(d) || 0);
 
-        return line(dth);
+        return line(dth as [number, number][]);
       })
       .attr('clip-path', `url(#${attrs.clipPathID})`)
-      .attr('stroke', (_d: any, i: number) => colours[i] || 'black')
-      .style(
-        'opacity',
-        (_d: any, i: number) =>
-          // console.log('alpha / d / i ', alpha, d, i)
-          alpha[i] ?? 1
-      );
+      .attr('stroke', (_d, i) => colours[i] || 'black')
+      .style('opacity', (_d, i) => alpha[i] ?? 1);
   }
 }
 

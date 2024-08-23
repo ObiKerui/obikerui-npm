@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 import * as d3 from 'd3-array';
 import { tSolaxData, tPowerCategory } from './Types';
+
+dayjs.extend(isBetween);
 
 type tPowerCategoryObj = {
   [Key in tPowerCategory]: number;
@@ -172,6 +175,41 @@ function averageData(data: tMonths) {
 }
 
 class DataGrouper {
+  getNewest(data: tSolaxData[]) {
+    const len = data.length;
+    return len > 0 ? data[len - 1] : null;
+  }
+
+  getRange(data: tSolaxData[], range: [dayjs.Dayjs, dayjs.Dayjs]) {
+    return data.filter((elem) =>
+      dayjs(elem.uploadTime).isBetween(range[0], range[1])
+    );
+  }
+
+  getPercentages(data: tSolaxData[]) {
+    let full = 0;
+    let empty = 0;
+    let charging = 0;
+    let discharging = 0;
+    const num = data.length;
+
+    data.forEach((elem, ith) => {
+      const batValue = elem.soc;
+      const prevBatValue = ith > 0 ? data[ith].soc : null;
+      if (batValue >= 90) full += 1;
+      if (batValue < 10) empty += 1;
+      if (prevBatValue && batValue > prevBatValue) charging += 1;
+      if (prevBatValue && batValue < prevBatValue) discharging += 1;
+    });
+
+    return {
+      full: full / num,
+      empty: empty / num,
+      charging: charging / num,
+      discharging: discharging / num,
+    };
+  }
+
   groupByMonths(data: tSolaxData[]) {
     const monthlyData = sortToMonths(data);
 

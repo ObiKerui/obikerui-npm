@@ -100,7 +100,6 @@ class PowerRouter {
     this.nodeMap.forEach((value, key) => {
       const nodeData = nodes.get(key);
       const isSelected = nodeData ? nodeData.selected : false;
-      console.log('is selected? ', key, isSelected);
 
       value.update({
         parent: originPoint.node(),

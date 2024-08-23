@@ -32,6 +32,7 @@ import { CGroupedBar } from './classbased/Plots/GroupedBar';
 import { CStacked } from './classbased/Plots/StackedPlot';
 import { CStackedArea } from './classbased/Plots/StackedAreaPlot';
 import { CScatter } from './classbased/Plots/Scatter';
+import { CBrush } from './classbased/Plots/Brush';
 
 import { CLegend } from './classbased/Metadata/Legend';
 
@@ -67,4 +68,5 @@ export {
   CStacked,
   CStackedArea,
   CScatter,
+  CBrush,
 };

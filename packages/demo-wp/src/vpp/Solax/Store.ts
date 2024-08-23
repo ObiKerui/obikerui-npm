@@ -14,8 +14,8 @@ type tPowerRouter = {
   setNodes: (newValue: Map<tPowerNodeID, tNode>) => void;
   arches: Map<tPowerArchID, tArch>;
   setArches: (newValue: Map<tPowerArchID, tArch>) => void;
-  focus: string;
-  setFocus: (newValue: string) => void;
+  focus: tPowerNodeID;
+  setFocus: (newValue: tPowerNodeID) => void;
   solaxData: tSolaxData[];
   selected: boolean[];
   setSelected: (newValue: boolean[]) => void;
@@ -33,7 +33,7 @@ const usePowerRouter = create<tPowerRouter>((set) => ({
   setNodes: (newValue) => set({ nodes: newValue }),
   arches: powerArchMap,
   setArches: (newValue) => set({ arches: newValue }),
-  focus: 'ev',
+  focus: 'battery',
   setFocus: (newValue) => set({ focus: newValue }),
   solaxData: [],
   selected: new Array(5).fill(false),

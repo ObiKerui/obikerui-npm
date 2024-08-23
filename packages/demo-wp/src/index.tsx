@@ -15,7 +15,7 @@ import './index.css';
 
 import { BarPlot } from './plots/BarPlot/Component';
 
-import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
+// import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
 import { LinePlotContainer } from './plots/LinePlot/LinePlot';
 import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
 // import { ScatterPlot } from './plots/ScatterPlot/ScatterPlot';
@@ -38,6 +38,7 @@ import { GroupedBar } from './plots/GroupedBar/Component';
 import { StackedPlot } from './plots/StackedBar/Component';
 import { StackedArea } from './plots/StackedArea/Component';
 import { ScatterPlot } from './plots/ScatterPlot/Component';
+import { ZoomPlot } from './plots/ZoomPlot/Component';
 
 import { LeafletMap } from './maps/LeafletMap/Component';
 import { BasicMap } from './maps/BasicMap/Component';
@@ -96,9 +97,9 @@ function Plots() {
     <div className="bg-base-100 p-4">
       <BarPlot />
       <ScatterPlot />
-      <LinePlotContainer />
-      <LinePlotContainerB />
-      <DynamicPlotContainer />
+      {/* <LinePlotContainer /> */}
+      {/* <LinePlotContainerB /> */}
+      <ZoomPlot />
       <Histogram />
       <GroupedBar />
       <StackedPlot />
