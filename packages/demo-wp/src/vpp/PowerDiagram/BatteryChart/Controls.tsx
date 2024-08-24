@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { cn } from '../../../Utils/CSS';
-import { tTimeFrame } from './Chart';
+import { tTimeFrame } from './Model';
 
 function Controls() {
   const [searchParams, setSearchParams] = useSearchParams();

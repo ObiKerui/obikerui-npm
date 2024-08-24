@@ -1,37 +1,8 @@
 import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import * as d3 from 'd3';
-import { create } from 'zustand';
 import dayjs from 'dayjs';
-import { tPowerCategory, tSolaxData } from '../../Solax/Types';
-
-type tPlotDataElem = {
-  key: string;
-  soc: number;
-};
-
-type tTimeFrame = '48hours' | 'week' | 'month' | 'quarter';
-
-type tBatteryChart = {
-  container: HTMLDivElement | null;
-  setContainer: (newValue: HTMLDivElement | null) => void;
-  categories: tPowerCategory[];
-  setCategories: (newValue: tPowerCategory[]) => void;
-  rangedData: tSolaxData[];
-  setRangedData: (newValue: tSolaxData[]) => void;
-  timeFrame: tTimeFrame;
-  setTimeFrame: (newValue: tTimeFrame) => void;
-};
-
-const useBatteryChart = create<tBatteryChart>((set) => ({
-  container: null,
-  setContainer: (newValue) => set({ container: newValue }),
-  categories: [],
-  setCategories: (newValue) => set({ categories: newValue }),
-  rangedData: [],
-  setRangedData: (newValue) => set({ rangedData: newValue }),
-  timeFrame: '48hours',
-  setTimeFrame: (newValue) => set({ timeFrame: newValue }),
-}));
+import { tPowerCategory } from '../../Solax/Types';
+import { tBatteryChart } from './Model';
 
 class Chart {
   container;
@@ -56,7 +27,7 @@ class Chart {
   }
 
   update(newModel: tBatteryChart) {
-    const { container, categories, rangedData } = newModel;
+    const { lineContainer, categories, rangedData } = newModel;
 
     if (!rangedData) {
       return;
@@ -86,7 +57,7 @@ class Chart {
 
     this.container.attrs = {
       ...this.container.attrs,
-      html: container,
+      html: lineContainer,
       width: 500,
       height: 400,
       yAxisLabel: categories[0] ?? '',
@@ -118,11 +89,4 @@ class Chart {
   }
 }
 
-const chart = new Chart();
-
-useBatteryChart.subscribe((newModel) => {
-  chart.update(newModel);
-});
-
-export { useBatteryChart };
-export type { tPlotDataElem, tBatteryChart, tTimeFrame };
+export { Chart };

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import * as d3 from 'd3-array';
-import { tSolaxData, tPowerCategory } from './Types';
+import { tSolaxData, tPowerCategory, tPercentages } from './Types';
 
 dayjs.extend(isBetween);
 
@@ -195,10 +195,19 @@ class DataGrouper {
 
     data.forEach((elem, ith) => {
       const batValue = elem.soc;
-      const prevBatValue = ith > 0 ? data[ith].soc : null;
-      if (batValue >= 90) full += 1;
-      if (batValue < 10) empty += 1;
-      if (prevBatValue && batValue > prevBatValue) charging += 1;
+      const prevBatValue = ith > 0 ? data[ith - 1].soc : null;
+      if (batValue >= 90) {
+        full += 1;
+        return;
+      }
+      if (batValue < 10) {
+        empty += 1;
+        return;
+      }
+      if (prevBatValue && batValue > prevBatValue) {
+        charging += 1;
+        return;
+      }
       if (prevBatValue && batValue < prevBatValue) discharging += 1;
     });
 
@@ -207,7 +216,7 @@ class DataGrouper {
       empty: empty / num,
       charging: charging / num,
       discharging: discharging / num,
-    };
+    } as tPercentages;
   }
 
   groupByMonths(data: tSolaxData[]) {

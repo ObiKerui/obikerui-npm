@@ -3,25 +3,40 @@ import { useSearchParams } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
 import { DataGrouper } from '../../Solax/Grouper';
 import { usePowerRouter } from '../../Solax/Store';
-import { tTimeFrame, useBatteryChart } from './Chart';
+import { useBatteryChart, tTimeFrame } from './Model';
+import { Chart as LineChart } from './Chart';
+import { Chart as BarChart } from './PercentChart';
 
 const grouper = new DataGrouper();
+const lineChart = new LineChart();
+const barChart = new BarChart();
+
+useBatteryChart.subscribe((newState) => {
+  lineChart.update(newState);
+  barChart.update(newState);
+});
 
 function ChartContainer() {
   const data = usePowerRouter((state) => state.data);
-  const setContainer = useBatteryChart((state) => state.setContainer);
+  const setLineContainer = useBatteryChart((state) => state.setLineContainer);
+  const setBarContainer = useBatteryChart((state) => state.setBarContainer);
   const setRangedData = useBatteryChart((state) => state.setRangedData);
+  const setPercentages = useBatteryChart((state) => state.setPercentages);
   const [searchParams] = useSearchParams();
 
-  const chartRef = useRef<HTMLDivElement | null>(null);
+  const lineChartRef = useRef<HTMLDivElement | null>(null);
+  const barChartRef = useRef<HTMLDivElement | null>(null);
+
   const timeFrame = searchParams.get('timeFrame');
 
   useEffect(() => {
-    setContainer(chartRef.current);
+    setLineContainer(lineChartRef.current);
+    setBarContainer(barChartRef.current);
   }, []);
 
   useEffect(() => {
     let ranged = [];
+    let percentages = null;
     const latest = grouper.getNewest(data);
     if (!latest) {
       return;
@@ -44,12 +59,16 @@ function ChartContainer() {
         break;
     }
     ranged = grouper.getRange(data, range as [Dayjs, Dayjs]);
+    percentages = grouper.getPercentages(ranged);
+
     setRangedData(ranged);
+    setPercentages(percentages);
   }, [timeFrame, data]);
 
   return (
     <div>
-      <div ref={chartRef} />
+      <div ref={lineChartRef} />
+      <div ref={barChartRef} />
     </div>
   );
 }

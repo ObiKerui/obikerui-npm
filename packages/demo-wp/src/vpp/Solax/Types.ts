@@ -53,6 +53,13 @@ type tSolaxData = {
   uploadTime: string;
 };
 
+type tPercentages = {
+  full: number;
+  empty: number;
+  charging: number;
+  discharging: number;
+};
+
 export type {
   tLabel,
   tNode,
@@ -61,4 +68,5 @@ export type {
   tPowerCategory,
   tArch,
   tSolaxData,
+  tPercentages,
 };

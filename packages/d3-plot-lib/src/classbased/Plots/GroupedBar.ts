@@ -18,6 +18,30 @@ type tD3BarScale = {
 
 // type tGroupedBarElems = tGroupedBarElem[];
 
+// WHAT SPECIFIC DATA DOES IT NEED?
+// data -> the array of data - each element of the array is an object
+// callback with each object? to get the cateogy of that object?
+// subcategories -> for each category how it is divided up
+//  - create a scaleband for the subcategories
+//  - scaleband domain -> subcategories
+//  - scaleband range -> xScale.bandwidth()
+
+// outer-bars pass in the object data
+// for each object in object data array
+// transform x based on xScale(d.category)
+// then do inner-bars
+// rect x - xScaleSubCategory(d.key)
+// rect y - ySCale(d.value)
+// width - xScaleSubCategory.bandwidth
+// height - chartheight - yScale(d.value)
+
+// would need something like
+// attrs = {
+// objects: { key: value }[] some mapped type?
+// xScale -> must have a bandwidth
+// subcategories: unknown[] (get subcategory callback?)
+// }
+
 class CGroupedBar extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;

@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
-import { v4 as uuidv4 } from 'uuid';
 import { tContainerAttrs, tScaling } from '../sharedTypes';
 import { DataFormatter } from '../../dataFormatter';
 import { PlotBase } from './PlotBase';
-import { tFill, tPlotAttrs } from './PlotAttrs';
+import { tFill } from './PlotAttrs';
 
 const colorScheme = ['red', 'green', 'blue', 'grey'];
 
@@ -14,34 +13,6 @@ const defaultFill = {
 } as tFill;
 
 class CLines extends PlotBase {
-  // eslint-disable-next-line class-methods-use-this
-  updateClipPath(attrs: tPlotAttrs, container: tContainerAttrs) {
-    const { svg, chartWidth, chartHeight } = container;
-    if (!svg) return;
-
-    const chartGroup = svg.select(`.${attrs.plotID}`);
-
-    // eslint-disable-next-line no-param-reassign
-    if (!attrs.clipPathID) {
-      attrs.clipPathID = `attrs.plotID-${uuidv4()}`;
-    }
-
-    const clipData = chartGroup.select<SVGDefsElement>('defs');
-    if (clipData.empty()) {
-      chartGroup.append('defs').append('clipPath').append('rect');
-    }
-
-    chartGroup
-      .select<SVGDefsElement>('defs')
-      .select<SVGClipPathElement>('clipPath')
-      .attr('id', `${attrs.clipPathID}`)
-      .select<SVGRectElement>('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', chartWidth)
-      .attr('height', chartHeight);
-  }
-
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
     const { xs, ys, fill } = attrs;
@@ -62,7 +33,6 @@ class CLines extends PlotBase {
     const ysFormatted = dataFormatter.ysFormatted();
 
     const chartGroup = svg.select(`.${attrs.plotID}`);
-    this.updateClipPath(attrs, container);
 
     // select all rect in svg.chart-group with the class bar
     let lines = chartGroup

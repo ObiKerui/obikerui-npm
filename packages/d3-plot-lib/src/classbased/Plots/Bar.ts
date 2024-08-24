@@ -15,6 +15,7 @@ class CBar extends PlotBase {
     }
 
     const xd3BarScale = xScale as CallableFunction & {
+      domain: CallableFunction;
       bandwidth: CallableFunction;
     };
 
@@ -23,7 +24,7 @@ class CBar extends PlotBase {
     const colourScale = d3
       .scaleOrdinal<string, string>()
       .domain(labels)
-      .range(['blue']);
+      .range(['blue', 'red', 'green']);
 
     // select all rect in svg.chart-group with the class bar
     let bars = chartGroup

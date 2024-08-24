@@ -36,6 +36,8 @@ function updateChart(
   html: HTMLDivElement,
   data: d3.DSVRowArray<string>
 ) {
+  console.log('this was retrieved via d3.csv: ', data);
+
   const colours = ['blue', 'green', 'red'];
   const groupsHera = d3.map(data, (d: any) => d.group);
 
@@ -83,6 +85,9 @@ function updateChart(
 
 async function loadData() {
   const data = d3.csv('assets/data_stacked.csv');
+  // const data = d3.csv<'group' | 'Nitrogen' | 'normal' | 'stressed'>(
+  //   'assets/data_stacked.csv'
+  // );
   return data;
 }
 
