@@ -19,13 +19,19 @@ type tIcon = {
   width: number;
 };
 
+type tActivity = {
+  iconPaths: string[];
+};
+
 type tNode = {
   id: string;
   coordinates: [number, number];
   icon: tIcon;
+  activity: tActivity;
   powerLevel: string;
   labels: tLabel[];
   selected: boolean;
+  colour: string;
 };
 
 type tPowerArchID =
@@ -60,6 +66,11 @@ type tPercentages = {
   discharging: number;
 };
 
+type tProfitLoss = {
+  feedin: number;
+  consumed: number;
+};
+
 export type {
   tLabel,
   tNode,
@@ -69,4 +80,5 @@ export type {
   tArch,
   tSolaxData,
   tPercentages,
+  tProfitLoss,
 };

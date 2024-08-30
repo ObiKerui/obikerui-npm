@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { Labels, tLabel, tLabelsModel } from './Label';
 import { Icon, tIconModel } from './Icon';
 import { tProfile } from './Types';
+import { Activity, tActivityModel } from './Activity';
 
 type tNodeModel = {
   parent: SVGGElement | null;
@@ -9,6 +10,7 @@ type tNodeModel = {
   coords: [number, number];
   labels: tLabel[];
   icon: tIconModel;
+  activity: tActivityModel;
   onClick: ((d: unknown, ith: number) => void) | null;
   profile?: tProfile;
   selected: boolean;
@@ -23,10 +25,12 @@ const defaultProfile = {
 class Node {
   labels: Labels;
   icon: Icon;
+  activity: Activity;
 
   constructor() {
     this.labels = new Labels();
     this.icon = new Icon();
+    this.activity = new Activity();
   }
 
   update(model: tNodeModel) {
@@ -35,6 +39,7 @@ class Node {
       coords,
       labels,
       icon,
+      activity,
       id,
       onClick,
       profile = defaultProfile,
@@ -97,6 +102,14 @@ class Node {
       parent: nodeOrigin.node(),
       profile,
     } as tIconModel);
+
+    this.activity.update({
+      ...activity,
+      parent: nodeOrigin.node(),
+      height: 33,
+      width: 35,
+      currIconIndex: 0,
+    } as tActivityModel);
   }
 }
 

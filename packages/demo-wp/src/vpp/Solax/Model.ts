@@ -20,9 +20,14 @@ const pvLabelData = [
 ] as tLabel[];
 
 const pvIconData = {
-  path: 'assets/PowerRouter/Light/pv.svg',
+  path: 'assets/PowerRouter/Light/newpv.svg',
   height: 30,
   width: 50,
+};
+
+const pvActivityData = {
+  iconPaths: ['assets/PowerRouter/Light/sun.svg'],
+  active: true,
 };
 
 const inverterLabelData = [
@@ -37,9 +42,17 @@ const inverterLabelData = [
 ] as tLabel[];
 
 const inverterIconData = {
-  path: 'assets/PowerRouter/Light/inverter.svg',
+  path: 'assets/PowerRouter/Light/newinverter.svg',
   height: 30,
   width: 50,
+};
+
+const inverterActivityData = {
+  iconPaths: [
+    'assets/PowerRouter/Light/consume.svg',
+    'assets/PowerRouter/Light/produce.svg',
+  ],
+  active: false,
 };
 
 const batteryLabelData = [
@@ -54,9 +67,17 @@ const batteryLabelData = [
 ] as tLabel[];
 
 const batteryIconData = {
-  path: 'assets/PowerRouter/Light/battery.svg',
+  path: 'assets/PowerRouter/Light/newbattery.svg',
   height: 30,
   width: 50,
+};
+
+const batteryActivityData = {
+  iconPaths: [
+    'assets/PowerRouter/Light/consume.svg',
+    'assets/PowerRouter/Light/produce.svg',
+  ],
+  active: false,
 };
 
 const gridLabelData = [
@@ -71,9 +92,17 @@ const gridLabelData = [
 ] as tLabel[];
 
 const gridIconData = {
-  path: 'assets/PowerRouter/Light/grid.svg',
+  path: 'assets/PowerRouter/Light/newgrid.svg',
   height: 30,
   width: 50,
+};
+
+const gridActivityData = {
+  iconPaths: [
+    'assets/PowerRouter/Light/consume.svg',
+    'assets/PowerRouter/Light/produce.svg',
+  ],
+  active: false,
 };
 
 const loadLabelData = [
@@ -93,6 +122,14 @@ const loadIconData = {
   width: 50,
 };
 
+const loadActivityData = {
+  iconPaths: [
+    'assets/PowerRouter/Light/consume.svg',
+    'assets/PowerRouter/Light/produce.svg',
+  ],
+  active: false,
+};
+
 const powerNodeMap = new Map<tPowerNodeID, tNode>([
   [
     'pv',
@@ -100,9 +137,11 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
       id: 'pv',
       coordinates: [-150, -100],
       icon: pvIconData,
+      activity: pvActivityData,
       powerLevel: '20',
       labels: pvLabelData,
       selected: false,
+      colour: 'red',
     },
   ],
   [
@@ -111,9 +150,11 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
       id: 'inverter',
       coordinates: [0, 0],
       icon: inverterIconData,
+      activity: inverterActivityData,
       powerLevel: '20',
       labels: inverterLabelData,
       selected: false,
+      colour: 'default',
     },
   ],
   [
@@ -122,9 +163,11 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
       id: 'battery',
       coordinates: [-150, 100],
       icon: batteryIconData,
+      activity: batteryActivityData,
       powerLevel: '20',
       labels: batteryLabelData,
       selected: false,
+      colour: 'green',
     },
   ],
   [
@@ -133,9 +176,11 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
       id: 'grid',
       coordinates: [150, -100],
       icon: gridIconData,
+      activity: gridActivityData,
       powerLevel: '20',
       labels: gridLabelData,
       selected: false,
+      colour: 'grey',
     },
   ],
   [
@@ -144,9 +189,11 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
       id: 'load',
       coordinates: [150, 100],
       icon: loadIconData,
+      activity: loadActivityData,
       powerLevel: '20',
       labels: loadLabelData,
       selected: false,
+      colour: 'blue',
     },
   ],
 ]);

@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { tContainerAttrs, tPlot } from '../sharedTypes';
+import { tContainerAttrs, tGenericD3Scale, tPlot } from '../sharedTypes';
 
 class PlotScalesGenerator {
   updateScales(plot: tPlot, contAttrs: tContainerAttrs) {
@@ -15,18 +15,18 @@ class PlotScalesGenerator {
 
     let xScale = null;
     if (getPlotXScale) {
-      xScale = getPlotXScale(chartWidth) as CallableFunction;
+      xScale = getPlotXScale(chartWidth) as tGenericD3Scale;
     }
     if (!xScale && getContainerXScale) {
-      xScale = getContainerXScale(chartWidth) as CallableFunction;
+      xScale = getContainerXScale(chartWidth) as tGenericD3Scale;
     }
 
     let yScale = null;
     if (getPlotYScale) {
-      yScale = getPlotYScale(chartHeight) as CallableFunction;
+      yScale = getPlotYScale(chartHeight) as tGenericD3Scale;
     }
     if (!yScale && getContainerYScale) {
-      yScale = getContainerYScale(chartHeight) as CallableFunction;
+      yScale = getContainerYScale(chartHeight) as tGenericD3Scale;
     }
 
     return {

@@ -2,7 +2,7 @@ import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
 import { tPowerCategory } from '../../Solax/Types';
-import { tBatteryChart } from './Model';
+import { tGridChart } from './Model';
 import { powerNodeMap } from '../../Solax/Model';
 
 class Chart {
@@ -27,7 +27,7 @@ class Chart {
     }
   }
 
-  update(newModel: tBatteryChart) {
+  update(newModel: tGridChart) {
     const { lineContainer, categories, rangedData } = newModel;
 
     if (!rangedData) {
@@ -44,36 +44,35 @@ class Chart {
       Date
     ];
 
-    const ys = rangedData.map((elem) => elem.soc);
+    const ys = rangedData.map((elem) => elem.feedinenergy);
     const xs = rangedData.map((elem) => dayjs(elem.uploadTime).toDate());
 
     // push extra values on to arrays to create bottom right and bottom left points for fill
     const bottomRightX = xs[xs.length - 1] ?? null;
     const bottomLeftX = xs[0] ?? null;
 
+    // colour
+    const colour = powerNodeMap.get('grid')?.colour ?? 'default';
+
     if (bottomLeftX && bottomRightX) {
       xs.push(bottomRightX, bottomLeftX);
       ys.push(0, 0);
     }
-
-    // colour
-    const colour = powerNodeMap.get('battery')?.colour ?? 'default';
 
     this.container.attrs = {
       ...this.container.attrs,
       html: lineContainer,
       width: 500,
       height: 400,
-      yAxisLabel: 'Battery % (soc)',
+      yAxisLabel: categories[0] ?? '',
       xAxisText: {
         rotation: 45,
-        onRender: (d: string) => dayjs(d).format('HH:MM'),
+        onRender: () => '',
       },
-      xAxisLabel: '',
       onGetXScale: (chartWidth: number) =>
         d3.scaleTime().domain(validExtent).rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>
-        d3.scaleLinear().domain([0, 100]).rangeRound([chartHeight, 0]),
+        d3.scaleLinear().domain([-3000, 8000]).rangeRound([chartHeight, 0]),
     } as d3PlotLib.tContainerAttrs;
 
     const plot = this.container.getPlots()[0];

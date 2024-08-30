@@ -4,8 +4,9 @@ import { Arch } from '../Lib/Node/Arch';
 import { tNode, tPowerArchID, tPowerNodeID, tArch } from '../Solax/Types';
 import { tIconModel } from '../Lib/Node/Icon';
 import { tPowerRouter, usePowerRouter } from '../Solax/Store';
-import { useBatteryChart } from './Chart/Chart';
+// import { useBatteryChart } from './Chart/Chart';
 import { darkProfile, lightProfile, powerNodeToCategory } from '../Solax/Model';
+import { tActivityModel } from '../Lib/Node/Activity';
 
 function updateUI(newValue: tPowerNodeID) {
   usePowerRouter.getState().setFocus(newValue);
@@ -26,7 +27,7 @@ function updateUI(newValue: tPowerNodeID) {
   usePowerRouter.getState().setNodes(currNodes);
 
   const category = powerNodeToCategory.get(newValue) ?? 'unknown';
-  useBatteryChart.getState().setCategories([category]);
+  // useBatteryChart.getState().setCategories([category]);
 }
 
 class PowerRouter {
@@ -111,6 +112,10 @@ class PowerRouter {
           width: nodeData?.icon.width,
           height: nodeData?.icon.height,
         } as tIconModel,
+        activity: {
+          active: key !== 'inverter' && key !== 'load',
+          iconPaths: nodeData?.activity.iconPaths,
+        } as tActivityModel,
         onClick: (d) => {
           updateUI(d as tPowerNodeID);
         },

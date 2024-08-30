@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
-import { tContainerAttrs, tScaling } from '../sharedTypes';
+import { tContainerAttrs, tGenericBandScale, tScaling } from '../sharedTypes';
 import { PlotBase } from './PlotBase';
+
+const defaultFill = {
+  fillOpacity: 1,
+  fillColour: 'none',
+  stroke: 'black',
+  strokeOpacity: 1,
+  opacity: 1,
+};
 
 class CBar extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
@@ -14,10 +22,7 @@ class CBar extends PlotBase {
       return;
     }
 
-    const xd3BarScale = xScale as CallableFunction & {
-      domain: CallableFunction;
-      bandwidth: CallableFunction;
-    };
+    const xd3BarScale = xScale as tGenericBandScale;
 
     const chartGroup = svg.select(`.${attrs.plotID}`);
 

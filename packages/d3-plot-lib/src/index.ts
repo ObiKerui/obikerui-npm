@@ -33,6 +33,7 @@ import { CStacked } from './classbased/Plots/StackedPlot';
 import { CStackedArea } from './classbased/Plots/StackedAreaPlot';
 import { CScatter } from './classbased/Plots/Scatter';
 import { CBrush } from './classbased/Plots/Brush';
+import { CGeneric } from './classbased/Plots/GenericPlot';
 
 import { CLegend } from './classbased/Metadata/Legend';
 
@@ -69,4 +70,5 @@ export {
   CStackedArea,
   CScatter,
   CBrush,
+  CGeneric,
 };

@@ -1,12 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
 import { cn } from '../../../Utils/CSS';
+import { tTimeFrame } from './Model';
 
 function Controls() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const timeFrame = searchParams.get('timeFrame');
 
-  const setTimeFrame = (timeFrameParam: string) => {
+  const setTimeFrame = (timeFrameParam: tTimeFrame) => {
     setSearchParams(
       (prev) => {
         prev.set('timeFrame', `${timeFrameParam}`);
@@ -23,38 +24,38 @@ function Controls() {
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': timeFrame === 'months',
+          'btn-active': timeFrame === '48hours',
         })}
-        onClick={() => setTimeFrame('months')}
+        onClick={() => setTimeFrame('48hours')}
       >
-        by Month
+        Last 48 Hours
       </button>
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': timeFrame === 'weeks',
+          'btn-active': timeFrame === 'week',
         })}
-        onClick={() => setTimeFrame('weeks')}
+        onClick={() => setTimeFrame('week')}
       >
-        by Week
+        Last Week
       </button>
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': timeFrame === 'days',
+          'btn-active': timeFrame === 'month',
         })}
-        onClick={() => setTimeFrame('days')}
+        onClick={() => setTimeFrame('month')}
       >
-        by Day
+        Last Month
       </button>
       <button
         type="button"
         className={cn('btn btn-sm', {
-          'btn-active': timeFrame === 'hours',
+          'btn-active': timeFrame === 'quarter',
         })}
-        onClick={() => setTimeFrame('hours')}
+        onClick={() => setTimeFrame('quarter')}
       >
-        by Hour
+        Last Quarter
       </button>
     </div>
   );

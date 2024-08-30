@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3Array from 'd3-array';
-import { tContainerAttrs, tScaling } from '../sharedTypes';
+import { tContainerAttrs, tGenericD3Scale, tScaling } from '../sharedTypes';
 import { PlotBase } from './PlotBase';
 
 type tD3Scale = {
@@ -45,6 +45,7 @@ class CHistogram extends PlotBase {
     }
 
     const d3YScale = yScale as unknown as tD3Scale;
+
     const currMaxHeight: number = d3YScale.domain()[1];
     if (currMaxHeight < maxHeight) {
       d3YScale.domain([0, maxHeight * normaliser]);

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import * as d3Array from 'd3-array';
 import { atom, useAtom, getDefaultStore } from 'jotai';
 import rfdc from 'rfdc';
 import { ScatterPlot as ScatterPlotObj } from './Plot';
@@ -197,6 +198,28 @@ function ScatterPlot() {
           species: d.Species as tSpeciesKey,
         })
       );
+
+      const entries = csvresult.flatMap(Object.entries);
+      const what = d3Array.group(entries, ([key]) => key);
+      console.log('what is entries? ', entries, what);
+
+      // const grouped = d3.group(data.flatMap(Object.entries), ([key]) => key);
+      // const grouped = d3Array.group(csvresult, (obj) => obj.species);
+      // console.log('what is the csv result: ', csvresult);
+      // console.log('what is the grouped result: ', grouped);
+
+      // Step 1: Group by key (a or c), and map the results to arrays of values.
+      // const groupeda = d3Array.group(
+      //   csvresult.flatMap(Object.entries),
+      //   ([key]) => key
+      // );
+
+      // Step 2: Transform the grouped data into the desired format.
+      // const transformed = Array.from(groupeda, ([key, entries]) => ({
+      //   [key]: entries.map(([, value]) => value),
+      // }));
+
+      // console.log('grouped / transformed: ', groupeda, transformed);
 
       setPlotData((prev) => ({
         ...prev,

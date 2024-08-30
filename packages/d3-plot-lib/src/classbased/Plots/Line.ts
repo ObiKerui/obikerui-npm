@@ -3,19 +3,22 @@ import * as d3 from 'd3';
 import { tContainerAttrs, tScaling } from '../sharedTypes';
 import { DataFormatter } from '../../dataFormatter';
 import { PlotBase } from './PlotBase';
-import { tFill } from './PlotAttrs';
+import { tLineAttrs } from './PlotAttrs';
 
 const colorScheme = ['red', 'green', 'blue', 'grey'];
 
 const defaultFill = {
-  colour: 'none',
-  opacity: 0,
-} as tFill;
+  fillOpacity: 1,
+  fillColour: 'none',
+  stroke: 'black',
+  strokeOpacity: 1,
+  opacity: 1,
+};
 
 class CLines extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
-    const { xs, ys, fill } = attrs;
+    const { xs, ys, lineAttrs } = attrs;
     const { svg } = container;
     const colours = attrs.colours.length > 0 ? attrs.colours : colorScheme;
     const curveType = attrs.curve ?? d3.curveLinear;
@@ -43,20 +46,7 @@ class CLines extends PlotBase {
     lines.exit().style('opacity', 0).remove();
 
     // Enter - add the shapes to this data point
-    const enterGroup = lines
-      .enter()
-      .append('path')
-      .classed('lines', true)
-      .attr('fill', (_d, ith) => {
-        const fillInfo = fill[ith] ?? defaultFill;
-        return fillInfo.colour;
-      })
-      .attr('fill-opacity', (_d, ith) => {
-        const fillInfo = fill[ith] ?? defaultFill;
-        return fillInfo.opacity;
-      })
-      .attr('stroke', 'steelblue')
-      .attr('stroke-width', 1.5);
+    const enterGroup = lines.enter().append('path').classed('lines', true);
 
     // join the new data points with existing
     lines = lines.merge(enterGroup);
@@ -75,7 +65,7 @@ class CLines extends PlotBase {
       .attr('d', (dth, ith) => {
         const line = d3
           .line()
-          .defined(definedFtn)
+          // .defined(definedFtn)
           .curve(curveType)
           .x((d, i) => xScale(getXValue(d, i, dth, ith)) || 0)
           .y((d) => yScale(d) || 0);
@@ -83,8 +73,24 @@ class CLines extends PlotBase {
         return line(dth as [number, number][]);
       })
       .attr('clip-path', `url(#${attrs.clipPathID})`)
-      .attr('stroke', (_d, i) => colours[i] || 'black')
-      .style('opacity', (_d, i) => alpha[i] ?? 1);
+      .attr(
+        'fill',
+        (_d, ith) => lineAttrs[ith]?.fillColour ?? defaultFill.fillColour
+      )
+      .attr(
+        'fill-opacity',
+        (_d, ith) => lineAttrs[ith]?.fillOpacity ?? defaultFill.fillOpacity
+      )
+      .attr('stroke', (_d, ith) => lineAttrs[ith]?.stroke ?? defaultFill.stroke)
+      .attr(
+        'stroke-opacity',
+        (_d, ith) => lineAttrs[ith]?.strokeOpacity ?? defaultFill.strokeOpacity
+      )
+      .style(
+        'opacity',
+        (_d, ith) => lineAttrs[ith]?.opacity ?? defaultFill.opacity
+      )
+      .attr('stroke-width', 1.5);
   }
 }
 

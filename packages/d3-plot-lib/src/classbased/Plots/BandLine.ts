@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
-import { tContainerAttrs, tScaling } from '../sharedTypes';
+import { tContainerAttrs, tGenericBandScale, tScaling } from '../sharedTypes';
 import { PlotBase } from './PlotBase';
 
 class CBandLine extends PlotBase {
@@ -14,9 +14,7 @@ class CBandLine extends PlotBase {
       return;
     }
 
-    const xd3BarScale = xScale as CallableFunction & {
-      bandwidth: CallableFunction;
-    };
+    const xd3BarScale = xScale as tGenericBandScale;
 
     const chartGroup = svg.select(`.${attrs.plotID}`);
 

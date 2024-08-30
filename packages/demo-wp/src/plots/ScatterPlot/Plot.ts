@@ -18,6 +18,12 @@ class ScatterPlot {
       return;
     }
 
+    console.log('what grouped data passed to scatter plot? ', groupedData.data);
+    console.log(
+      'what grouped data processed to: ',
+      Array.from(groupedData.data.values())
+    );
+
     // visibility array
     const visibilityArr = Array.from(metric.values()).map(
       (elem) => elem.active

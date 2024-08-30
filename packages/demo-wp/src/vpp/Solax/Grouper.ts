@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import * as d3 from 'd3-array';
-import { tSolaxData, tPowerCategory, tPercentages } from './Types';
+import { tSolaxData, tPowerCategory, tPercentages, tProfitLoss } from './Types';
 
 dayjs.extend(isBetween);
 
@@ -184,6 +184,22 @@ class DataGrouper {
     return data.filter((elem) =>
       dayjs(elem.uploadTime).isBetween(range[0], range[1])
     );
+  }
+
+  getProfitLoss(data: tSolaxData[]) {
+    let totalFeedIn = 0;
+    let totalConsumed = 0;
+
+    data.forEach((elem) => {
+      const amount = elem.feedinenergy;
+      if (amount >= 0) totalFeedIn += amount;
+      if (amount < 0) totalConsumed += amount;
+    });
+
+    return {
+      consumed: totalConsumed * -1,
+      feedin: totalFeedIn,
+    } as tProfitLoss;
   }
 
   getPercentages(data: tSolaxData[]) {

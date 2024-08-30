@@ -1,22 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
-import { tContainerAttrs, tScaling } from '../sharedTypes';
+import { tContainerAttrs, tGenericBandScale, tScaling } from '../sharedTypes';
 import { PlotBase } from './PlotBase';
 
 const colorScheme = ['red', 'green', 'blue', 'grey'];
-
-type tD3BarScale = {
-  domain: any;
-  bandwidth: any;
-};
-
-// type tGroupedBarElem = {
-//   outerGroup: () => string;
-//   key: () => string;
-//   value: () => string;
-// };
-
-// type tGroupedBarElems = tGroupedBarElem[];
 
 // WHAT SPECIFIC DATA DOES IT NEED?
 // data -> the array of data - each element of the array is an object
@@ -48,16 +35,12 @@ class CGroupedBar extends PlotBase {
     const { ys, subgroups } = attrs;
     const { svg, chartHeight } = container;
     const colours = attrs.colours.length > 0 ? attrs.colours : colorScheme;
-    // const curveType = attrs.curve ?? d3.curveLinear;
-    // const alpha = [1.0];
 
     if (!svg) {
       return;
     }
 
-    // const data = ys as unknown as tGroupedBarElems;
-
-    const xd3BarScale = xScale as unknown as tD3BarScale;
+    const xd3BarScale = xScale as tGenericBandScale;
 
     const chartGroup = svg.select(`.${attrs.plotID}`);
 

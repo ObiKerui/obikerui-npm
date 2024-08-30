@@ -1,6 +1,6 @@
 import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import * as d3 from 'd3';
-import { tBatteryChart } from './Model';
+import { tGridChart } from './Model';
 
 class Chart {
   container;
@@ -9,17 +9,17 @@ class Chart {
     this.container.addPlot(new d3PlotLib.CBar());
   }
 
-  update(newModel: tBatteryChart) {
-    const { barContainer, categories, percentages } = newModel;
+  update(newModel: tGridChart) {
+    const { barContainer, categories, profitLoss } = newModel;
 
-    if (!percentages) {
+    if (!profitLoss) {
       return;
     }
 
-    const dom = [...Object.keys(percentages)];
+    const dom = [...Object.keys(profitLoss)];
 
-    const ys = [...Object.values(percentages)];
-    console.log('what are percentages? ', ys, dom[0], dom[1]);
+    const ys = [...Object.values(profitLoss)];
+    const max = ys.reduce((sum, curr) => sum + curr, 0);
     // const xs = rangedData.map((elem) => dayjs(elem.uploadTime).toDate());
 
     this.container.attrs = {
@@ -27,11 +27,10 @@ class Chart {
       html: barContainer,
       width: 500,
       height: 400,
-      yAxisLabel: 'Battery % (soc)',
+      yAxisLabel: categories[0] ?? 'KWs',
       xAxisText: {
         rotation: 0,
       },
-      xAxisLabel: 'Battery State',
       onGetXScale: (chartWidth: number) =>
         d3
           .scaleBand()
@@ -39,7 +38,10 @@ class Chart {
           .paddingInner(0.2)
           .rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>
-        d3.scaleLinear().domain([0, 100]).rangeRound([chartHeight, 0]),
+        d3
+          .scaleLinear()
+          .domain([0, max / 1000])
+          .rangeRound([chartHeight, 0]),
     } as d3PlotLib.tContainerAttrs;
 
     const plot = this.container.getPlots()[0];
@@ -48,7 +50,7 @@ class Chart {
       labels: dom,
       stackedDataset: ys,
       onGetLabel: (_d: number, ith: number) => dom[ith],
-      onGetValue: (d: number) => d * 100,
+      onGetValue: (d: number) => d / 1000.0,
     } as d3PlotLib.tPlotAttrs;
 
     this.container.update();
@@ -56,8 +58,3 @@ class Chart {
 }
 
 export { Chart };
-// // const chart = new Chart();
-
-// // useBatteryChart.subscribe((newModel) => {
-// //   chart.update(newModel);
-// // });

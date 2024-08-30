@@ -16,8 +16,8 @@ import './index.css';
 import { BarPlot } from './plots/BarPlot/Component';
 
 // import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
-import { LinePlotContainer } from './plots/LinePlot/LinePlot';
-import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
+// import { LinePlotContainer } from './plots/LinePlot/LinePlot';
+// import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
 // import { ScatterPlot } from './plots/ScatterPlot/ScatterPlot';
 // import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
@@ -39,6 +39,7 @@ import { StackedPlot } from './plots/StackedBar/Component';
 import { StackedArea } from './plots/StackedArea/Component';
 import { ScatterPlot } from './plots/ScatterPlot/Component';
 import { ZoomPlot } from './plots/ZoomPlot/Component';
+import { Plot as GenericPlot } from './plots/Generic/Component';
 
 import { LeafletMap } from './maps/LeafletMap/Component';
 import { BasicMap } from './maps/BasicMap/Component';
@@ -104,6 +105,7 @@ function Plots() {
       <GroupedBar />
       <StackedPlot />
       <StackedArea />
+      <GenericPlot />
     </div>
   );
 }

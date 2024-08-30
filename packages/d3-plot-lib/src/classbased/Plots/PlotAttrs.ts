@@ -1,9 +1,12 @@
 import * as d3 from 'd3';
 import { Series } from 'd3';
 
-type tFill = {
-  colour: string;
-  opacity: number;
+type tLineAttrs = {
+  stroke?: string;
+  strokeOpacity?: number;
+  fillColour?: string;
+  fillOpacity?: number;
+  opacity?: number;
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -22,7 +25,7 @@ const defaultPlotAttrs = {
   curve: null as d3.CurveFactory | null,
   tag: null as string | null,
   lineStyles: null as string[] | null,
-  fill: [] as tFill[],
+  lineAttrs: [] as tLineAttrs[],
   data: null as any,
   onClick: null as any,
   onMouseDown: null as any,
@@ -105,4 +108,4 @@ const PlotAttrs = {
 
 export default PlotAttrs;
 type tPlotAttrs = typeof PlotAttrs;
-export type { tPlotAttrs, tConditionParam, tScatterGroupSelection, tFill };
+export type { tPlotAttrs, tConditionParam, tScatterGroupSelection, tLineAttrs };

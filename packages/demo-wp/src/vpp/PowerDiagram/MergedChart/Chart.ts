@@ -2,8 +2,8 @@ import * as d3PlotLib from '@obikerui/d3-plot-lib';
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
 import { tPowerCategory } from '../../Solax/Types';
-import { tBatteryChart } from './Model';
 import { powerNodeMap } from '../../Solax/Model';
+import { tChart } from './Model';
 
 class Chart {
   container;
@@ -27,8 +27,8 @@ class Chart {
     }
   }
 
-  update(newModel: tBatteryChart) {
-    const { lineContainer, categories, rangedData } = newModel;
+  update(newModel: tChart) {
+    const { lineContainer, categories, rangedData, visibility } = newModel;
 
     if (!rangedData) {
       return;
@@ -44,7 +44,10 @@ class Chart {
       Date
     ];
 
-    const ys = rangedData.map((elem) => elem.soc);
+    const yieldData = rangedData.map((elem) => elem.yieldtoday);
+    const loadData = rangedData.map((elem) => elem.consumeenergy);
+    const gridData = rangedData.map((elem) => elem.feedinpower);
+
     const xs = rangedData.map((elem) => dayjs(elem.uploadTime).toDate());
 
     // push extra values on to arrays to create bottom right and bottom left points for fill
@@ -53,18 +56,24 @@ class Chart {
 
     if (bottomLeftX && bottomRightX) {
       xs.push(bottomRightX, bottomLeftX);
-      ys.push(0, 0);
+      yieldData.push(0, 0);
+      loadData.push(0, 0);
+      gridData.push(0, 0);
     }
 
-    // colour
-    const colour = powerNodeMap.get('battery')?.colour ?? 'default';
+    const pvOpacity = visibility.includes('pv') ? 0.5 : 0;
+    const pvColour = powerNodeMap.get('pv')?.colour ?? 'default';
+    const loadOpacity = visibility.includes('load') ? 0.5 : 0;
+    const loadColour = powerNodeMap.get('load')?.colour ?? 'default';
+    const gridOpacity = visibility.includes('grid') ? 0.5 : 0;
+    const gridColour = powerNodeMap.get('grid')?.colour ?? 'default';
 
     this.container.attrs = {
       ...this.container.attrs,
       html: lineContainer,
       width: 500,
       height: 400,
-      yAxisLabel: 'Battery % (soc)',
+      yAxisLabel: 'Power Watts',
       xAxisText: {
         rotation: 45,
         onRender: (d: string) => dayjs(d).format('HH:MM'),
@@ -73,7 +82,7 @@ class Chart {
       onGetXScale: (chartWidth: number) =>
         d3.scaleTime().domain(validExtent).rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>
-        d3.scaleLinear().domain([0, 100]).rangeRound([chartHeight, 0]),
+        d3.scaleLinear().domain([-3000, 8000]).rangeRound([chartHeight, 0]),
     } as d3PlotLib.tContainerAttrs;
 
     const plot = this.container.getPlots()[0];
@@ -82,12 +91,23 @@ class Chart {
       opacity: [0.5],
       lineAttrs: [
         {
-          fillColour: colour,
-          opacity: 0.5,
+          stroke: pvColour,
+          fillColour: pvColour,
+          opacity: pvOpacity,
+        } as d3PlotLib.tLineAttrs,
+        {
+          stroke: loadColour,
+          fillColour: loadColour,
+          opacity: loadOpacity,
+        } as d3PlotLib.tLineAttrs,
+        {
+          stroke: gridColour,
+          fillColour: gridColour,
+          opacity: gridOpacity,
         } as d3PlotLib.tLineAttrs,
       ],
       xs,
-      ys: [ys],
+      ys: [yieldData, loadData, gridData],
     } as d3PlotLib.tPlotAttrs;
 
     this.container.update();
