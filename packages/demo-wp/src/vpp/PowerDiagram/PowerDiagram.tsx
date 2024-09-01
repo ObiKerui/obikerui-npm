@@ -15,6 +15,7 @@ import { ChartContainer as LoadChart } from './LoadChart/ChartContainer';
 import { Controls as LoadControls } from './LoadChart/Controls';
 import { ChartContainer as MergeChart } from './MergedChart/ChartContainer';
 import { VisibilityControls } from './MergedChart/Controls';
+import { DataTest } from './DataTest/DataTest';
 
 const powerRouterObj = new PowerRouter();
 
@@ -73,10 +74,7 @@ function PowerDiagram() {
   const diagramRef = useRef<HTMLDivElement | null>(null);
   const { setData, setContainer, nodes, setNodes, data, setProfile, focus } =
     usePowerRouter();
-  const [searchParams, setSearchParams] = useSearchParams({
-    detail: 'battery',
-    timeFrame: 'days',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const currTheme = searchParams.get('theme');
 
@@ -103,6 +101,7 @@ function PowerDiagram() {
     setSearchParams(
       (prev) => {
         prev.set('detail', `${focus}`);
+        prev.set('visible', `${focus}`);
         return prev;
       },
       {
@@ -115,14 +114,21 @@ function PowerDiagram() {
     <div className="flex flex-col gap-2">
       <div ref={diagramRef} />
       <div className="flex flex-row gap-2">
-        <MergeChart />
-        <VisibilityControls />
+        <DataTest />
+      </div>
+      <div className="flex flex-col gap-2">
+        <div>
+          <Controls />
+        </div>
+        <div className="flex flex-row gap-2">
+          <MergeChart />
+          <VisibilityControls />
+        </div>
       </div>
 
       <div className="flex flex-col">
         {focus === 'battery' && (
           <div>
-            <Controls />
             <BatteryChart />
           </div>
         )}

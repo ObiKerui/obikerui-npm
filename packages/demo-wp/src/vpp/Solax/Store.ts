@@ -33,6 +33,8 @@ type tPowerRouter = {
   setSelected: (newValue: boolean[]) => void;
   financial: tFinancial;
   setFinancial: (newValue: tFinancial) => void;
+  currentDataIdx: number;
+  setCurrentDataIdx: (newValue: number) => void;
 };
 
 const usePowerRouter = create<tPowerRouter>((set) => ({
@@ -63,6 +65,8 @@ const usePowerRouter = create<tPowerRouter>((set) => ({
     ],
   },
   setFinancial: (newValue) => set({ financial: newValue }),
+  currentDataIdx: 0,
+  setCurrentDataIdx: (newValue) => set({ currentDataIdx: newValue }),
 }));
 
 export { usePowerRouter };

@@ -13,10 +13,44 @@ type tActivityModel = {
 };
 
 const defaultProfile = {
+  fill: 'white',
   svgStroke: 'black',
 };
 
+type tSelection = d3.Selection<SVGGElement, unknown, null, undefined>;
+
 class Activity {
+  async createIcons(parentNode: tSelection, iconPaths: string[]) {
+    iconPaths.forEach(async (path, ith) => {
+      const iconPathStr = await importSVG(`${path}`);
+      const className = `icon-${ith}`;
+      const iconNodeEnter = parentNode
+        .append('g')
+        .classed(className, true)
+        .node();
+
+      if (iconNodeEnter) {
+        iconNodeEnter.appendChild(iconPathStr);
+      }
+    });
+  }
+
+  updateIcons(parentNode: tSelection, iconPaths: string[], currentIdx: number) {
+    iconPaths.forEach((_, ith) => {
+      const elemClass = `g.icon-${ith}`;
+      parentNode
+        .select<SVGGElement>(elemClass)
+        .attr('transform', `translate(${4},${4})`)
+        .attr('display', currentIdx === ith ? 'current' : 'none');
+
+      const path = parentNode
+        .select<SVGGElement>(elemClass)
+        .select('svg')
+        .select('path');
+      path.attr('fill', currentIdx > 0 ? 'green' : 'red').attr('opacity', 0.8);
+    });
+  }
+
   async update(model: tActivityModel) {
     const {
       parent,
@@ -37,16 +71,7 @@ class Activity {
     if (activityGroup.empty()) {
       activityGroup = svgElem.append('g').classed('activity', true);
       activityGroup.append('rect').classed('frame', true);
-
-      const idx = currIconIndex;
-      const iconPathStr = await importSVG(`${iconPaths[idx]}` ?? '');
-      const iconNodeEnter = activityGroup
-        .append('g')
-        .classed('icon', true)
-        .node();
-      if (iconNodeEnter) {
-        iconNodeEnter.appendChild(iconPathStr);
-      }
+      await this.createIcons(activityGroup, iconPaths);
     }
 
     activityGroup.attr('display', active ? 'default' : 'none');
@@ -54,19 +79,18 @@ class Activity {
     // update the frame
     activityGroup
       .select<SVGRectElement>('rect.frame')
-      .attr('stroke', 'currentColor')
+      .attr('stroke', profile.svgStroke)
       .attr('stroke-width', 2)
       .attr('width', width)
       .attr('height', height)
       .attr('rx', '5')
       .attr('ry', '5')
-      .attr('fill', 'hsl(0, 0%, 95%)')
+      .attr('fill', profile.fill)
+      // .attr('fill', 'hsl(0, 0%, 95%)')
       .attr('opacity', 1);
 
     // update the icon
-    activityGroup
-      .select<SVGGElement>('g.icon')
-      .attr('transform', `translate(${4},${4})`);
+    this.updateIcons(activityGroup, iconPaths, currIconIndex);
 
     // transform position to centre image
     const widthtemp = 35;

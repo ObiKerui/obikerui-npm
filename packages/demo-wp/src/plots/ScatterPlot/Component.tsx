@@ -199,10 +199,6 @@ function ScatterPlot() {
         })
       );
 
-      const entries = csvresult.flatMap(Object.entries);
-      const what = d3Array.group(entries, ([key]) => key);
-      console.log('what is entries? ', entries, what);
-
       // const grouped = d3.group(data.flatMap(Object.entries), ([key]) => key);
       // const grouped = d3Array.group(csvresult, (obj) => obj.species);
       // console.log('what is the csv result: ', csvresult);

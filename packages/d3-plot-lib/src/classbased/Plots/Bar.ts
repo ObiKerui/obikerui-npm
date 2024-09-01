@@ -3,18 +3,18 @@ import * as d3 from 'd3';
 import { tContainerAttrs, tGenericBandScale, tScaling } from '../sharedTypes';
 import { PlotBase } from './PlotBase';
 
-const defaultFill = {
-  fillOpacity: 1,
-  fillColour: 'none',
-  stroke: 'black',
-  strokeOpacity: 1,
-  opacity: 1,
-};
+// const defaultFill = {
+//   fillOpacity: 1,
+//   fillColour: 'none',
+//   stroke: 'black',
+//   strokeOpacity: 1,
+//   opacity: 1,
+// };
 
 class CBar extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
-    const { stackedDataset, onGetLabel, onGetValue, labels, alpha } = attrs;
+    const { data, onGetLabel, onGetValue, labels, alpha } = attrs;
 
     const { svg, chartHeight } = container;
 
@@ -27,14 +27,12 @@ class CBar extends PlotBase {
     const chartGroup = svg.select(`.${attrs.plotID}`);
 
     const colourScale = d3
-      .scaleOrdinal<string, string>()
-      .domain(labels)
+      .scaleOrdinal<number, string>()
+      .domain(Array(data.length).fill(0, data.length - 1))
       .range(['blue', 'red', 'green']);
 
     // select all rect in svg.chart-group with the class bar
-    let bars = chartGroup
-      .selectAll<SVGRectElement, number>('.bar')
-      .data(stackedDataset);
+    let bars = chartGroup.selectAll<SVGRectElement, number>('.bar').data(data);
 
     // Exit - remove data points if current data.length < data.length last time this ftn was called
     bars.exit().style('opacity', 0).remove();
@@ -59,7 +57,7 @@ class CBar extends PlotBase {
         const value = onGetValue ? onGetValue(d, i) : 0;
         return chartHeight - yScale(value);
       })
-      .attr('fill', (d) => colourScale(d.key))
+      .attr('fill', (_, ith) => colourScale(ith))
       .style('opacity', alpha);
   }
 }

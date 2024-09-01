@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { atom, getDefaultStore, useAtom } from 'jotai';
 import { useEffect, useRef } from 'react';
+import dayjs from 'dayjs';
 import { Codesandbox as CSBIcon } from '../../Utils/CodeSandboxLink';
 import { DateGrouper } from './DateGrouper';
 import { Metric, TimePeriods } from './Model';
@@ -86,18 +87,42 @@ function Plot() {
 
   useEffect(() => {
     let grouped = null;
+    const lastElem = dataSeries[dataSeries.length - 1] ?? null;
+    if (!lastElem) return;
+    const dayjsDate = dayjs(lastElem.date);
+
     switch (sorting) {
       case 'months':
-        grouped = dayGrouper.group('months', dataSeries);
+        grouped = dayGrouper.truncate(
+          dataSeries,
+          dayjsDate.subtract(12, 'months'),
+          dayjsDate
+        );
+        grouped = dayGrouper.group('months', grouped);
         break;
       case 'weeks':
-        grouped = dayGrouper.group('weeks', dataSeries);
+        grouped = dayGrouper.truncate(
+          dataSeries,
+          dayjsDate.subtract(12, 'weeks'),
+          dayjsDate
+        );
+        grouped = dayGrouper.group('weeks', grouped);
         break;
       case 'days':
-        grouped = dayGrouper.group('days', dataSeries);
+        grouped = dayGrouper.truncate(
+          dataSeries,
+          dayjsDate.subtract(30, 'days'),
+          dayjsDate
+        );
+        grouped = dayGrouper.group('days', grouped);
         break;
       case 'hours':
-        grouped = dayGrouper.group('hours', dataSeries);
+        grouped = dayGrouper.truncate(
+          dataSeries,
+          dayjsDate.subtract(48, 'hours'),
+          dayjsDate
+        );
+        grouped = dayGrouper.group('hours', grouped);
         break;
       default:
         grouped = dayGrouper.group('months', dataSeries);

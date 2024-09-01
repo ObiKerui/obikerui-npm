@@ -1,29 +1,37 @@
-import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { atom, useAtom, getDefaultStore } from 'jotai';
-import { BarPlot as BarPlotObj } from './Plot';
-import {
-  DataGrouper,
-  tChartData,
-  tData,
-  TimePeriods,
-  Metric,
-} from './DataGrouper';
-
+import dayjs, { ManipulateType } from 'dayjs';
+import { atom, getDefaultStore, useAtom } from 'jotai';
+import { useEffect, useRef } from 'react';
 import { Codesandbox as CSBIcon } from '../../Utils/CodeSandboxLink';
+import { DayjsGrouper } from './DateGrouper';
+import { Metric, TimePeriods, tData, tModel, tPeriod } from './Model';
+import { BarPlot as BarPlotObj } from './Plot';
 
-const BarPlotAtom = atom<tChartData>({
+const dayJSGrouper = new DayjsGrouper<tData>();
+
+type tValue = {
+  period: number;
+  unit: ManipulateType;
+};
+
+const map = new Map<tPeriod, tValue>([
+  ['months', { period: 12, unit: 'month' }],
+  ['weeks', { period: 3, unit: 'months' }],
+  ['days', { period: 1, unit: 'months' }],
+  ['hours', { period: 24, unit: 'hours' }],
+]);
+
+const BarPlotAtom = atom<tModel>({
   chartRef: null,
   dataSeries: [],
   sorting: 'months',
-  groupedData: null,
+  groupedData: [],
   metric: 'Avg Consumption',
 });
 
 const store = getDefaultStore();
 
 const barPlotObj = new BarPlotObj();
-const grouper = new DataGrouper();
 
 store.sub(BarPlotAtom, () => {
   const newState = store.get(BarPlotAtom);
@@ -39,7 +47,7 @@ function Controls() {
         ({
           ...prev,
           sorting: value,
-        } as tChartData)
+        } as tModel)
     );
   };
 
@@ -49,7 +57,7 @@ function Controls() {
         ({
           ...prev,
           metric: value,
-        } as tChartData)
+        } as tModel)
     );
   };
 
@@ -92,28 +100,25 @@ function BarPlot() {
 
   useEffect(() => {
     let grouped = null;
-    switch (sorting) {
-      case 'months':
-        grouped = grouper.groupByMonths(dataSeries);
-        break;
-      case 'weeks':
-        grouped = grouper.groupByWeeks(dataSeries);
-        break;
-      case 'days':
-        grouped = grouper.groupByDays(dataSeries);
-        break;
-      case 'hours':
-        grouped = grouper.groupByHours(dataSeries);
-        break;
-      default:
-        grouped = grouper.groupByMonths(dataSeries);
-    }
+    const lastElem = dataSeries[dataSeries.length - 1] ?? null;
+    if (!lastElem) return;
+
+    const dayjsDate = dayjs(lastElem.date);
+    const value = map.get(sorting);
+    if (!value) return;
+
+    grouped = dayJSGrouper
+      .setData(dataSeries)
+      .truncate(dayjsDate.subtract(value.period, value.unit), dayjsDate)
+      .group(sorting)
+      .average()
+      .getData();
 
     setBarPlot({
       ...barPlot,
       groupedData: grouped,
     });
-  }, [sorting, dataSeries]);
+  }, [dataSeries, sorting]);
 
   useEffect(() => {
     setBarPlot((prev) => ({

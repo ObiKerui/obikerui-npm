@@ -48,7 +48,7 @@ class Chart {
     plot.attrs = {
       ...plot.attrs,
       labels: dom,
-      stackedDataset: ys,
+      data: ys,
       onGetLabel: (_d: number, ith: number) => dom[ith],
       onGetValue: (d: number) => d / 1000.0,
     } as d3PlotLib.tPlotAttrs;

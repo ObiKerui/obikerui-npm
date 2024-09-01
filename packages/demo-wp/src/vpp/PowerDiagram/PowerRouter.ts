@@ -4,7 +4,6 @@ import { Arch } from '../Lib/Node/Arch';
 import { tNode, tPowerArchID, tPowerNodeID, tArch } from '../Solax/Types';
 import { tIconModel } from '../Lib/Node/Icon';
 import { tPowerRouter, usePowerRouter } from '../Solax/Store';
-// import { useBatteryChart } from './Chart/Chart';
 import { darkProfile, lightProfile, powerNodeToCategory } from '../Solax/Model';
 import { tActivityModel } from '../Lib/Node/Activity';
 
@@ -93,6 +92,7 @@ class PowerRouter {
         id: archData?.id ?? '',
         coords: archData?.coordinates ?? ([[0, 0]] as [number, number][]),
         flow: archData?.flow ?? 'none',
+        current: archData?.current ?? 'none',
         parent: originPoint.node(),
         profile: currProfile,
       });
@@ -113,7 +113,9 @@ class PowerRouter {
           height: nodeData?.icon.height,
         } as tIconModel,
         activity: {
-          active: key !== 'inverter' && key !== 'load',
+          active:
+            key !== 'inverter' && key !== 'load' && nodeData?.activity.active,
+          currIconIndex: nodeData?.activity.currIconIndex ?? 0,
           iconPaths: nodeData?.activity.iconPaths,
         } as tActivityModel,
         onClick: (d) => {

@@ -108,7 +108,7 @@ class Node {
       parent: nodeOrigin.node(),
       height: 33,
       width: 35,
-      currIconIndex: 0,
+      profile,
     } as tActivityModel);
   }
 }

@@ -21,6 +21,8 @@ type tIcon = {
 
 type tActivity = {
   iconPaths: string[];
+  currIconIndex: number;
+  active: boolean;
 };
 
 type tNode = {
@@ -45,6 +47,7 @@ type tArch = {
   id: string;
   coordinates: [number, number][];
   flow: 'positive' | 'negative' | 'none';
+  current: 'none' | 'low' | 'med' | 'high';
 };
 
 type tSolaxData = {
@@ -56,6 +59,8 @@ type tSolaxData = {
   feedinenergy: number;
   consumeenergy: number;
   soc: number;
+  batStatus: string;
+  batPower: number;
   uploadTime: string;
 };
 
@@ -81,4 +86,5 @@ export type {
   tSolaxData,
   tPercentages,
   tProfitLoss,
+  tActivity,
 };

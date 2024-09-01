@@ -6,6 +6,7 @@ import {
   tPowerArchID,
   tArch,
   tPowerCategory,
+  tActivity,
 } from './Types';
 
 const pvLabelData = [
@@ -25,8 +26,9 @@ const pvIconData = {
   width: 50,
 };
 
-const pvActivityData = {
+const pvActivityData: tActivity = {
   iconPaths: ['assets/PowerRouter/Light/sun.svg'],
+  currIconIndex: 0,
   active: true,
 };
 
@@ -47,11 +49,12 @@ const inverterIconData = {
   width: 50,
 };
 
-const inverterActivityData = {
+const inverterActivityData: tActivity = {
   iconPaths: [
     'assets/PowerRouter/Light/consume.svg',
     'assets/PowerRouter/Light/produce.svg',
   ],
+  currIconIndex: 0,
   active: false,
 };
 
@@ -72,11 +75,12 @@ const batteryIconData = {
   width: 50,
 };
 
-const batteryActivityData = {
+const batteryActivityData: tActivity = {
   iconPaths: [
     'assets/PowerRouter/Light/consume.svg',
     'assets/PowerRouter/Light/produce.svg',
   ],
+  currIconIndex: 0,
   active: false,
 };
 
@@ -97,11 +101,12 @@ const gridIconData = {
   width: 50,
 };
 
-const gridActivityData = {
+const gridActivityData: tActivity = {
   iconPaths: [
     'assets/PowerRouter/Light/consume.svg',
     'assets/PowerRouter/Light/produce.svg',
   ],
+  currIconIndex: 0,
   active: false,
 };
 
@@ -122,11 +127,12 @@ const loadIconData = {
   width: 50,
 };
 
-const loadActivityData = {
+const loadActivityData: tActivity = {
   iconPaths: [
     'assets/PowerRouter/Light/consume.svg',
     'assets/PowerRouter/Light/produce.svg',
   ],
+  currIconIndex: 0,
   active: false,
 };
 
@@ -210,6 +216,7 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
         [0, -10],
       ],
       flow: 'none',
+      current: 'none',
     },
   ],
   [
@@ -223,6 +230,7 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
         [0, 10],
       ],
       flow: 'negative',
+      current: 'none',
     },
   ],
   [
@@ -236,6 +244,7 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
         [0, -10],
       ],
       flow: 'none',
+      current: 'none',
     },
   ],
   [
@@ -249,6 +258,7 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
         [0, 10],
       ],
       flow: 'negative',
+      current: 'none',
     },
   ],
 ]);

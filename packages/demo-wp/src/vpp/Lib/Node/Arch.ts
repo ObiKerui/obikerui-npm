@@ -1,11 +1,18 @@
 import * as d3 from 'd3';
 import { tProfile } from './Types';
 
+const flow = ['positive', 'negative', 'none'] as const;
+type tFlow = (typeof flow)[number];
+
+const current = ['none', 'low', 'med', 'high'] as const;
+type tCurrent = (typeof current)[number];
+
 type tArchModel = {
   id: string;
   parent: SVGGElement | null;
   coords: [number, number][];
-  flow: 'positive' | 'negative' | 'none';
+  flow: tFlow;
+  current: tCurrent;
   profile?: tProfile;
 };
 
@@ -17,9 +24,23 @@ const defaultProfile = {
   circleFill: 'black',
 };
 
+const currToSpeedMap = new Map<tCurrent, number>([
+  ['none', 6000],
+  ['low', 5000],
+  ['med', 3000],
+  ['high', 2000],
+]);
+
 class Arch {
   update(model: tArchModel) {
-    const { parent, coords, id, flow, profile = defaultProfile } = model;
+    const {
+      parent,
+      coords,
+      id,
+      flow,
+      current,
+      profile = defaultProfile,
+    } = model;
 
     // const darkProfile = {
     //   stroke: 'white',
@@ -92,6 +113,8 @@ class Arch {
       };
     }
 
+    const duration = currToSpeedMap.get(current) ?? 0;
+
     function transition() {
       const lineNode = lines.node();
       if (!lineNode) {
@@ -99,7 +122,7 @@ class Arch {
       }
       circle
         .transition()
-        .duration(5000)
+        .duration(duration)
         .attrTween('transform', translateAlong(lineNode))
         .on('end', transition);
     }

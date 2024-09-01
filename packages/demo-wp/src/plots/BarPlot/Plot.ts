@@ -1,7 +1,6 @@
-// import { atom } from 'jotai';
 import * as d3 from 'd3';
 import * as d3PlotLib from '@obikerui/d3-plot-lib';
-import { tChartData, tAveraged, tMetric } from './DataGrouper';
+import { tData, tModel, tMetric } from './Model';
 
 class BarPlot {
   container: d3PlotLib.CContainer;
@@ -9,32 +8,29 @@ class BarPlot {
   constructor() {
     this.container = new d3PlotLib.CContainer();
     this.container.addPlot(new d3PlotLib.CBar());
-    // this.container.update();
   }
 
-  getMetric(metric: tMetric, data: tAveraged) {
+  getMetric(metric: tMetric, data: tData) {
     switch (metric) {
       case 'Avg Consumption':
-        return data.avgConsumption;
+        return data.consumption;
       case 'Avg Export':
-        return data.avgExport;
+        return data.export;
       case 'Avg Price Per KwH':
-        return data.avgPPKWH;
+        return data.ppkwh;
       default:
         return 0;
     }
   }
 
-  update(barPlotModel: tChartData) {
+  update(barPlotModel: tModel) {
     const { chartRef, groupedData, metric } = barPlotModel;
 
     if (!groupedData) {
       return;
     }
 
-    const { labels } = groupedData;
-
-    // console.log('bar plot : what is grouped data / data? ', groupedData.data);
+    const labels = groupedData.map((elem) => elem.date);
 
     this.container.attrs = {
       ...this.container.attrs,
@@ -58,9 +54,9 @@ class BarPlot {
     bars.attrs = {
       ...bars.attrs,
       labels,
-      stackedDataset: groupedData.data,
-      onGetValue: (d: tAveraged) => this.getMetric(metric, d),
-      onGetLabel: (d: tAveraged) => d.key,
+      data: groupedData,
+      onGetValue: (d: tData) => this.getMetric(metric, d),
+      onGetLabel: (d: tData) => d.date,
     } as d3PlotLib.tPlotAttrs;
 
     this.container.update();
