@@ -46,7 +46,9 @@ function SolarDataGenerator() {
     // sunPathGen.sunPath(SolarTwin.FebOct).xs().ys();
 
     // generate the yearly data
-    const yearDataGen = yearDataGenerator().location(location).positionGenerator(sunPosGenerator);
+    const yearDataGen = yearDataGenerator()
+      .location(location)
+      .positionGenerator(sunPosGenerator);
     yearDataGen();
     yearData = yearDataGen.data();
 

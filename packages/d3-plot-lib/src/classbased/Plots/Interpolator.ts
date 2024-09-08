@@ -98,7 +98,7 @@ class Interpolator {
   update(plot: tPlot) {
     const { xs, ys, where } = plot.attrs;
     const numXs = xs as number[];
-    const numYs = ys as number[];
+    const numYs = ys as unknown as number[];
 
     if (!where) {
       return null;

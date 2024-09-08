@@ -8,6 +8,7 @@ import { darkProfile, lightProfile, powerNodeToCategory } from '../Solax/Model';
 import { tActivityModel } from '../Lib/Node/Activity';
 
 function updateUI(newValue: tPowerNodeID) {
+  console.log('update the UI : ', newValue);
   usePowerRouter.getState().setFocus(newValue);
   const currNodes = usePowerRouter.getState().nodes;
   const currNode = currNodes.get(newValue as tPowerNodeID);

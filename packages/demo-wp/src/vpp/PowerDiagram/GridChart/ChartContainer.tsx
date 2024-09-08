@@ -4,39 +4,43 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DataGrouper } from '../../Solax/Grouper';
 import { usePowerRouter } from '../../Solax/Store';
 import { useGridChart, tTimeFrame } from './Model';
-import { Chart as LineChart } from './Chart';
 import { Chart as BarChart } from './PercentChart';
+import { Chart as ProfitLossChart } from './ProfitLossChart';
 
 const grouper = new DataGrouper();
-const lineChart = new LineChart();
 const barChart = new BarChart();
+const profitLoss = new ProfitLossChart();
 
 useGridChart.subscribe((newState) => {
-  lineChart.update(newState);
   barChart.update(newState);
+  profitLoss.update(newState);
 });
 
 function ChartContainer() {
   const data = usePowerRouter((state) => state.data);
-  const setLineContainer = useGridChart((state) => state.setLineContainer);
-  const setRangedData = useGridChart((state) => state.setRangedData);
+  const financialData = usePowerRouter((state) => state.financial);
   const setBarContainer = useGridChart((state) => state.setBarContainer);
   const setProfitLoss = useGridChart((state) => state.setProfitLoss);
+  const setProdCons = useGridChart((state) => state.setProducedConsumed);
+  const setProfitLossContainer = useGridChart(
+    (state) => state.setProfitLossContainer
+  );
   const [searchParams] = useSearchParams();
 
-  const lineChartRef = useRef<HTMLDivElement | null>(null);
   const barChartRef = useRef<HTMLDivElement | null>(null);
+  const profLossRef = useRef<HTMLDivElement | null>(null);
 
   const timeFrame = searchParams.get('timeFrame');
 
   useEffect(() => {
-    setLineContainer(lineChartRef.current);
     setBarContainer(barChartRef.current);
+    setProfitLossContainer(profLossRef.current);
   }, []);
 
   useEffect(() => {
     let ranged = [];
     let percentages = null;
+    let profLossCurr = null;
     const latest = grouper.getNewest(data);
     if (!latest) {
       return;
@@ -60,15 +64,17 @@ function ChartContainer() {
     }
     ranged = grouper.getRange(data, range as [Dayjs, Dayjs]);
     percentages = grouper.getProfitLoss(ranged);
+    profLossCurr = grouper.getProfitLossCurrency(ranged, financialData);
+    console.log('prof / loss currency: ', profLossCurr);
 
-    setRangedData(ranged);
     setProfitLoss(percentages);
+    setProdCons(profLossCurr);
   }, [timeFrame, data]);
 
   return (
     <div>
-      <div ref={lineChartRef} />
       <div ref={barChartRef} />
+      <div ref={profLossRef} />
     </div>
   );
 }

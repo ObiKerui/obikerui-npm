@@ -1,113 +1,154 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useLayoutEffect, useRef, useState } from 'react';
-import * as d3PlotLib from '@obikerui/d3-plot-lib';
-import * as d3 from 'd3';
+import { useRef, useEffect } from 'react';
+import { atom, useAtom, getDefaultStore } from 'jotai';
+import { Histogram } from './Plot';
 import * as np from '../NumpyClone/numpy';
+import { tModel } from './Model';
 
-function createChart() {
-  const logmassA = np.randomNormal(0, 1, 10000);
-  const logmassB = np.randomNormal(8, 2, 10000);
+const PlotAtom = atom<tModel>({
+  chartRef: null,
+  xs: [],
+  logMassA: [],
+  logMassB: [],
+  pdfNorm: [],
+  colours: ['red', 'green', 'blue', 'grey'],
+});
 
-  const ms = np.linspace(-5, 20, 100);
-  const mean = np.mean(logmassA) ?? 0;
-  const std = np.std(logmassA) ?? 0;
-  const pdfNorm = np.pdf(ms, mean, std);
+const store = getDefaultStore();
 
-  // let plot = d3PlotLib.Plot().xs(ms).ys(pdf_norm).curve(d3.curveCardinal)
+const plotObj = new Histogram();
 
-  const fill = new d3PlotLib.CFillArea();
-  fill.attrs = {
-    ...fill.attrs,
-    xs: ms,
-    ys: pdfNorm,
-    alpha: 0.2,
-    where: (x: any) => x > 0.9 && x < 2,
-    colours: ['blue'],
-    labels: ['filled in'],
-  } as d3PlotLib.tPlotAttrs;
+store.sub(PlotAtom, () => {
+  const newState = store.get(PlotAtom);
+  plotObj.update(newState);
+});
 
-  const histA = new d3PlotLib.CHistogram();
-  histA.attrs = {
-    ...histA.attrs,
-    xs: ms,
-    ys: logmassA,
-    bins: 100,
-    density: true,
-    alpha: 0.4,
-  } as d3PlotLib.tPlotAttrs;
+// function Controls() {
+//   const [plotData, setPlotData] = useAtom(PlotAtom);
+//   const { species, metric } = plotData;
 
-  const histB = new d3PlotLib.CHistogram();
-  histB.attrs = {
-    ...histB.attrs,
-    xs: ms,
-    ys: logmassB,
-    bins: 100,
-    density: true,
-    alpha: 0.6,
-  } as d3PlotLib.tPlotAttrs;
+//   const updateSpecies = (value: tSpeciesKey) => {
+//     setPlotData((prev) => {
+//       const currFilter = prev.species;
+//       const currValue = currFilter.get(value);
+//       if (!currValue) throw new Error('Error updating species!');
+//       currFilter.set(value, {
+//         ...currValue,
+//         active: !currValue.active,
+//       });
 
-  const plotC = new d3PlotLib.CLines();
-  plotC.attrs = {
-    ...plotC.attrs,
-    xs: ms,
-    ys: pdfNorm,
-  } as d3PlotLib.tPlotAttrs;
+//       return {
+//         ...prev,
+//         species: rfdc()(currFilter),
+//       };
+//     });
+//   };
 
-  const container = new d3PlotLib.CContainer();
-  container.addPlot(histA);
-  container.addPlot(histB);
-  container.addPlot(plotC);
-  container.addPlot(fill);
+//   const updateMetric = (value: tMetricKey) => {
+//     setPlotData((prev) => {
+//       const currFilter = prev.metric;
+//       const currValue = currFilter.get(value);
+//       if (!currValue) throw new Error('Error updating metric!');
 
-  container.attrs = {
-    ...container.attrs,
-    onGetXScale(chartWidth) {
-      const xScale = d3
-        .scaleLinear()
-        .domain(d3.extent(ms) as [number, number])
-        .nice()
-        .rangeRound([0, chartWidth]);
-      return xScale;
-    },
-    onGetYScale(chartHeight) {
-      const yScale = d3
-        .scaleLinear()
-        .domain(d3.extent(pdfNorm) as [number, number])
-        .nice()
-        .rangeRound([chartHeight, 0]);
-      return yScale;
-    },
-  };
-  container.update();
+//       currFilter.set(value, {
+//         ...currValue,
+//         active: !currValue.active,
+//       });
 
-  return container;
-}
+//       return {
+//         ...prev,
+//         metric: rfdc()(currFilter),
+//       };
+//     });
+//   };
 
-function Histogram() {
+//   const isSpeciesEnabled = (value: tSpeciesKey) =>
+//     plotData.species.get(value)?.active ?? false;
+
+//   const isMetricEnabled = (value: tMetricKey) =>
+//     plotData.metric.get(value)?.active ?? false;
+
+//   return (
+//     <div>
+//       <div className="flex flex-row">
+//         <details className="dropdown">
+//           <summary className="btn m-1">Filter Species</summary>
+//           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+//             {Array.from(species.keys()).map((elem) => (
+//               <li key={elem}>
+//                 <button type="button" onClick={() => updateSpecies(elem)}>
+//                   <span
+//                     className={cn('font-extralight', {
+//                       'font-semibold': isSpeciesEnabled(elem),
+//                     })}
+//                   >
+//                     {species.get(elem)?.label}
+//                   </span>
+//                 </button>
+//               </li>
+//             ))}
+//           </ul>
+//         </details>
+//         <details className="dropdown">
+//           <summary className="btn m-1">Filter Metric</summary>
+//           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+//             {Array.from(metric.keys()).map((elem) => (
+//               <li key={elem}>
+//                 <button type="button" onClick={() => updateMetric(elem)}>
+//                   <span
+//                     className={cn('font-extralight', {
+//                       'font-semibold': isMetricEnabled(elem),
+//                     })}
+//                   >
+//                     {metric.get(elem)?.label}
+//                   </span>
+//                 </button>
+//               </li>
+//             ))}
+//           </ul>
+//         </details>
+//       </div>
+//     </div>
+//   );
+// }
+
+function HistPlot() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const chart = useRef<d3PlotLib.CContainer>(createChart());
-  const [chartAttrs, setChartAttrs] =
-    useState<d3PlotLib.tContainerAttrs | null>(null);
+  const [, setPlotData] = useAtom(PlotAtom);
 
-  useLayoutEffect(() => {
-    if (ref.current === null) {
-      return;
-    }
-    const updatedAttrs = {
-      ...chart.current.attrs,
-      html: ref.current,
-    };
-    chart.current.attrs = updatedAttrs;
-    chart.current.update();
-    setChartAttrs(updatedAttrs);
+  useEffect(() => {
+    setPlotData((prev) => ({
+      ...prev,
+      chartRef: ref.current,
+    }));
+  }, [ref.current]);
+
+  useEffect(() => {
+    const logMassA = np.randomNormal(0, 1, 10000);
+    const logMassB = np.randomNormal(8, 2, 10000);
+
+    const ms = np.linspace(-5, 20, 100);
+    const mean = np.mean(logMassA) ?? 0;
+    const std = np.std(logMassA) ?? 0;
+    const pdfNorm = np.pdf(ms, mean, std);
+
+    setPlotData((prev) => ({
+      ...prev,
+      xs: ms,
+      logMassA,
+      logMassB,
+      pdfNorm,
+    }));
   }, []);
 
   return (
     <div>
-      <span>histogram</span>
-      <div ref={ref} />
+      <span>Histogram Plot</span>
+      {/* <Controls /> */}
+      <div className="flex gap-4">
+        <div className="w-[800px]" ref={ref} />
+      </div>
     </div>
   );
 }
 
-export { Histogram };
+export { HistPlot };

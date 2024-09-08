@@ -4,23 +4,33 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DataGrouper } from '../../Solax/Grouper';
 import { usePowerRouter } from '../../Solax/Store';
 import { useChart, tTimeFrame } from './Model';
-import { Chart as LineChart } from './Chart';
+import { Chart as PowerChart } from './PowerChart/Chart';
+import { Chart as BatteryChart } from './BatChart';
+import { Chart as PVChart } from './PVChart';
 
 const grouper = new DataGrouper();
-const lineChart = new LineChart();
+const lineChart = new PowerChart();
+const batChart = new BatteryChart();
+const pvChart = new PVChart();
 
 useChart.subscribe((newState) => {
   lineChart.update(newState);
+  batChart.update(newState);
+  pvChart.update(newState);
 });
 
 function ChartContainer() {
   const data = usePowerRouter((state) => state.data);
   const setLineContainer = useChart((state) => state.setLineContainer);
+  const setBatContainer = useChart((state) => state.setBatContainer);
+  const setPVContainer = useChart((state) => state.setPVContainer);
   const setRangedData = useChart((state) => state.setRangedData);
   const setVisibility = useChart((state) => state.setVisibility);
   const [searchParams] = useSearchParams();
 
   const lineChartRef = useRef<HTMLDivElement | null>(null);
+  const batChartRef = useRef<HTMLDivElement | null>(null);
+  const pvChartRef = useRef<HTMLDivElement | null>(null);
 
   const timeFrame = searchParams.get('timeFrame');
   const visible = searchParams.get('visible') ?? '';
@@ -28,6 +38,8 @@ function ChartContainer() {
 
   useEffect(() => {
     setLineContainer(lineChartRef.current);
+    setBatContainer(batChartRef.current);
+    setPVContainer(pvChartRef.current);
   }, []);
 
   useEffect(() => {
@@ -65,6 +77,8 @@ function ChartContainer() {
   return (
     <div>
       <div ref={lineChartRef} />
+      <div ref={batChartRef} />
+      <div ref={pvChartRef} />
     </div>
   );
 }

@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.pv-light {
+  @apply bg-red-400;
+}
+
+.pv-dark {
+  @apply bg-red-900;
+}
+
+.grid-light {
+  @apply bg-gray-400;
+}
+
+.grid-dark {
+  @apply bg-gray-700;
+}
+
+.load-light {
+  @apply bg-blue-400;
+}
+
+.load-dark {
+  @apply bg-blue-900;
+}
+
+.battery-light {
+  @apply bg-green-400;
+}
+
+.battery-dark {
+  @apply bg-green-900;
+}

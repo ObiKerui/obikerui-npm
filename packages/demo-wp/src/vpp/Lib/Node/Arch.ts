@@ -83,6 +83,7 @@ class Arch {
       .attr('d', (dth) => lineGen(dth))
       .attr('fill', 'none')
       .attr('stroke', profile.stroke)
+      // .attr('stroke', flow === 'negative' ? 'red' : 'green')
       .attr('stroke-width', profile.strokeWidth);
 
     let circle = groupArchSelect
@@ -98,7 +99,9 @@ class Arch {
       .attr('r', () => 6.5)
       .attr('transform', `translate(0,${0})`)
       .attr('fill', profile.circleFill)
+      // .attr('fill', flow === 'negative' ? 'red' : 'green')
       .attr('stroke', profile.stroke)
+      // .attr('stroke', flow === 'negative' ? 'red' : 'green')
       .attr('stroke-width', profile.strokeWidth);
 
     // Returns an attrTween for translating along the specified path element.
@@ -120,6 +123,13 @@ class Arch {
       if (!lineNode) {
         return;
       }
+
+      // lines
+      //   .transition()
+      //   .duration(duration)
+      //   .attrTween('stroke', () => d3.interpolate('black', 'red'))
+      //   .on('end', transition);
+
       circle
         .transition()
         .duration(duration)

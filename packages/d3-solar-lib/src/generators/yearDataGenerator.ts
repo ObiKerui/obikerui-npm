@@ -22,12 +22,18 @@ function YearDataGenerator() {
   let data: unknown[] = [];
   let year = 2000;
 
-  function generate(posGenerator: tPositionGenerator, start: Date, loc: number[]) {
+  function generate(
+    posGenerator: tPositionGenerator,
+    start: Date,
+    loc: number[]
+  ) {
     const end = new Date(start);
     end.setDate(start.getDate() + 1);
 
     const days = d3.utcDays(start, end, 1);
-    const hours = days.flatMap((day) => d3.utcHours(day, new Date(+day + 24 * 3600 * 1000), 1));
+    const hours = days.flatMap((day) =>
+      d3.utcHours(day, new Date(+day + 24 * 3600 * 1000), 1)
+    );
 
     const data = hours.map((date) => {
       const result = posGenerator(date, loc[0], loc[1]);

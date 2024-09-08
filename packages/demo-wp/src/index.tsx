@@ -5,24 +5,17 @@ import {
   createHashRouter,
   useSearchParams,
 } from 'react-router-dom';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import ErrorPage from './ErrorPage';
 import Sidebar from './Sidebar';
 import './index.css';
 
-// import { BarPlotContainer } from './plots/BarPlot/BarPlot';
-
 import { BarPlot } from './plots/BarPlot/Component';
 
-// import DynamicPlotContainer from './plots/LinePlot/DynamicPlot';
-// import { LinePlotContainer } from './plots/LinePlot/LinePlot';
-// import { LinePlotContainerB } from './plots/LinePlot/LinePlotB';
-// import { ScatterPlot } from './plots/ScatterPlot/ScatterPlot';
-// import { AnalemmaPlotContainer } from './solar/AnalemmaPlot/AnalemmaPlot';
 import { AnalemmaPlotContainer } from './solar/AnalemmaPlot2/AnalemmaPlot';
 import { ShadePlotContainer } from './solar/ShadePlot/ShadePlot';
-import RoofPlot from './solar/RoofPlanner/RootPlot';
 
 import { Dashboard as PropertyDashboard } from './properties/Dashboard/Dashboard';
 import { AppProvider as PropertyProvider } from './properties/Provider/Provider';
@@ -33,7 +26,7 @@ import { AppProvider as ThreeSolarAppProvider } from './solar/ThreeSolar/Provide
 import { AppProvider as VPPAppProvider } from './vpp/Provider/Provider';
 
 import './style.css';
-import { Histogram } from './plots/Histogram/Component';
+import { HistPlot } from './plots/Histogram/Component';
 import { GroupedBar } from './plots/GroupedBar/Component';
 import { StackedPlot } from './plots/StackedBar/Component';
 import { StackedArea } from './plots/StackedArea/Component';
@@ -75,10 +68,11 @@ function Root() {
             <div className="pb-4">
               <button
                 type="button"
-                className="btn btn-sm border-black"
+                className="btn btn-sm border-gray-600"
                 onClick={() => setTheme()}
               >
-                set theme
+                {currTheme === 'light' && <FontAwesomeIcon icon={faSun} />}
+                {currTheme === 'dark' && <FontAwesomeIcon icon={faMoon} />}
               </button>
             </div>
 
@@ -98,10 +92,8 @@ function Plots() {
     <div className="bg-base-100 p-4">
       <BarPlot />
       <ScatterPlot />
-      {/* <LinePlotContainer /> */}
-      {/* <LinePlotContainerB /> */}
       <ZoomPlot />
-      <Histogram />
+      <HistPlot />
       <GroupedBar />
       <StackedPlot />
       <StackedArea />
@@ -126,7 +118,7 @@ function Solar() {
     <div>
       <ShadePlotContainer />
       <AnalemmaPlotContainer />
-      <RoofPlot />
+      {/* <RoofPlot /> */}
     </div>
   );
 }

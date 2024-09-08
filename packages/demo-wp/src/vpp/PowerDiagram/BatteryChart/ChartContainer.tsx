@@ -18,19 +18,19 @@ useBatteryChart.subscribe((newState) => {
 
 function ChartContainer() {
   const data = usePowerRouter((state) => state.data);
-  const setLineContainer = useBatteryChart((state) => state.setLineContainer);
+  // const setLineContainer = useBatteryChart((state) => state.setLineContainer);
   const setBarContainer = useBatteryChart((state) => state.setBarContainer);
   const setRangedData = useBatteryChart((state) => state.setRangedData);
   const setPercentages = useBatteryChart((state) => state.setPercentages);
   const [searchParams] = useSearchParams();
 
-  const lineChartRef = useRef<HTMLDivElement | null>(null);
+  // const lineChartRef = useRef<HTMLDivElement | null>(null);
   const barChartRef = useRef<HTMLDivElement | null>(null);
 
   const timeFrame = searchParams.get('timeFrame');
 
   useEffect(() => {
-    setLineContainer(lineChartRef.current);
+    // setLineContainer(lineChartRef.current);
     setBarContainer(barChartRef.current);
   }, []);
 
@@ -67,7 +67,7 @@ function ChartContainer() {
 
   return (
     <div>
-      <div ref={lineChartRef} />
+      {/* <div ref={lineChartRef} /> */}
       <div ref={barChartRef} />
     </div>
   );

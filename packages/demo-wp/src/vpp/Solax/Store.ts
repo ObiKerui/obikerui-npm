@@ -1,18 +1,14 @@
 import { create } from 'zustand';
 import dayjs from 'dayjs';
-import { tSolaxData, tPowerNodeID, tPowerArchID, tArch, tNode } from './Types';
+import {
+  tSolaxData,
+  tPowerNodeID,
+  tPowerArchID,
+  tArch,
+  tNode,
+  tFinancial,
+} from './Types';
 import { powerNodeMap, powerArchMap } from './Model';
-
-type tTariff = {
-  start: dayjs.Dayjs;
-  end: dayjs.Dayjs;
-  price: number;
-};
-
-type tFinancial = {
-  feedIn: number;
-  tariffs: tTariff[];
-};
 
 type tPowerRouter = {
   profile: 'light' | 'dark' | null;
@@ -49,7 +45,7 @@ const usePowerRouter = create<tPowerRouter>((set) => ({
   setNodes: (newValue) => set({ nodes: newValue }),
   arches: powerArchMap,
   setArches: (newValue) => set({ arches: newValue }),
-  focus: 'battery',
+  focus: 'none',
   setFocus: (newValue) => set({ focus: newValue }),
   solaxData: [],
   selected: new Array(5).fill(false),
@@ -58,9 +54,14 @@ const usePowerRouter = create<tPowerRouter>((set) => ({
     feedIn: 0,
     tariffs: [
       {
+        start: dayjs('2023-01-01T00:00:00'),
+        end: dayjs('2023-03-01T23:59:00'),
+        price: 0.25,
+      },
+      {
         start: dayjs('1970-01-01T00:00:00'),
-        end: dayjs('1970-01-01T23:59:00'),
-        price: 0,
+        end: dayjs('2024-01-01T23:59:00'),
+        price: 0.8,
       },
     ],
   },

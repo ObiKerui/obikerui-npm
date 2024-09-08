@@ -126,6 +126,8 @@ class CContainer {
     if (attrs.showMargins && attrs.svg) {
       attrs.svg.style('background-color', 'rgba(255, 0, 0, .2)');
     }
+
+    attrs.svg?.style('display', attrs.display);
   }
 
   addPlot(plot: tPlot) {

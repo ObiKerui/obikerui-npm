@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import dayjs from 'dayjs';
 import { usePowerRouter } from '../../Solax/Store';
 import { PowerInput } from '../PowerInput';
 
@@ -55,17 +56,19 @@ function DataTest() {
     setNodes(nodes);
   }, [currDataIdx]);
 
-  // we need the solax data
-  // we will have a slider that can set the point in time of the solax data
-  // we will show the actual data (or some of it)
-  // we will show the date of the data
+  const showDate = (dateStr: string) =>
+    dayjs(dateStr).format('DD/MM/YYYY HH:mm');
 
   return (
     <div className="flex w-full flex-col rounded-md border border-gray-500 p-4">
       <div className="flex flex-col gap-2">
-        <span>start: {solaxData[0]?.uploadTime ?? ''}</span>
-        <span>current date: {solaxData[currDataIdx]?.uploadTime ?? ''}</span>
-        <span>start: {solaxData[solaxData.length - 1]?.uploadTime ?? ''}</span>
+        <span>start: {showDate(solaxData[0]?.uploadTime) ?? ''}</span>
+        <span>
+          current date: {showDate(solaxData[currDataIdx]?.uploadTime) ?? ''}
+        </span>
+        <span>
+          end: {showDate(solaxData[solaxData.length - 1]?.uploadTime) ?? ''}
+        </span>
       </div>
       <RangeSlider
         currentIdx={currDataIdx}

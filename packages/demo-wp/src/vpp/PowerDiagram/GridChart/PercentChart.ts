@@ -26,8 +26,9 @@ class Chart {
       ...this.container.attrs,
       html: barContainer,
       width: 500,
-      height: 400,
+      height: 200,
       yAxisLabel: categories[0] ?? 'KWs',
+      xAxisLabel: '',
       xAxisText: {
         rotation: 0,
       },
@@ -49,6 +50,8 @@ class Chart {
       ...plot.attrs,
       labels: dom,
       data: ys,
+      colours: ['gray', 'gray'],
+      opacity: [0.5, 0.5],
       onGetLabel: (_d: number, ith: number) => dom[ith],
       onGetValue: (d: number) => d / 1000.0,
     } as d3PlotLib.tPlotAttrs;

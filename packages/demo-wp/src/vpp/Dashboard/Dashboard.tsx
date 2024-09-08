@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { Frame as PowerRouter } from '../PowerRouter/Frame';
 import { PowerDiagram } from '../PowerDiagram/PowerDiagram';
 import { DNOMap } from '../DNOMap/DNOMap';
+import { Settings } from '../Settings/Settings';
 
 function SiteOptions() {
   const [searchParams, setSearchParams] = useSearchParams({
@@ -13,32 +13,6 @@ function SiteOptions() {
 
   return (
     <div role="tablist" className="tabs tabs-lifted">
-      {/* <input
-        type="radio"
-        name="my_tabs_2"
-        role="tab"
-        className="tab"
-        aria-label="Power Router"
-        onChange={() =>
-          setSearchParams(
-            (prev) => {
-              prev.set('tab', 'power-router');
-              return prev;
-            },
-            {
-              replace: true,
-            }
-          )
-        }
-        checked={currTab === 'power-router'}
-      />
-      <div
-        role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
-      >
-        <PowerRouter checked={currTab === 'power-router'} />
-      </div> */}
-
       <input
         type="radio"
         name="my_tabs_2"
@@ -70,7 +44,7 @@ function SiteOptions() {
         name="my_tabs_2"
         role="tab"
         className="tab"
-        aria-label="Power Router 2"
+        aria-label="Power Router"
         onChange={() =>
           setSearchParams(
             (prev) => {
@@ -90,20 +64,47 @@ function SiteOptions() {
       >
         <PowerDiagram />
       </div>
+      <input
+        type="radio"
+        name="my_tabs_2"
+        role="tab"
+        className="tab"
+        aria-label="Settings"
+        onChange={() =>
+          setSearchParams(
+            (prev) => {
+              prev.set('tab', 'settings');
+              return prev;
+            },
+            {
+              replace: true,
+            }
+          )
+        }
+        checked={currTab === 'settings'}
+      />
+      <div
+        role="tabpanel"
+        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+      >
+        <div className="flex w-full">
+          <Settings />
+        </div>
+      </div>
     </div>
   );
 }
 
 function Dashboard() {
-  const [_, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     setSearchParams(
       (prev) => {
         prev.set('tab', 'power-router-b');
-        prev.set('detail', 'battery');
+        prev.set('detail', 'inverter');
         prev.set('timeFrame', '48hours');
-        prev.set('visible', 'pv,load,grid');
+        prev.set('visible', 'pv,load,grid,battery');
         return prev;
       },
       {

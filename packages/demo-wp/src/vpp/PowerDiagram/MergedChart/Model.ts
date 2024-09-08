@@ -11,6 +11,10 @@ type tTimeFrame = '48hours' | 'week' | 'month' | 'quarter';
 type tChart = {
   lineContainer: HTMLDivElement | null;
   setLineContainer: (newValue: HTMLDivElement | null) => void;
+  batContainer: HTMLDivElement | null;
+  setBatContainer: (newValue: HTMLDivElement | null) => void;
+  pvContainer: HTMLDivElement | null;
+  setPVContainer: (newValue: HTMLDivElement | null) => void;
   categories: tPowerCategory[];
   setCategories: (newValue: tPowerCategory[]) => void;
   rangedData: tSolaxData[];
@@ -24,6 +28,10 @@ type tChart = {
 const useChart = create<tChart>((set) => ({
   lineContainer: null,
   setLineContainer: (newValue) => set({ lineContainer: newValue }),
+  batContainer: null,
+  setBatContainer: (newValue) => set({ batContainer: newValue }),
+  pvContainer: null,
+  setPVContainer: (newValue) => set({ pvContainer: newValue }),
   categories: [],
   setCategories: (newValue) => set({ categories: newValue }),
   rangedData: [],

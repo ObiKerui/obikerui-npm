@@ -4,6 +4,7 @@ import { Axis, AxisDomain, AxisScale } from 'd3';
 const ContainerAttrs = {
   html: null as HTMLElement | null,
   svg: null as d3.Selection<SVGSVGElement, any, null, undefined> | null,
+  display: 'block' as 'block' | 'inline' | 'none',
   legend: null as ((_obj: unknown, _plots: unknown) => void) | null,
   showMargins: false,
   height: 500,

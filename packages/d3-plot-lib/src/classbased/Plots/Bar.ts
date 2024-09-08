@@ -14,7 +14,7 @@ import { PlotBase } from './PlotBase';
 class CBar extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
-    const { data, onGetLabel, onGetValue, labels, alpha } = attrs;
+    const { data, onGetLabel, onGetValue, labels, colours, opacity } = attrs;
 
     const { svg, chartHeight } = container;
 
@@ -29,7 +29,7 @@ class CBar extends PlotBase {
     const colourScale = d3
       .scaleOrdinal<number, string>()
       .domain(Array(data.length).fill(0, data.length - 1))
-      .range(['blue', 'red', 'green']);
+      .range(colours ?? ['blue', 'red', 'green']);
 
     // select all rect in svg.chart-group with the class bar
     let bars = chartGroup.selectAll<SVGRectElement, number>('.bar').data(data);
@@ -58,7 +58,7 @@ class CBar extends PlotBase {
         return chartHeight - yScale(value);
       })
       .attr('fill', (_, ith) => colourScale(ith))
-      .style('opacity', alpha);
+      .style('opacity', (_, ith) => opacity[ith] ?? 1);
   }
 }
 

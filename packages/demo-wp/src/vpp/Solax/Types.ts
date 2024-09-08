@@ -1,5 +1,7 @@
+import dayjs from 'dayjs';
+
 type tPowerConnection = 'load' | 'pv' | 'battery' | 'heatpump' | 'ev' | 'grid';
-type tPowerNodeID = tPowerConnection | 'inverter';
+type tPowerNodeID = tPowerConnection | 'inverter' | 'none';
 
 type tPowerCategory =
   | 'soc'
@@ -76,6 +78,17 @@ type tProfitLoss = {
   consumed: number;
 };
 
+type tTariff = {
+  start: dayjs.Dayjs;
+  end: dayjs.Dayjs;
+  price: number;
+};
+
+type tFinancial = {
+  feedIn: number;
+  tariffs: tTariff[];
+};
+
 export type {
   tLabel,
   tNode,
@@ -86,5 +99,7 @@ export type {
   tSolaxData,
   tPercentages,
   tProfitLoss,
+  tFinancial,
+  tTariff,
   tActivity,
 };

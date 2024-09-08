@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as d3 from 'd3';
 import { tContainerAttrs, tScaling } from '../sharedTypes';
 import { PlotBase } from './PlotBase';
 
 class CScatter extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
-    const { labels, data, onGetValue, colours, onSetPlotGroupAttrs } = attrs;
+    const { ys, onGetX, onGetY, colours, onSetPlotGroupAttrs } = attrs;
 
     const { svg } = container;
 
@@ -21,12 +20,9 @@ class CScatter extends PlotBase {
     //   .domain(labels)
     //   .range(['blue']);
 
-    // console.log('what data passed to scatter plot? ', data);
-
-    // select all rect in svg.chart-group with the class bar
     let plotGroups = chartGroup
       .selectAll<SVGGElement, number>('g.plot-groups')
-      .data(data);
+      .data(ys);
 
     // Exit - remove data points if current data.length < data.length last time this ftn was called
     plotGroups.exit().style('opacity', 0).remove();
@@ -43,12 +39,12 @@ class CScatter extends PlotBase {
     plotGroups.style('fill', (_d, i) => colours[i] ?? 'blue');
 
     if (onSetPlotGroupAttrs) {
-      onSetPlotGroupAttrs(plotGroups);
+      onSetPlotGroupAttrs(plotGroups as any);
     }
 
     let circleGroups = plotGroups
       .selectAll<SVGCircleElement, number>('circle')
-      .data((d: unknown) => d as any);
+      .data((d) => d);
 
     circleGroups.exit().style('opacity', 0).remove();
 
@@ -57,15 +53,13 @@ class CScatter extends PlotBase {
     circleGroups = circleGroups.merge(circleGroupsEnter);
 
     circleGroups
-      .attr('cx', (_d: unknown, idx: number): number => {
-        const result = xScale([idx] as any);
-        return result || 0;
+      .attr('cx', (d: unknown, idx: number): number => {
+        const value = onGetX ? onGetX(d, idx) : idx;
+        return xScale(value) ?? 0;
       })
       .attr('cy', (d, ith) => {
-        if (onGetValue) {
-          return yScale(onGetValue(d, ith));
-        }
-        return 0;
+        const value = onGetY ? onGetY(d, ith) : d;
+        return yScale(value) ?? 0;
       })
       .attr('r', 1.5);
     // .style('fill', (d: unknown) => colours(d));

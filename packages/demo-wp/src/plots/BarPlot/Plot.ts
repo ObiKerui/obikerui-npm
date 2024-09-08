@@ -55,6 +55,7 @@ class BarPlot {
       ...bars.attrs,
       labels,
       data: groupedData,
+      colours: ['red', 'green', 'blue'],
       onGetValue: (d: tData) => this.getMetric(metric, d),
       onGetLabel: (d: tData) => d.date,
     } as d3PlotLib.tPlotAttrs;

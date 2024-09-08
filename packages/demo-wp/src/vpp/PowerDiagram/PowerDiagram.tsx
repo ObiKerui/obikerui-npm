@@ -3,19 +3,16 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useSearchParams } from 'react-router-dom';
 import { usePowerRouter } from '../Solax/Store';
-import { tNode, tPowerNodeID, tSolaxData } from '../Solax/Types';
+import { tSolaxData } from '../Solax/Types';
 import { PowerRouter } from './PowerRouter';
 import { ChartContainer as BatteryChart } from './BatteryChart/ChartContainer';
-import { Controls } from './BatteryChart/Controls';
-import { ChartContainer as PVChart } from './PVChart/ChartContainer';
-import { Controls as PVControls } from './PVChart/Controls';
+import TimeControls from './Controls/Time';
 import { ChartContainer as GridChart } from './GridChart/ChartContainer';
-import { Controls as GridControls } from './GridChart/Controls';
-import { ChartContainer as LoadChart } from './LoadChart/ChartContainer';
-import { Controls as LoadControls } from './LoadChart/Controls';
 import { ChartContainer as MergeChart } from './MergedChart/ChartContainer';
-import { VisibilityControls } from './MergedChart/Controls';
+import VisibilityControls from './Controls/Visibility';
 import { DataTest } from './DataTest/DataTest';
+import { Inverter } from './InverterData/Inverter';
+import WeatherInfo from './WeatherInfo';
 
 const powerRouterObj = new PowerRouter();
 
@@ -31,6 +28,15 @@ type tJsonObject = {
   result: tJsonResultObject;
 };
 
+const detailToVisMap = new Map<string | null, string>([
+  ['inverter', 'pv,grid,load,battery'],
+  ['pv', 'pv'],
+  ['grid', 'grid'],
+  ['load', 'load'],
+  ['battery', 'battery'],
+  [null, 'pv,grid,load,battery'],
+]);
+
 async function loadData() {
   const response = await d3.json<tJsonObject[]>(
     'assets/PowerRouter/solaxTestOutput.json'
@@ -39,41 +45,9 @@ async function loadData() {
   return mapped ?? [];
 }
 
-function updateNodes(nodes: Map<tPowerNodeID, tNode>, data: tSolaxData[]) {
-  if (data.length === 0) return nodes;
-  const lastElem = data[data.length - 1];
-
-  const battery = nodes.get('battery');
-  if (battery) {
-    // battery.powerLevel = lastElem.soc;
-    battery.labels[1].text = `${lastElem.soc.toFixed(0)}%`;
-  }
-
-  const pv = nodes.get('pv');
-  if (pv) {
-    // pv.powerLevel = lastElem.yieldtoday;
-    pv.labels[1].text = `${lastElem.yieldtoday.toFixed(2)}kwH`;
-  }
-
-  const grid = nodes.get('grid');
-  if (grid) {
-    // grid.powerLevel = lastElem.feedinenergy;
-    grid.labels[1].text = `${lastElem.feedinenergy.toFixed(2)}kwH`;
-  }
-
-  const load = nodes.get('load');
-  if (load) {
-    // load.powerLevel = lastElem.consumeenergy;
-    load.labels[1].text = `${lastElem.consumeenergy.toFixed(2)}kwH`;
-  }
-
-  return nodes;
-}
-
 function PowerDiagram() {
   const diagramRef = useRef<HTMLDivElement | null>(null);
-  const { setData, setContainer, nodes, setNodes, data, setProfile, focus } =
-    usePowerRouter();
+  const { setData, setContainer, setProfile, focus } = usePowerRouter();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const currTheme = searchParams.get('theme');
@@ -89,11 +63,6 @@ function PowerDiagram() {
   }, []);
 
   useEffect(() => {
-    const updatedNodes = updateNodes(nodes, data);
-    setNodes(updatedNodes);
-  }, [data]);
-
-  useEffect(() => {
     setProfile(currTheme as 'light' | 'dark' | null);
   }, [currTheme]);
 
@@ -101,7 +70,7 @@ function PowerDiagram() {
     setSearchParams(
       (prev) => {
         prev.set('detail', `${focus}`);
-        prev.set('visible', `${focus}`);
+        prev.set('visible', `${detailToVisMap.get(focus)}`);
         return prev;
       },
       {
@@ -111,43 +80,35 @@ function PowerDiagram() {
   }, [focus]);
 
   return (
-    <div className="flex flex-col gap-2">
-      <div ref={diagramRef} />
-      <div className="flex flex-row gap-2">
-        <DataTest />
+    <div className="flex flex-row gap-2">
+      <div className="flex flex-col">
+        <WeatherInfo />
+        <div ref={diagramRef} />
+        <div className="flex flex-row gap-2">
+          <DataTest />
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <div>
-          <Controls />
+          <TimeControls />
         </div>
         <div className="flex flex-row gap-2">
           <MergeChart />
           <VisibilityControls />
         </div>
-      </div>
-
-      <div className="flex flex-col">
         {focus === 'battery' && (
           <div>
             <BatteryChart />
           </div>
         )}
-        {focus === 'pv' && (
-          <div>
-            <PVControls />
-            <PVChart />
-          </div>
-        )}
         {focus === 'grid' && (
           <div>
-            <GridControls />
             <GridChart />
           </div>
         )}
-        {focus === 'load' && (
+        {focus === 'inverter' && (
           <div>
-            <LoadControls />
-            <LoadChart />
+            <Inverter />
           </div>
         )}
       </div>

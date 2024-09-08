@@ -1,7 +1,13 @@
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import * as d3 from 'd3-array';
-import { tSolaxData, tPowerCategory, tPercentages, tProfitLoss } from './Types';
+import {
+  tSolaxData,
+  tPowerCategory,
+  tPercentages,
+  tFinancial,
+  tProfitLoss,
+} from './Types';
 
 dayjs.extend(isBetween);
 
@@ -189,15 +195,46 @@ class DataGrouper {
   getProfitLoss(data: tSolaxData[]) {
     let totalFeedIn = 0;
     let totalConsumed = 0;
+    // const totalFeedInCurr = 0;
+    // const totalConsumedCurr = 0;
 
     data.forEach((elem) => {
       const amount = elem.feedinenergy;
       if (amount >= 0) totalFeedIn += amount;
       if (amount < 0) totalConsumed += amount;
+
+      // if (amount >= 0) totalConsumedCurr * rate += amount;
+      // if (amount < 0) totalConsumedCurr * rate += amount;
     });
 
     return {
       consumed: totalConsumed * -1,
+      feedin: totalFeedIn,
+    } as tProfitLoss;
+  }
+
+  getRate(dateTime: string, financialData: tFinancial) {
+    const tariff = financialData.tariffs.filter((elem) =>
+      dayjs(dateTime).isBetween(elem.start, elem.end)
+    );
+    return tariff;
+  }
+
+  getProfitLossCurrency(data: tSolaxData[], financial: tFinancial) {
+    let totalFeedIn = 0;
+    let totalConsumed = 0;
+
+    data.forEach((elem) => {
+      const amount = elem.feedinenergy / 1000.0;
+      const rate = this.getRate(elem.uploadTime, financial);
+      if (rate.length === 1) {
+        if (amount >= 0) totalFeedIn += amount * rate[0].price;
+        if (amount < 0) totalConsumed -= amount * rate[0].price;
+      }
+    });
+
+    return {
+      consumed: totalConsumed,
       feedin: totalFeedIn,
     } as tProfitLoss;
   }

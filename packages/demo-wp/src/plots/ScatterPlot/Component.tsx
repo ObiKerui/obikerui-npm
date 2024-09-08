@@ -1,67 +1,30 @@
 import { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import * as d3Array from 'd3-array';
 import { atom, useAtom, getDefaultStore } from 'jotai';
 import rfdc from 'rfdc';
 import { ScatterPlot as ScatterPlotObj } from './Plot';
-import {
-  DataGrouper,
-  tChartData,
-  Metric,
-  tCSVElement,
-  tSpeciesKey,
-  tMetric,
-  tGroupedData,
-  tSpeciesParams,
-  tMetricParams,
-} from './DataGrouper';
 import { cn } from '../../Utils/CSS';
+import {
+  tCSVElement,
+  tModel,
+  tSpeciesKey,
+  MetricMap,
+  SpeciesMap,
+  tMetricKey,
+} from './Model';
 
-const speciesFilter = new Map<tSpeciesKey, tSpeciesParams>();
-speciesFilter.set('setosa', {
-  label: 'Setosa',
-  active: true,
-});
-speciesFilter.set('versicolor', {
-  label: 'Versicolor',
-  active: true,
-});
-speciesFilter.set('virginica', {
-  label: 'Virginica',
-  active: true,
-});
-
-const metricFilter = new Map<tMetric, tMetricParams>();
-Metric.forEach((metric) => {
-  metricFilter.set(metric, {
-    label: metric,
-    active: true,
-  });
-});
-
-const groupedDataMap = new Map<tMetric, number[]>();
-Metric.forEach((metric) => {
-  groupedDataMap.set(metric, []);
-});
-
-const grouped = {
-  data: groupedDataMap,
-} as tGroupedData;
-
-const PlotAtom = atom<tChartData>({
+const PlotAtom = atom<tModel>({
   chartRef: null,
   dataSeries: [],
-  columns: Array.from(groupedDataMap.keys()),
   colours: ['red', 'green', 'blue', 'grey'],
-  species: speciesFilter,
-  groupedData: grouped,
-  metric: metricFilter,
+  species: SpeciesMap,
+  processedData: [],
+  metric: MetricMap,
 });
 
 const store = getDefaultStore();
 
 const plotObj = new ScatterPlotObj();
-const grouper = new DataGrouper();
 
 store.sub(PlotAtom, () => {
   const newState = store.get(PlotAtom);
@@ -89,7 +52,7 @@ function Controls() {
     });
   };
 
-  const updateMetric = (value: tMetric) => {
+  const updateMetric = (value: tMetricKey) => {
     setPlotData((prev) => {
       const currFilter = prev.metric;
       const currValue = currFilter.get(value);
@@ -110,7 +73,7 @@ function Controls() {
   const isSpeciesEnabled = (value: tSpeciesKey) =>
     plotData.species.get(value)?.active ?? false;
 
-  const isMetricEnabled = (value: tMetric) =>
+  const isMetricEnabled = (value: tMetricKey) =>
     plotData.metric.get(value)?.active ?? false;
 
   return (
@@ -160,23 +123,14 @@ function Controls() {
 function ScatterPlot() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [plotData, setPlotData] = useAtom(PlotAtom);
-  const { species, dataSeries, metric } = plotData;
+  const { dataSeries } = plotData;
 
   useEffect(() => {
-    let columnData = null;
-    const filtered = grouper.filterBySpecies(dataSeries, species);
-    columnData = grouper.groupByMetric(filtered);
-
-    const { groupedData } = plotData;
-    if (groupedData) {
-      groupedData.data = columnData;
-    }
-
     setPlotData({
       ...plotData,
-      groupedData,
+      processedData: dataSeries,
     });
-  }, [species, dataSeries, metric]);
+  }, [dataSeries]);
 
   useEffect(() => {
     setPlotData((prev) => ({
@@ -198,24 +152,6 @@ function ScatterPlot() {
           species: d.Species as tSpeciesKey,
         })
       );
-
-      // const grouped = d3.group(data.flatMap(Object.entries), ([key]) => key);
-      // const grouped = d3Array.group(csvresult, (obj) => obj.species);
-      // console.log('what is the csv result: ', csvresult);
-      // console.log('what is the grouped result: ', grouped);
-
-      // Step 1: Group by key (a or c), and map the results to arrays of values.
-      // const groupeda = d3Array.group(
-      //   csvresult.flatMap(Object.entries),
-      //   ([key]) => key
-      // );
-
-      // Step 2: Transform the grouped data into the desired format.
-      // const transformed = Array.from(groupeda, ([key, entries]) => ({
-      //   [key]: entries.map(([, value]) => value),
-      // }));
-
-      // console.log('grouped / transformed: ', groupeda, transformed);
 
       setPlotData((prev) => ({
         ...prev,

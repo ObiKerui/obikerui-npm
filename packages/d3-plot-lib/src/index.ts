@@ -35,6 +35,8 @@ import { CScatter } from './classbased/Plots/Scatter';
 import { CBrush } from './classbased/Plots/Brush';
 import { CGeneric } from './classbased/Plots/GenericPlot';
 
+import { PlotHistGenerator as CBinGenerator } from './classbased/Plots/PlotHistGenerator';
+
 import { CLegend } from './classbased/Metadata/Legend';
 
 export {
@@ -63,6 +65,7 @@ export {
   CText,
   CLines,
   CHistogram,
+  CBinGenerator,
   CFillArea,
   CGroupedBar,
   CLegend,

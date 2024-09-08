@@ -15,7 +15,8 @@ const defaultPlotAttrs = {
   clipPathID: null as string | null,
   index: 0,
   xs: [] as d3.AxisDomain[],
-  ys: [] as d3.AxisDomain[] | d3.AxisDomain[][],
+  // ys: [] as d3.AxisDomain[] | d3.AxisDomain[][],
+  ys: [] as d3.AxisDomain[][],
   values: [] as number[],
   alpha: 1,
   labels: [] as string[],
@@ -50,6 +51,8 @@ type tScatterGroupSelection = d3.Selection<
 >;
 
 const ScatterAttrs = {
+  onGetX: null as ((data: unknown, ith: number) => d3.AxisDomain) | null,
+  onGetY: null as ((data: unknown, ith: number) => d3.AxisDomain) | null,
   onSetPlotGroupAttrs: null as
     | ((selection: tScatterGroupSelection) => void)
     | null,
