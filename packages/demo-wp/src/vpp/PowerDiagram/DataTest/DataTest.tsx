@@ -60,7 +60,7 @@ function DataTest() {
     dayjs(dateStr).format('DD/MM/YYYY HH:mm');
 
   return (
-    <div className="flex w-full flex-col rounded-md border border-gray-500 p-4">
+    <div className="border-base-300 flex w-full flex-col rounded-md border p-4 shadow-md">
       <div className="flex flex-col gap-2">
         <span>start: {showDate(solaxData[0]?.uploadTime) ?? ''}</span>
         <span>

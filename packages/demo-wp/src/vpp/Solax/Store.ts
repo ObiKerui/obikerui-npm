@@ -31,6 +31,8 @@ type tPowerRouter = {
   setFinancial: (newValue: tFinancial) => void;
   currentDataIdx: number;
   setCurrentDataIdx: (newValue: number) => void;
+  sunPathContainer: HTMLDivElement | null;
+  setSunPathContainer: (newValue: HTMLDivElement | null) => void;
 };
 
 const usePowerRouter = create<tPowerRouter>((set) => ({
@@ -68,6 +70,8 @@ const usePowerRouter = create<tPowerRouter>((set) => ({
   setFinancial: (newValue) => set({ financial: newValue }),
   currentDataIdx: 0,
   setCurrentDataIdx: (newValue) => set({ currentDataIdx: newValue }),
+  sunPathContainer: null,
+  setSunPathContainer: (newValue) => set({ sunPathContainer: newValue }),
 }));
 
 export { usePowerRouter };

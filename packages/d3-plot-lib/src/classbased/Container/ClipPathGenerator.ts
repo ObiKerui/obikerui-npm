@@ -1,19 +1,21 @@
 /* eslint-disable class-methods-use-this */
 import { v4 as uuidv4 } from 'uuid';
-import { tContainerAttrs, tPlot } from '../sharedTypes';
+import { tContainerAttrs } from '../sharedTypes';
 
-class PlotClipPathGenerator {
-  updateSVG(plot: tPlot, contAttrs: tContainerAttrs) {
-    const { attrs: plotAttrs } = plot;
+class ClipPathGenerator {
+  updateSVG(contAttrs: tContainerAttrs) {
+    // const { attrs: plotAttrs } = plot;
 
     const { svg, chartWidth, chartHeight } = contAttrs;
+    const { clipPathID } = contAttrs;
     if (!svg) {
       return;
     }
 
     // eslint-disable-next-line no-param-reassign
-    if (!plotAttrs.clipPathID) {
-      plotAttrs.clipPathID = `clip-${uuidv4()}`;
+    if (!clipPathID) {
+      // eslint-disable-next-line no-param-reassign
+      contAttrs.clipPathID = `clip-${uuidv4()}`;
     }
 
     const chartGroup = svg.select('g.chart-group');
@@ -26,7 +28,7 @@ class PlotClipPathGenerator {
     chartGroup
       .select<SVGDefsElement>('defs')
       .select<SVGClipPathElement>('clipPath')
-      .attr('id', `${plotAttrs.clipPathID}`)
+      .attr('id', `${clipPathID}`)
       .select<SVGRectElement>('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -35,4 +37,4 @@ class PlotClipPathGenerator {
   }
 }
 
-export { PlotClipPathGenerator };
+export { ClipPathGenerator };

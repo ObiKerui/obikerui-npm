@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as d3 from 'd3';
 import { tContainerAttrs, tScaling } from '../sharedTypes';
-import { DataFormatter } from '../../dataFormatter';
+// import { DataFormatter } from '../../dataFormatter';
 import { PlotBase } from './PlotBase';
-import { tLineAttrs } from './PlotAttrs';
+// import { tLineAttrs } from './PlotAttrs';
 
 const colorScheme = ['red', 'green', 'blue', 'grey'];
 
@@ -15,10 +15,10 @@ const defaultFill = {
   opacity: 1,
 };
 
-class CLines extends PlotBase {
+class CCircles extends PlotBase {
   draw(container: tContainerAttrs, { xScale, yScale }: tScaling) {
     const { attrs } = this;
-    const { xs, ys, lineAttrs } = attrs;
+    const { xs, ys, lineAttrs, radius } = attrs;
     const { svg } = container;
     const colours = attrs.colours.length > 0 ? attrs.colours : colorScheme;
     const curveType = attrs.curve ?? d3.curveLinear;
@@ -30,10 +30,10 @@ class CLines extends PlotBase {
       return;
     }
 
-    const dataFormatter = DataFormatter().xs(xs).ys(ys);
-    dataFormatter();
-    const xsFormatted = dataFormatter.xsFormatted();
-    const ysFormatted = dataFormatter.ysFormatted();
+    // const dataFormatter = DataFormatter().xs(xs).ys(ys);
+    // dataFormatter();
+    // const xsFormatted = dataFormatter.xsFormatted();
+    // const ysFormatted = dataFormatter.ysFormatted();
 
     const chartGroup = svg.select(`.${attrs.plotID}`);
 
@@ -41,39 +41,36 @@ class CLines extends PlotBase {
 
     // select all rect in svg.chart-group with the class bar
     let lines = chartGroup
-      .selectAll<SVGPathElement, number>('.lines')
-      .data(ysFormatted);
+      .selectAll<SVGCircleElement, number>('.circles')
+      .data(ys);
 
     // Exit - remove data points if current data.length < data.length last time this ftn was called
     lines.exit().style('opacity', 0).remove();
 
     // Enter - add the shapes to this data point
-    const enterGroup = lines.enter().append('path').classed('lines', true);
+    const enterGroup = lines.enter().append('circle').classed('circles', true);
 
     // join the new data points with existing
     lines = lines.merge(enterGroup);
 
-    function definedFtn(d: any) {
-      return d >= -0.2;
-    }
-
-    function getXValue(_d: any, i: number, _dth: any, ith: number) {
-      const ithIndex = ith < xsFormatted.length ? ith : 0;
-      const ithX = xsFormatted[ithIndex];
-      return ithX[i];
-    }
+    // function getXValue(_d: any, i: number, _dth: any, ith: number) {
+    //   const ithIndex = ith < xsFormatted.length ? ith : 0;
+    //   const ithX = xsFormatted[ithIndex];
+    //   return ithX[i];
+    // }
 
     lines
-      .attr('d', (dth, ith) => {
-        const line = d3
-          .line()
-          // .defined(definedFtn)
-          .curve(curveType)
-          .x((d, i) => xScale(getXValue(d, i, dth, ith)) || 0)
-          .y((d) => yScale(d) || 0);
-
-        return line(dth as [number, number][]);
+      .attr('cx', (_, ith) => {
+        const xValue = xs[ith] ?? 0;
+        console.log('dth / x-value / scaled ', xValue, xScale(xValue));
+        return xScale(xValue) ?? 0;
       })
+      .attr('cy', (dth, ith) => {
+        const yValue = dth[ith] ?? 0;
+        console.log('dth / y-value / scaled ', dth, yValue, yScale(yValue));
+        return yScale(yValue) ?? 0;
+      })
+      .attr('r', (_, ith) => radius[ith] ?? 1)
       .attr(
         'fill',
         (_d, ith) => lineAttrs[ith]?.fillColour ?? defaultFill.fillColour
@@ -95,4 +92,4 @@ class CLines extends PlotBase {
   }
 }
 
-export { CLines };
+export { CCircles };

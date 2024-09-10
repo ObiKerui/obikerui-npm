@@ -21,6 +21,16 @@ import {
   normalizeDegrees,
 } from './utils/units';
 
+import {
+  getEquationOfTime,
+  getHourAngle,
+  getSolarAltitude,
+  getSolarDeclination,
+  getSolarNoon,
+  getSunAltitudeAzimuth,
+  getUTCDayOfYear,
+} from './utils/sun';
+
 export {
   BarChart as BarPlot,
   Container,
@@ -44,4 +54,11 @@ export {
   Months,
   SolarTwin,
   AllPeriods,
+  getEquationOfTime,
+  getHourAngle,
+  getSolarAltitude,
+  getSolarDeclination,
+  getSolarNoon,
+  getSunAltitudeAzimuth,
+  getUTCDayOfYear,
 };

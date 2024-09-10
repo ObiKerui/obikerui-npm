@@ -11,6 +11,8 @@ type tTimeFrame = '48hours' | 'week' | 'month' | 'quarter';
 type tPVChart = {
   lineContainer: HTMLDivElement | null;
   setLineContainer: (newValue: HTMLDivElement | null) => void;
+  sunChartContainer: HTMLDivElement | null;
+  setSunChartContainer: (newValue: HTMLDivElement | null) => void;
   categories: tPowerCategory[];
   setCategories: (newValue: tPowerCategory[]) => void;
   rangedData: tSolaxData[];
@@ -20,6 +22,8 @@ type tPVChart = {
 };
 
 const usePVChart = create<tPVChart>((set) => ({
+  sunChartContainer: null,
+  setSunChartContainer: (newValue) => set({ sunChartContainer: newValue }),
   lineContainer: null,
   setLineContainer: (newValue) => set({ lineContainer: newValue }),
   categories: [],

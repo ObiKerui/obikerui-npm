@@ -1,3 +1,5 @@
+import getSunPosition from './sun-position-in-900-bytes';
+
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-use-before-define */
@@ -80,7 +82,8 @@ function getSolarDeclination(date: Date) {
     return degrees * (pi / 180);
   };
 
-  const declination = -23.45 * Math.cos(degToRad((360.0 / 365.0) * (diffInDays + 10)));
+  const declination =
+    -23.45 * Math.cos(degToRad((360.0 / 365.0) * (diffInDays + 10)));
   return declination;
 }
 
@@ -96,7 +99,8 @@ function getHourAngle(date: Date, _longitude: number) {
 
   // in hours
   // const solarAngleHours = 15.0 * (date.getUTCHours() - 12);
-  const solarHourAngleMins = 15.0 * (date.getUTCHours() + date.getUTCMinutes() / 60 - 12);
+  const solarHourAngleMins =
+    15.0 * (date.getUTCHours() + date.getUTCMinutes() / 60 - 12);
 
   // const hourAngle = (date.getUTCHours() + date.getUTCMinutes() / 60 - 12) * 15 + longitude;
   return solarHourAngleMins;
@@ -153,7 +157,8 @@ function getSolarNoon(date: Date, longitude: number) {
   solarNoon.setHours(12 - longitudeInHours - timeOffset);
 
   // Adjust for daylight saving time
-  const isDaylightSavingTime = date.getTimezoneOffset() < solarNoon.getTimezoneOffset();
+  const isDaylightSavingTime =
+    date.getTimezoneOffset() < solarNoon.getTimezoneOffset();
   if (isDaylightSavingTime) {
     solarNoon.setHours(solarNoon.getHours() - 1);
   }
@@ -164,6 +169,13 @@ function getSolarNoon(date: Date, longitude: number) {
   return solarNoon;
 }
 
+function getSunAltitudeAzimuth(
+  date: Date,
+  latitude: number,
+  longitude: number
+) {
+  return getSunPosition(date.getTime(), longitude, latitude);
+}
 // export default function(date, longitude) {
 //   var t = century(+day(date) + (12 - longitude * 24 / 360) * 36e5), // First approximation.
 //       o1 = 720 - longitude * 4 - equationOfTime(t - longitude / (360 * 36525)), // First correction.
@@ -178,7 +190,7 @@ export {
   getHourAngle,
   getEquationOfTime,
   getSolarNoon,
-
+  getSunAltitudeAzimuth,
   // task list
   // getJulianCenturiesSinceJ2000
   // getGeometricMeanOfSun,

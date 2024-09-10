@@ -5,6 +5,7 @@ import { AxisGenerator } from './AxisGenerator';
 import { LabelGenerator } from './LabelGenerator';
 import { GridGenerator } from './GridGenerator';
 import { tContainerAttrs, tMetadata, tPlot } from '../sharedTypes';
+import { ClipPathGenerator } from './ClipPathGenerator';
 
 class CContainer {
   attrs: tContainerAttrs;
@@ -14,6 +15,8 @@ class CContainer {
   gridGenerator: GridGenerator;
 
   labelGenerator: LabelGenerator;
+
+  clipPathGenerator: ClipPathGenerator;
 
   plots: tPlot[];
 
@@ -26,6 +29,7 @@ class CContainer {
     this.axisGenerator = new AxisGenerator(this);
     this.gridGenerator = new GridGenerator(this);
     this.labelGenerator = new LabelGenerator(this);
+    this.clipPathGenerator = new ClipPathGenerator();
   }
 
   // Building Blocks
@@ -98,6 +102,7 @@ class CContainer {
     // }
 
     this.buildSVG(attrs.html);
+    this.clipPathGenerator.updateSVG(attrs);
 
     if (attrs.onGetXScale) {
       attrs.xScale = attrs.onGetXScale(

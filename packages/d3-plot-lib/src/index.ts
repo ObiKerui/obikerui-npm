@@ -34,6 +34,7 @@ import { CStackedArea } from './classbased/Plots/StackedAreaPlot';
 import { CScatter } from './classbased/Plots/Scatter';
 import { CBrush } from './classbased/Plots/Brush';
 import { CGeneric } from './classbased/Plots/GenericPlot';
+import { CCircles } from './classbased/Plots/Circles';
 
 import { PlotHistGenerator as CBinGenerator } from './classbased/Plots/PlotHistGenerator';
 
@@ -74,4 +75,5 @@ export {
   CScatter,
   CBrush,
   CGeneric,
+  CCircles,
 };

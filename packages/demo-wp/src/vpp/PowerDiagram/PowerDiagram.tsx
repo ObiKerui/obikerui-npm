@@ -9,10 +9,12 @@ import { ChartContainer as BatteryChart } from './BatteryChart/ChartContainer';
 import TimeControls from './Controls/Time';
 import { ChartContainer as GridChart } from './GridChart/ChartContainer';
 import { ChartContainer as MergeChart } from './MergedChart/ChartContainer';
+import { ChartContainer as SunChart } from './SunChart/ChartContainer';
 import VisibilityControls from './Controls/Visibility';
 import { DataTest } from './DataTest/DataTest';
 import { Inverter } from './InverterData/Inverter';
 import WeatherInfo from './WeatherInfo';
+import GridSummary from './GridChart/GridSummary';
 
 const powerRouterObj = new PowerRouter();
 
@@ -84,8 +86,9 @@ function PowerDiagram() {
       <div className="flex flex-col">
         <WeatherInfo />
         <div ref={diagramRef} />
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-col gap-2">
           <DataTest />
+          <SunChart />
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -104,6 +107,7 @@ function PowerDiagram() {
         {focus === 'grid' && (
           <div>
             <GridChart />
+            <GridSummary />
           </div>
         )}
         {focus === 'inverter' && (

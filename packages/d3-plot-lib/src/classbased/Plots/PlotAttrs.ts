@@ -97,6 +97,10 @@ const BrushAttrs = {
   timeFrame: [0, 0] as [d3.NumberValue, d3.NumberValue],
 };
 
+const CircleAttrs = {
+  radius: [] as number[],
+};
+
 const PlotAttrs = {
   ...defaultPlotAttrs,
   ...ScatterAttrs,
@@ -107,6 +111,7 @@ const PlotAttrs = {
   ...stackedAttrs,
   ...StackedAreaAttrs,
   ...BrushAttrs,
+  ...CircleAttrs,
 };
 
 export default PlotAttrs;
