@@ -210,7 +210,7 @@ function NewBalance() {
       <MonthlyProfit />
       <tbody className="font-semibold">
         <tr className="bg-base-200">
-          <td>Monthly Profit</td>
+          <td>Monthly Income</td>
           <td />
           <td>{convertToCurrency(summaryData.totalMonthlyProfit)}</td>
         </tr>

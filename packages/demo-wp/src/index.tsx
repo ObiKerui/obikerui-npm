@@ -5,7 +5,7 @@ import {
   createHashRouter,
   useSearchParams,
 } from 'react-router-dom';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import ErrorPage from './ErrorPage';
@@ -59,6 +59,18 @@ function Root() {
       }
     );
   };
+
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        prev.set('theme', 'light');
+        return prev;
+      },
+      {
+        replace: true,
+      }
+    );
+  }, []);
 
   return (
     <div data-theme={currTheme} className="bg-base-200 mx-auto min-h-screen">
