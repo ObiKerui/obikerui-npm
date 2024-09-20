@@ -1,4 +1,4 @@
-import { type tROIModel } from '../Model';
+import { type tROIModel } from '../sharedTypes';
 import { CashflowCalculator } from './CashflowCalculator';
 import { YieldCalculator } from './YieldCalculator';
 

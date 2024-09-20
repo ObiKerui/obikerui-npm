@@ -1,10 +1,12 @@
 /* eslint-disable max-classes-per-file */
 import { calculateSDLT } from '../../Utils';
-import { type tROIModel, createROIModel } from '../Model';
+// import { type tROIModel, createROIModel } from '../Model';
+import { tROIModel } from '../sharedTypes';
 import { Mortgage } from './Mortgage';
 import { Summary } from './Summary';
 import { YieldRangeCalculator } from './YieldCalculator';
 import { Yields } from './Yields';
+import { createROIModel } from '../../Model/Model';
 
 class Controller {
   model: tROIModel;

@@ -1,4 +1,4 @@
-import { type tROIModel } from '../Model';
+import { type tROIModel } from '../sharedTypes';
 
 class Mortgage {
   model: tROIModel;

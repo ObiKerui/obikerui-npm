@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useAppProvider } from '../Provider/Provider';
 import {
   FieldCosts,
   FieldDesc,
@@ -10,24 +9,21 @@ import Percent from './Icons/Percent';
 import Pound from './Icons/Pound';
 import { CurrencyInput } from './Inputs/Currency';
 import { PercentInput } from './Inputs/Percentage';
+import { useBoundStore } from '../Model/Store';
 
 function DepositField() {
-  const { model, controller } = useAppProvider();
+  const propertyValue = useBoundStore((state) => state.propertyValue);
+  const deposit = useBoundStore((state) => state.deposit);
+  const setDeposit = useBoundStore((state) => state.setDeposit);
+
   const [inputMode, setInputMode] = useState<string>('currency');
-  const [currentPropVal, setCurrentPropVal] = useState<number>(
-    model.investment.propertyValue
-  );
+  const [currentPropVal, setCurrentPropVal] = useState<number>(propertyValue);
   const [currentPCent, setCurrentPercentage] = useState<number>(0);
 
   useEffect(() => {
-    setCurrentPropVal(model.investment.propertyValue);
-    setCurrentPercentage(currentPCent * model.investment.propertyValue);
-  }, [model.investment.propertyValue]);
-
-  //   useEffect(() => {
-  //     const newPercent = model.investment.depositAmount / currentPropVal;
-  //     setCurrentPercentage(newPercent * 100);
-  //   }, [model.investment.depositAmount]);
+    setCurrentPropVal(propertyValue);
+    setCurrentPercentage(currentPCent * propertyValue);
+  }, [propertyValue]);
 
   const onUpdate = (inputType: string, amount: number) => {
     let value = amount;
@@ -35,7 +31,7 @@ function DepositField() {
       setCurrentPercentage(value);
       value = (value / 100.0) * currentPropVal;
     }
-    controller.updateDepositAmount(value);
+    setDeposit(value);
   };
 
   return (
@@ -48,7 +44,7 @@ function DepositField() {
             <span className="flex h-[24px] items-center">
               {inputMode === 'currency' && (
                 <CurrencyInput
-                  value={model.investment.depositAmount}
+                  value={deposit}
                   placeholder="Enter Amount"
                   onUpdate={(newAmount) => onUpdate('currency', newAmount)}
                 />

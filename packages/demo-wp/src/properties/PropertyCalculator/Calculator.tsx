@@ -1,4 +1,4 @@
-import { useAppProvider } from '../Provider/Provider';
+// import { useAppProvider } from '../Provider/Provider';
 import { NewBalance } from './NewBalance';
 
 // function Calculator() {
@@ -15,7 +15,7 @@ import { NewBalance } from './NewBalance';
 // }
 
 function Calculator() {
-  const { model } = useAppProvider();
+  // const { model } = useAppProvider();
 
   return (
     <div className="flex flex-col gap-1">

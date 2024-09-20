@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { type tROIModel } from '../Model';
+import { type tROIModel } from '../sharedTypes';
 
 class Summary {
   getSummary(model: tROIModel) {

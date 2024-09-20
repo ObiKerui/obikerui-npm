@@ -1,5 +1,4 @@
 import { cn } from '../../Utils/CSS';
-import { useAppProvider } from '../Provider/Provider';
 import { CurrencyInput } from './Inputs/Currency';
 import Property from './Icons/Property';
 import {
@@ -9,19 +8,23 @@ import {
   FieldToggle,
   FieldWrapper,
 } from './Field/FieldWrapper';
+import { useBoundStore } from '../Model/Store';
 
 function PropertyChoice() {
-  const { model, controller } = useAppProvider();
-
-  const additional = model.investment.isAdditionalProperty;
+  const setIsAdditionalProperty = useBoundStore(
+    (state) => state.setIsAdditionalProperty
+  );
+  const isAdditionalProperty = useBoundStore(
+    (state) => state.isAdditionalProperty
+  );
 
   return (
     <ul className="menu bg-base-200 rounded-box w-56">
       <li>
         <button
           type="button"
-          className={cn({ 'bg-base-300': additional === false })}
-          onClick={() => controller.updateAdditionalProperty(false)}
+          className={cn({ 'bg-base-300': isAdditionalProperty === false })}
+          onClick={() => setIsAdditionalProperty(false)}
         >
           <Property />
           First Home
@@ -30,8 +33,8 @@ function PropertyChoice() {
       <li>
         <button
           type="button"
-          className={cn({ 'bg-base-300': additional === true })}
-          onClick={() => controller.updateAdditionalProperty(true)}
+          className={cn({ 'bg-base-300': isAdditionalProperty === true })}
+          onClick={() => setIsAdditionalProperty(true)}
         >
           <Property />
           Additional Home
@@ -42,7 +45,8 @@ function PropertyChoice() {
 }
 
 function PropertyField() {
-  const { model, controller } = useAppProvider();
+  const propertyValue = useBoundStore((state) => state.propertyValue);
+  const setPropertyValue = useBoundStore((state) => state.setPropertyValue);
 
   return (
     <FieldWrapper>
@@ -53,11 +57,9 @@ function PropertyField() {
           <FieldCosts>
             <span className="flex h-[24px] items-center">
               <CurrencyInput
-                value={model.investment.propertyValue}
+                value={propertyValue}
                 placeholder="Enter Property Price"
-                onUpdate={(newPrice) =>
-                  controller.updatePropertyPrice(newPrice)
-                }
+                onUpdate={(newPrice) => setPropertyValue(newPrice)}
               />
             </span>
             <FieldToggle hovering={hovering}>

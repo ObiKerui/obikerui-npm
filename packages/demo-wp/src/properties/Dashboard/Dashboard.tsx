@@ -2,23 +2,10 @@ import { useSearchParams } from 'react-router-dom';
 import { Dashboard as ChartDashboard } from '../Charts/Dashboard';
 import { Calculator } from '../PropertyCalculator/Calculator';
 import { PropertyMap } from './Roadmap';
-
-function PropertyList() {
-  return (
-    <div className="flex flex-grow flex-col gap-1">
-      <div className="">
-        <span>Current Properties</span>
-      </div>
-      <div>
-        <ul>
-          <li>property 1</li>
-          <li>property 2</li>
-          <li>property 3</li>
-        </ul>
-      </div>
-    </div>
-  );
-}
+import { MapBoxMap } from './Mapbox/Component';
+import { SavePropertyButton } from '../PropertyList/SavePropertyButton';
+import { NewPropertyForm } from '../PropertyList/NewPropertyForm';
+import { GridPropertyForm } from '../PropertyList/GridPropertyForm';
 
 function PropertyOptions() {
   const [searchParams, setSearchParams] = useSearchParams({
@@ -50,9 +37,17 @@ function PropertyOptions() {
       />
       <div
         role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        className="tab-content bg-base-100 border-base-300 rounded-box p-1 md:p-6"
       >
-        <PropertyMap checked={currTab === 'property'} />
+        <div className="flex flex-col p-4">
+          <div>
+            <PropertyMap checked={currTab === 'property'} />
+          </div>
+          <div>
+            <span>Map Box Map</span>
+            <MapBoxMap />
+          </div>
+        </div>
       </div>
 
       <input
@@ -76,9 +71,10 @@ function PropertyOptions() {
       />
       <div
         role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        className="tab-content bg-base-100 border-base-300 rounded-box p-0 md:p-6"
       >
-        <div>
+        <div className="flex flex-col gap-2">
+          <SavePropertyButton />
           <Calculator />
         </div>
       </div>
@@ -112,11 +108,51 @@ function PropertyOptions() {
   );
 }
 
+function PropertySidePanel() {
+  return (
+    <div className="w-full">
+      <div role="tablist" className="tabs tabs-lifted">
+        <input
+          type="radio"
+          name="right_tabs_2"
+          role="tab"
+          className="tab"
+          aria-label="Create"
+          checked
+        />
+        <div
+          role="tabpanel"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        >
+          <div className="h-[900px] w-full">
+            <NewPropertyForm />
+            <GridPropertyForm />
+          </div>
+        </div>
+        {/* <input
+        type="radio"
+        name="right_tabs_3"
+        role="tab"
+        className="tab"
+        aria-label="New"
+      />
+      <div
+        role="tabpanel"
+        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+      >
+        <div className="bg-base-300 w-full">content</div>
+      </div> */}
+      </div>
+    </div>
+  );
+}
+
 function Dashboard() {
   return (
-    <div className="flex min-w-full flex-row gap-1">
-      <div className="flex flex-grow">
+    <div className="flex w-full min-w-full flex-row gap-1">
+      <div className="flex w-full flex-row gap-2">
         <PropertyOptions />
+        <PropertySidePanel />
       </div>
     </div>
   );

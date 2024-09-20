@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useMemo, useState } from 'react';
-import { type tROIModel } from '../Lib/Model';
+import { type tROIModel } from '../Lib/sharedTypes';
 import { Controller } from '../Lib/Controllers/Controller';
 
 /**

@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { CurrencyInput } from './Currency';
 import { PercentInput } from './Percentage';
 import { Toggle } from './Toggle';
-import { eInputType } from '../../Lib/Model';
+import { tInputType } from '../../Lib/sharedTypes';
+// import { eInputType } from '../../Lib/Model';
 
 type tUpdateArgs = {
-  inputType: eInputType;
+  inputType: tInputType;
   value: number;
 };
 
@@ -30,7 +31,7 @@ function Optional({
 
   const updateMode = () => {
     setIndex((curr) => (curr + 1) % 2);
-    const type = index === 0 ? eInputType.PERCENTAGE : eInputType.CURRENCY;
+    const type = index === 0 ? 'Percentage' : 'Currency';
     onUpdate({
       inputType: type,
       value,
@@ -45,7 +46,7 @@ function Optional({
           placeholder="Enter percentage"
           onUpdate={(newPercentage) => {
             onUpdate({
-              inputType: eInputType.PERCENTAGE,
+              inputType: 'Percentage',
               value: newPercentage,
             });
           }}
@@ -57,7 +58,7 @@ function Optional({
           placeholder="Enter amount"
           onUpdate={(newAmount) => {
             onUpdate({
-              inputType: eInputType.CURRENCY,
+              inputType: 'Currency',
               value: newAmount,
             });
           }}

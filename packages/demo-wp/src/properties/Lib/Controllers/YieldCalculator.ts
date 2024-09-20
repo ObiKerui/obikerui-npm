@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable class-methods-use-this */
-import { tROIModel } from '../Model';
+import { tROIModel } from '../sharedTypes';
 
 class YieldCalculator {
   // eslint-disable-next-line class-methods-use-this

@@ -1,25 +1,57 @@
 import { useState } from 'react';
-import { useAppProvider } from '../Provider/Provider';
 import { CurrencyInput } from './Inputs/Currency';
-// import { Optional } from './Inputs/Option';
 import {
   calculateSDLTPct,
   convertToCurrency,
   convertToPercentage,
 } from '../Utils';
 import { SDTLInfo } from './Inputs/SDTLInfo';
-// import { tUpdateDepositArgs } from '../Provider/Controllers/Deposit';
 import { PropertyField } from './PropertyInput';
 import { MortgageField } from './MortgageInput';
 import { DepositField } from './DepositInput';
+import { useBoundStore, useComputedState } from '../Model/Store';
+import { InvestmentCtrl } from '../Model/Investment';
+import { ExpenditureCtrl } from '../Model/Expenditure';
+import { IncomeCtrl } from '../Model/Income';
+import { MetricsCtrl } from '../Model/Metrics';
 
-function Investment() {
-  const { model, controller } = useAppProvider();
-  const [mouseOverRow, setMouseOverRow] = useState<string | null>(null);
+const investmentCtrl = new InvestmentCtrl();
+const expenditureCtrl = new ExpenditureCtrl();
+const incomeCtrl = new IncomeCtrl();
+const metricsCtrl = new MetricsCtrl();
+
+useBoundStore.subscribe((state) => {
+  investmentCtrl.update(state);
+  expenditureCtrl.update(state);
+  incomeCtrl.update(state);
+  metricsCtrl.update(state);
+});
+
+function Header() {
+  return (
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th>Costi</th>
+        <th>Profit</th>
+      </tr>
+    </thead>
+  );
+}
+
+function StampDuty() {
+  const propertyValue = useBoundStore((state) => state.propertyValue);
+  const setStampDuty = useBoundStore((state) => state.setStampDuty);
+  const isAdditionalProperty = useBoundStore(
+    (state) => state.isAdditionalProperty
+  );
+
+  const compStampDuty = useComputedState((state) => state.stampDuty);
+
+  const [, setMouseOverRow] = useState<string | null>(null);
 
   return (
     <tbody>
-      <PropertyField />
       <tr
         onMouseEnter={() => setMouseOverRow('stampduty')}
         onMouseLeave={() => setMouseOverRow(null)}
@@ -27,51 +59,30 @@ function Investment() {
         <td>Stamp Duty</td>
         <td className="flex flex-row items-center">
           <CurrencyInput
-            value={model.investment.stampDuty}
+            value={compStampDuty}
             placeholder="Value"
-            onUpdate={(newStamp) => controller.updateStampDuty(newStamp)}
+            onUpdate={(newStamp) => setStampDuty(newStamp)}
           />
           <span className="font-light">
             <SDTLInfo
               rate={
-                calculateSDLTPct(
-                  model.investment.propertyValue ?? 0,
-                  model.investment.isAdditionalProperty
-                ) * 100.0
+                calculateSDLTPct(propertyValue ?? 0, isAdditionalProperty) *
+                100.0
               }
             />
           </span>
         </td>
-        <td />
+        <td>&nbsp;</td>
       </tr>
-      <DepositField />
-      {/* <tr
-        onMouseEnter={() => setMouseOverRow('deposit')}
-        onMouseLeave={() => setMouseOverRow(null)}
-      >
-        <td>Deposit Amount</td>
-        <td className="flex flex-row items-center">
-          <Optional
-            value={model.investment.depositAmount}
-            placeholder="Enter Deposit Amount"
-            onUpdate={(deposit) =>
-              controller.deposit.updateDeposit({
-                inputType: deposit.inputType,
-                currency: deposit.value,
-                percentage: deposit.value,
-              } as tUpdateDepositArgs)
-            }
-            hovering={mouseOverRow === 'deposit'}
-          />
-        </td>
-        <td />
-      </tr> */}
     </tbody>
   );
 }
 
 function Mortgage() {
-  const { model, controller } = useAppProvider();
+  const setLegalFees = useBoundStore((state) => state.setLegalFees);
+  const renovationFees = useBoundStore((state) => state.renovationFees);
+  const setRenovationFees = useBoundStore((state) => state.setRenovationFees);
+
   return (
     <tbody>
       <MortgageField />
@@ -80,7 +91,7 @@ function Mortgage() {
         <td>
           <CurrencyInput
             placeholder="Legal Fees"
-            onUpdate={(newValue) => controller.updateLegalFees(newValue)}
+            onUpdate={(newValue) => setLegalFees(newValue)}
           />
         </td>
       </tr>
@@ -88,27 +99,35 @@ function Mortgage() {
         <td>Renovation Costs</td>
         <td>
           <CurrencyInput
-            value={model.investment.renovationCosts}
+            value={renovationFees}
             placeholder="Value"
-            onUpdate={(newReno) => controller.updateRenovations(newReno)}
+            onUpdate={(newReno) => setRenovationFees(newReno)}
           />
         </td>
-        <td />
+        <td>&nbsp;</td>
       </tr>
     </tbody>
   );
 }
 
 function MonthlyExpenditure() {
-  const { model, controller } = useAppProvider();
+  const monthlyMortgagePayment = useComputedState(
+    (state) => state.monthlyMortgagePayment
+  );
+  const setManagementFees = useBoundStore((state) => state.setManagementFees);
+  const setMaintenanceFees = useBoundStore((state) => state.setMaintenanceFees);
+  const setBills = useBoundStore((state) => state.setBills);
+  const setRentalVoids = useBoundStore((state) => state.setRentalVoids);
+
   return (
     <tbody>
       <tr>
         <td>Mortgage Payment</td>
         <td>
           <CurrencyInput
-            value={model.monthlyExpenses.mortgage}
+            value={monthlyMortgagePayment}
             placeholder="Mortgage Payment"
+            readonly
             // onUpdate={(newValue) => controller.updateMortgage(newValue)}
           />
         </td>
@@ -118,7 +137,7 @@ function MonthlyExpenditure() {
         <td>
           <CurrencyInput
             placeholder="Enter Management Fees"
-            onUpdate={(newValue) => controller.updateManagementFees(newValue)}
+            onUpdate={(newValue) => setManagementFees(newValue)}
           />
         </td>
       </tr>
@@ -127,7 +146,7 @@ function MonthlyExpenditure() {
         <td>
           <CurrencyInput
             placeholder="Enter Maintenance"
-            onUpdate={(newValue) => controller.updateMaintenance(newValue)}
+            onUpdate={(newValue) => setMaintenanceFees(newValue)}
           />
         </td>
       </tr>
@@ -136,7 +155,7 @@ function MonthlyExpenditure() {
         <td>
           <CurrencyInput
             placeholder="Enter Bills"
-            onUpdate={(newValue) => controller.updateBills(newValue)}
+            onUpdate={(newValue) => setBills(newValue)}
           />
         </td>
       </tr>
@@ -145,25 +164,27 @@ function MonthlyExpenditure() {
         <td>
           <CurrencyInput
             placeholder="Enter Rental Voids"
-            onUpdate={(newValue) => controller.updateRentalVoids(newValue)}
+            onUpdate={(newValue) => setRentalVoids(newValue)}
           />
         </td>
       </tr>
+      <tr>&nbsp;</tr>
     </tbody>
   );
 }
 
 function MonthlyProfit() {
-  const { controller } = useAppProvider();
+  const setRentalIncome = useBoundStore((state) => state.setRentalIncome);
+
   return (
     <tbody>
       <tr>
-        <td>Rent</td>
-        <td />
+        <td>Rental Income</td>
+        <td>&nbsp;</td>
         <td>
           <CurrencyInput
             placeholder="Mortgage Payment"
-            onUpdate={(newValue) => controller.updateRentalIncome(newValue)}
+            onUpdate={(newValue) => setRentalIncome(newValue)}
           />
         </td>
       </tr>
@@ -171,77 +192,94 @@ function MonthlyProfit() {
   );
 }
 
-function Header() {
+const incomeOptionMap = new Map<string, string>([
+  ['monthly', 'Monthly Cost / Income'],
+  ['annual', 'Annual Cost / Income'],
+]);
+
+type tOnChangeDropdown = {
+  onChange: (arg: 'monthly' | 'annual') => void;
+};
+
+function IncomeDropdown({ onChange }: tOnChangeDropdown) {
+  const onChangeCB = (value: string | null) => {
+    if (value) onChange(value as 'monthly' | 'annual');
+  };
+
   return (
-    <thead>
-      <tr>
-        <td />
-        <td>Cost</td>
-        <td>Profit</td>
-      </tr>
-    </thead>
+    <div>
+      <select
+        className="select select-sm bg-opacity-0 pl-1 text-xs md:text-base"
+        onChange={(ev) =>
+          onChangeCB(ev.target.selectedOptions[0].getAttribute('data-key'))
+        }
+      >
+        {Array.from(incomeOptionMap).map(([key, value]) => (
+          <option data-key={key} key={key}>
+            {value}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
 
 function NewBalance() {
-  const { model, controller } = useAppProvider();
-  const summaryData = controller.summary.getSummary(model);
+  const totalInvestment = useComputedState((state) => state.totalInvestment);
+  const monthlyExpenditure = useComputedState(
+    (state) => state.monthlyExpenditure
+  );
+  const monthlyIncome = useComputedState((state) => state.monthlyIncome);
+  const incomePeriod = useBoundStore((state) => state.incomePeriod);
+  const income =
+    incomePeriod === 'monthly' ? monthlyIncome : monthlyIncome * 12;
+
+  const expenditure =
+    incomePeriod === 'monthly' ? monthlyExpenditure : monthlyExpenditure * 12;
+
+  const yieldValue = useComputedState((state) => state.yield);
+  const netROI = useBoundStore((state) => state.netROI);
+
+  const setIncomePeriod = useBoundStore((state) => state.setIncomePeriod);
 
   return (
-    <table className="table">
+    <table className="table text-xs md:text-base">
       <Header />
-      <Investment />
+      <PropertyField />
+      <StampDuty />
+      <DepositField />
       <Mortgage />
       <tbody className="bg-base-200 font-semibold">
         <tr>
           <td>Total Investment</td>
-          <td>{convertToCurrency(summaryData.totalInvestment)}</td>
-          <td />
+          <td>{convertToCurrency(totalInvestment)}</td>
+          <td>&nbsp;</td>
         </tr>
       </tbody>
       <MonthlyExpenditure />
-      <tbody className="bg-base-200 font-semibold">
-        <tr>
-          <td>Monthly Expenditure</td>
-          <td>{convertToCurrency(summaryData.totalMonthlyExpenditure)}</td>
-          <td />
-        </tr>
-      </tbody>
       <MonthlyProfit />
       <tbody className="font-semibold">
         <tr className="bg-base-200">
-          <td>Monthly Income</td>
-          <td />
-          <td>{convertToCurrency(summaryData.totalMonthlyProfit)}</td>
-        </tr>
-        <tr>
-          <td />
-          <td>Annual Cost</td>
-          <td>{convertToCurrency(model.cashflow.annualCost)}</td>
-        </tr>
-        <tr>
-          <td />
-          <td>Annual Profit</td>
-          <td>{convertToCurrency(model.cashflow.annualProfit)}</td>
-        </tr>
-        <tr>
-          <td />
-          <td>Balance</td>
-          <td>
-            {convertToCurrency(
-              model.cashflow.annualProfit - model.cashflow.annualCost
-            )}
+          <td className="p-2 md:p-2">
+            <IncomeDropdown onChange={(value) => setIncomePeriod(value)} />
           </td>
+          <td>{convertToCurrency(expenditure)}</td>
+          <td>{convertToCurrency(income)}</td>
         </tr>
         <tr>
-          <td />
+          <td>&nbsp;</td>
+          <td>{incomePeriod === 'monthly' ? 'Monthly' : 'Annual'} Balance</td>
+          <td>{convertToCurrency(income - expenditure)}</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
           <td>Yield</td>
-          <td>{convertToPercentage(model.yields.net ?? 0)}</td>
+          <td>{convertToPercentage(yieldValue ?? 0)}</td>
         </tr>
         <tr>
-          <td />
+          <td>&nbsp;</td>
           <td>ROI</td>
-          <td>{model.roi.net}</td>
+          <td>{netROI}</td>
         </tr>
       </tbody>
     </table>

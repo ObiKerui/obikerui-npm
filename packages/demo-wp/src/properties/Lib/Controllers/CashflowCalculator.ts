@@ -1,4 +1,4 @@
-import { tROIModel } from '../Model';
+import { tROIModel } from '../sharedTypes';
 
 class CashflowCalculator {
   calculateTotalMonthProfit(model: tROIModel) {

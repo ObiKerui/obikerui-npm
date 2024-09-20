@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAppProvider } from '../Provider/Provider';
 import { CurrencyInput } from './Inputs/Currency';
 import {
   FieldCosts,
@@ -10,9 +9,15 @@ import {
 } from './Field/FieldWrapper';
 import { PercentInput } from './Inputs/Percentage';
 import { YearsInput } from './Inputs/Years';
+import { useBoundStore, useComputedState } from '../Model/Store';
 
 function MortgageOptions() {
-  const { model, controller } = useAppProvider();
+  // const { model, controller } = useAppProvider();
+  const interestRate = useBoundStore((state) => state.interestRate);
+  const setInterestRate = useBoundStore((state) => state.setInterestRate);
+  const mortgageTerm = useBoundStore((state) => state.mortgageTerm);
+  const setMortgageTerm = useBoundStore((state) => state.setMortgageTerm);
+
   const [interestOnly, setInterestOnly] = useState<boolean>(false);
 
   return (
@@ -20,17 +25,17 @@ function MortgageOptions() {
       <div className="flex flex-row items-center">
         <span className="pr-2">Interest Rate: </span>
         <PercentInput
-          value={model.investment.interestRate}
+          value={interestRate}
           placeholder="Interest Rate"
-          onUpdate={(newValue) => controller.updateInterestRate(newValue)}
+          onUpdate={(newValue) => setInterestRate(newValue)}
         />
       </div>
       <div className="flex flex-row items-center">
         <span className="pr-2">Term: </span>
         <YearsInput
-          value={model.investment.mortgageTerm}
+          value={mortgageTerm}
           placeholder="Enter Term"
-          onUpdate={(newValue) => controller.updateMortgageTerm(newValue)}
+          onUpdate={(newValue) => setMortgageTerm(newValue)}
         />
       </div>
       <div className="form-control">
@@ -50,7 +55,8 @@ function MortgageOptions() {
 }
 
 function MortgageField() {
-  const { model, controller } = useAppProvider();
+  const mortgageAmount = useComputedState((state) => state.mortgageAmount);
+  const setMortgageAmount = useBoundStore((state) => state.setMortgagePayment);
 
   return (
     <FieldWrapper>
@@ -61,9 +67,9 @@ function MortgageField() {
           <FieldCosts>
             <span className="flex h-[24px] items-center">
               <CurrencyInput
-                value={model.investment.mortgageAmount}
+                value={mortgageAmount}
                 placeholder="Enter Mortgage Amount"
-                onUpdate={(newAmount) => controller.updateMortgage(newAmount)}
+                onUpdate={(newAmount) => setMortgageAmount(newAmount)}
               />
             </span>
             <FieldToggle hovering={hovering}>

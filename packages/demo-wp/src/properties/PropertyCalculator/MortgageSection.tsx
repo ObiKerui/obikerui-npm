@@ -1,8 +1,14 @@
+import { useBoundStore, useComputedState } from '../Model/Store';
 import { useAppProvider } from '../Provider/Provider';
 import { CurrencyInput } from './Inputs/Currency';
 
 function MortgageFields() {
-  const { controller } = useAppProvider();
+  // const { controller } = useAppProvider();
+  const mortgageAmount = useComputedState((state) => state.mortgageAmount);
+  const setMortgagePayment = useBoundStore((state) => state.setMortgagePayment);
+  const setInterestRate = useBoundStore((state) => state.setInterestRate);
+  const setLegalFees = useBoundStore((state) => state.setLegalFees);
+
   return (
     <table className="table">
       <tbody>
@@ -11,7 +17,7 @@ function MortgageFields() {
           <td>
             <CurrencyInput
               placeholder="Mortgage Amount"
-              onUpdate={(newValue) => controller.updateMortgage(newValue)}
+              onUpdate={(newValue) => setMortgagePayment(newValue)}
             />
           </td>
         </tr>
@@ -20,7 +26,7 @@ function MortgageFields() {
           <td>
             <CurrencyInput
               placeholder="Interest Rate"
-              onUpdate={(newValue) => controller.updateInterestRate(newValue)}
+              onUpdate={(newValue) => setInterestRate(newValue)}
             />
           </td>
         </tr>
@@ -29,7 +35,7 @@ function MortgageFields() {
           <td>
             <CurrencyInput
               placeholder="Legal Fees"
-              onUpdate={(newValue) => controller.updateLegalFees(newValue)}
+              onUpdate={(newValue) => setLegalFees(newValue)}
             />
           </td>
         </tr>

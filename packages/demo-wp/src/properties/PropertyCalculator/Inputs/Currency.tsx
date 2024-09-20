@@ -7,6 +7,7 @@ type tCurrencyInput = {
   value?: number;
   placeholder?: string;
   onUpdate?: (arg: number) => void;
+  readonly?: boolean;
 };
 
 function defaultOnUpdate(arg: number) {
@@ -21,6 +22,7 @@ function CurrencyInput({
   value = 0,
   placeholder = 'Enter currency amount',
   onUpdate = defaultOnUpdate,
+  readonly = false,
 }: tCurrencyInput) {
   // const [focused, setFocused] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<number>(value);
@@ -38,6 +40,7 @@ function CurrencyInput({
   };
 
   const handleChange = (val: string) => {
+    if (readonly) return;
     setInputValue(+val);
     setDisplayValue(val);
   };
@@ -62,5 +65,12 @@ function CurrencyInput({
     </label>
   );
 }
+
+CurrencyInput.defaultProps = {
+  value: 0,
+  placeholder: 'Enter a value',
+  onUpdate: defaultOnUpdate,
+  readonly: false,
+};
 
 export { CurrencyInput };
