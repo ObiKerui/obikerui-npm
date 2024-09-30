@@ -94,7 +94,7 @@ class Activity {
 
     // transform position to centre image
     const widthtemp = 35;
-    const heighttemp = 60;
+    const heighttemp = 45;
     activityGroup.attr(
       'transform',
       `translate(-${widthtemp / 2}, ${heighttemp / 2})`

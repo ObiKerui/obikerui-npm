@@ -41,6 +41,7 @@ class LabelGenerator {
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(270 0 0)')
         .style('fill', 'currentColor')
+        .style('font', '10px Arial, sans-serif')
         .text(attrs.yAxisLabel);
     }
 
@@ -58,6 +59,7 @@ class LabelGenerator {
         .classed('x-axis-label-text', true)
         .attr('x', attrs.chartWidth / 2)
         .style('fill', 'currentColor')
+        .style('font', '10px Arial, sans-serif')
         .text(attrs.xAxisLabel);
     }
   }

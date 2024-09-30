@@ -179,6 +179,19 @@ function ThreeSolarHolder() {
 }
 
 function Properties() {
+  const [, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        prev.set('theme', 'light');
+        return prev;
+      },
+      {
+        replace: true,
+      }
+    );
+  }, []);
+
   return (
     <PropertyProvider>
       <div className="w-full">
@@ -189,6 +202,24 @@ function Properties() {
 }
 
 function VPP() {
+  const [, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        prev.set('theme', 'light');
+        prev.set('tab', 'power-router-b');
+        prev.set('detail', 'inverter');
+        prev.set('timeFrame', '48hours');
+        prev.set('visible', 'pv,load,grid,battery');
+        prev.set('detailstab', 'charts');
+        return prev;
+      },
+      {
+        replace: true,
+      }
+    );
+  }, []);
+
   return (
     <VPPAppProvider>
       <div>

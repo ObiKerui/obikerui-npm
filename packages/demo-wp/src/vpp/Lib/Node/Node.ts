@@ -50,6 +50,11 @@ class Node {
       return;
     }
 
+    // const width = 80;
+    // const height = 80;
+    const width = 60;
+    const height = 60;
+
     const parentOrigin = d3.select<SVGGElement, unknown>(parent);
     let nodeOrigin = parentOrigin.select<SVGGElement>(`g.node-${id}`);
     if (nodeOrigin.empty()) {
@@ -66,13 +71,13 @@ class Node {
     if (frame.empty()) {
       frame = nodeOrigin.append('rect').classed('frame', true);
     }
-    frame.attr('width', 80).attr('height', 80);
-    frame.attr('x', -(80 / 2)).attr('y', -(80 / 2));
+    frame.attr('width', width).attr('height', height);
+    frame.attr('x', -(width / 2)).attr('y', -(height / 2));
     frame.attr('fill', profile.fill).attr('stroke', profile.stroke);
     frame.attr('rx', '10').attr('ry', '10');
     frame.attr('stroke-width', () => {
-      const width = selected ? '4' : profile.strokeWidth;
-      return width;
+      const strokeWidth = selected ? '4' : profile.strokeWidth;
+      return strokeWidth;
     });
 
     frame

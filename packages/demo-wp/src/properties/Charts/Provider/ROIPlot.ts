@@ -16,6 +16,7 @@ class ROIPlot {
 
     const newContAttrs = {
       ...container.attrs,
+      width: 500,
       onGetXScale: (chartWidth: number) =>
         d3.scaleBand().domain([]).rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>
@@ -54,6 +55,7 @@ class ROIPlot {
 
     container.attrs = {
       ...container.attrs,
+      chartWidth: 100,
       html: pageElements.roiPlotDiv,
       xAxisLabel: roiPlot.xAxisTitle,
       yAxisLabel: roiPlot.yAxisTitle,

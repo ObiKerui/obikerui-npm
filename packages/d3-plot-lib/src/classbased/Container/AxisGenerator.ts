@@ -100,6 +100,7 @@ class AxisGenerator {
         .select('.y-axis-group.axis')
         .selectAll('text')
         .style('font', '10px Arial, sans-serif')
+        // .style('font', '10px Arial, sans-serif')
         // .style("text-anchor", yAxisTextAnchor)
         // .attr("dx", yAxisTextDX)
         // .attr("dy", yAxisTextDY)

@@ -19,7 +19,6 @@ function ChartContainer() {
   const sunChartRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log('does this happen? ', sunChartRef);
     setSunPathContainer(sunChartRef.current);
   }, []);
 
@@ -28,7 +27,7 @@ function ChartContainer() {
   // }, [currDataIdx]);
 
   return (
-    <div>
+    <div className="border-base-300 border">
       <div ref={sunChartRef} />
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { usePowerRouter } from '../../Solax/Store';
-import { Collapsable, InfoPanelBody, InfoPanelHeader } from './InfoPanel';
+import { Collapsable } from './InfoPanel';
 import { useGridChart } from './Model';
 import { cn } from '../../../Utils/CSS';
 

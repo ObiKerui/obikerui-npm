@@ -91,7 +91,7 @@ function PowerDiagram() {
           <SunChart />
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      {/* <div className="flex flex-col gap-2">
         <div>
           <TimeControls />
         </div>
@@ -115,7 +115,7 @@ function PowerDiagram() {
             <Inverter />
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

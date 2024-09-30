@@ -73,7 +73,7 @@ function LinePlotContainer(): JSX.Element {
       <div className="inline-flex flex-col">
         <HeatPlot />
         <Controls />
-        <LinePlot />
+        {/* <LinePlot /> */}
       </div>
     </div>
   );

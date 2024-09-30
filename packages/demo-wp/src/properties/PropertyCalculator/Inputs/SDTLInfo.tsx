@@ -4,10 +4,15 @@ type tSTDLInfo = {
 
 function SDTLInfo({ rate = 0 }: tSTDLInfo) {
   return (
-    <span>
-      <span className="pr-4 font-extralight">at</span> {rate}%
-    </span>
+    // <span>
+    //   <span className="font-extralight">at</span> {rate}%
+    // </span>
+    <span>{rate}%</span>
   );
 }
+
+SDTLInfo.defaultProps = {
+  rate: 0,
+};
 
 export { SDTLInfo };

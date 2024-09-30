@@ -10,6 +10,8 @@ import {
 import { PercentInput } from './Inputs/Percentage';
 import { YearsInput } from './Inputs/Years';
 import { useBoundStore, useComputedState } from '../Model/Store';
+import { Collapsable } from '../Lib/Components/Collapsable';
+import { cn } from '../../Utils/CSS';
 
 function MortgageOptions() {
   // const { model, controller } = useAppProvider();
@@ -57,39 +59,85 @@ function MortgageOptions() {
 function MortgageField() {
   const mortgageAmount = useComputedState((state) => state.mortgageAmount);
   const setMortgageAmount = useBoundStore((state) => state.setMortgagePayment);
+  const [isHovering, setIsHovering] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <FieldWrapper>
-      {(hovering, isOpen, toggleCollapse) => (
-        <>
-          <FieldDesc>Mortgage Amount</FieldDesc>
+    <div
+      className="grid grid-cols-3"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <div>Mortgage Amount</div>
 
-          <FieldCosts>
-            <span className="flex h-[24px] items-center">
-              <CurrencyInput
-                value={mortgageAmount}
-                placeholder="Enter Mortgage Amount"
-                onUpdate={(newAmount) => setMortgageAmount(newAmount)}
-              />
-            </span>
-            <FieldToggle hovering={hovering}>
-              <button
-                type="button"
-                className="btn btn-xs m-0"
-                onClick={toggleCollapse}
-              >
-                Options
-              </button>
-            </FieldToggle>
-          </FieldCosts>
+      <div>
+        <div className="flex h-[24px] items-center">
+          <CurrencyInput
+            value={mortgageAmount}
+            placeholder="Enter Mortgage Amount"
+            onUpdate={(newAmount) => setMortgageAmount(newAmount)}
+          />
+        </div>
+      </div>
+      <div
+        className={cn('hidden', {
+          block: isHovering,
+        })}
+      >
+        <button
+          type="button"
+          className="btn btn-xs m-0"
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          Options
+        </button>
+      </div>
 
-          <FieldOptions isVisible={isOpen}>
-            <MortgageOptions />
-          </FieldOptions>
-        </>
-      )}
-    </FieldWrapper>
+      <div className="col-span-3">
+        <Collapsable isOpen={isOpen}>
+          <MortgageOptions />
+        </Collapsable>
+      </div>
+    </div>
   );
 }
+
+// function MortgageField() {
+//   const mortgageAmount = useComputedState((state) => state.mortgageAmount);
+//   const setMortgageAmount = useBoundStore((state) => state.setMortgagePayment);
+
+//   return (
+//     <FieldWrapper>
+//       {(hovering, isOpen, toggleCollapse) => (
+//         <>
+//           <FieldDesc>Mortgage Amount</FieldDesc>
+
+//           <FieldCosts>
+//             <span className="flex h-[24px] items-center">
+//               <CurrencyInput
+//                 value={mortgageAmount}
+//                 placeholder="Enter Mortgage Amount"
+//                 onUpdate={(newAmount) => setMortgageAmount(newAmount)}
+//               />
+//             </span>
+//             <FieldToggle hovering={hovering}>
+//               <button
+//                 type="button"
+//                 className="btn btn-xs m-0"
+//                 onClick={toggleCollapse}
+//               >
+//                 Options
+//               </button>
+//             </FieldToggle>
+//           </FieldCosts>
+
+//           <FieldOptions isVisible={isOpen}>
+//             <MortgageOptions />
+//           </FieldOptions>
+//         </>
+//       )}
+//     </FieldWrapper>
+//   );
+// }
 
 export { MortgageField };

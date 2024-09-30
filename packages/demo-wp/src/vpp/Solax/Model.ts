@@ -12,18 +12,18 @@ import {
 const pvLabelData = [
   {
     text: 'PV Panels',
-    coords: [0, -50],
+    coords: [0, -40],
   },
   {
     text: 'power',
-    coords: [0, -25],
+    coords: [0, -15],
   },
 ] as tLabel[];
 
 const pvIconData = {
   path: 'assets/PowerRouter/Light/newpv.svg',
-  height: 30,
-  width: 50,
+  height: 20,
+  width: 35,
 };
 
 const pvActivityData: tActivity = {
@@ -35,18 +35,18 @@ const pvActivityData: tActivity = {
 const inverterLabelData = [
   {
     text: 'Inverter',
-    coords: [0, -50],
+    coords: [0, -40],
   },
   {
     text: 'power',
-    coords: [0, -25],
+    coords: [0, -15],
   },
 ] as tLabel[];
 
 const inverterIconData = {
   path: 'assets/PowerRouter/Light/newinverter.svg',
-  height: 30,
-  width: 50,
+  height: 20,
+  width: 35,
 };
 
 const inverterActivityData: tActivity = {
@@ -61,18 +61,18 @@ const inverterActivityData: tActivity = {
 const batteryLabelData = [
   {
     text: 'Battery',
-    coords: [0, -50],
+    coords: [0, -40],
   },
   {
     text: 'power',
-    coords: [0, -25],
+    coords: [0, -15],
   },
 ] as tLabel[];
 
 const batteryIconData = {
   path: 'assets/PowerRouter/Light/newbattery.svg',
-  height: 30,
-  width: 50,
+  height: 20,
+  width: 35,
 };
 
 const batteryActivityData: tActivity = {
@@ -87,18 +87,18 @@ const batteryActivityData: tActivity = {
 const gridLabelData = [
   {
     text: 'Grid',
-    coords: [0, -50],
+    coords: [0, -40],
   },
   {
     text: 'power',
-    coords: [0, -25],
+    coords: [0, -15],
   },
 ] as tLabel[];
 
 const gridIconData = {
   path: 'assets/PowerRouter/Light/newgrid.svg',
-  height: 30,
-  width: 50,
+  height: 20,
+  width: 35,
 };
 
 const gridActivityData: tActivity = {
@@ -113,18 +113,18 @@ const gridActivityData: tActivity = {
 const loadLabelData = [
   {
     text: 'Load',
-    coords: [0, -50],
+    coords: [0, -40],
   },
   {
     text: 'power',
-    coords: [0, -25],
+    coords: [0, -15],
   },
 ] as tLabel[];
 
 const loadIconData = {
   path: 'assets/PowerRouter/Light/heatpump.svg',
-  height: 30,
-  width: 50,
+  height: 20,
+  width: 35,
 };
 
 const loadActivityData: tActivity = {
@@ -141,7 +141,7 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
     'pv',
     {
       id: 'pv',
-      coordinates: [-150, -100],
+      coordinates: [-120, -80],
       icon: pvIconData,
       activity: pvActivityData,
       powerLevel: '20',
@@ -167,7 +167,7 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
     'battery',
     {
       id: 'battery',
-      coordinates: [-150, 100],
+      coordinates: [-120, 80],
       icon: batteryIconData,
       activity: batteryActivityData,
       powerLevel: '20',
@@ -180,7 +180,7 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
     'grid',
     {
       id: 'grid',
-      coordinates: [150, -100],
+      coordinates: [120, -80],
       icon: gridIconData,
       activity: gridActivityData,
       powerLevel: '20',
@@ -193,7 +193,7 @@ const powerNodeMap = new Map<tPowerNodeID, tNode>([
     'load',
     {
       id: 'load',
-      coordinates: [150, 100],
+      coordinates: [120, 80],
       icon: loadIconData,
       activity: loadActivityData,
       powerLevel: '20',
@@ -210,9 +210,13 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
     {
       id: 'pv_inverter',
       coordinates: [
-        [-150, -100],
-        [-80, -100],
-        [-80, -10],
+        // [-150, -100],
+        // [-80, -100],
+        // [-80, -10],
+        // [0, -10],
+        [-120, -80],
+        [-60, -80],
+        [-60, -10],
         [0, -10],
       ],
       flow: 'none',
@@ -224,9 +228,13 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
     {
       id: 'battery_inverter',
       coordinates: [
-        [-150, 100],
-        [-80, 100],
-        [-80, 10],
+        // [-150, 100],
+        // [-80, 100],
+        // [-80, 10],
+        // [0, 10],
+        [-120, 80],
+        [-60, 80],
+        [-60, 10],
         [0, 10],
       ],
       flow: 'negative',
@@ -238,9 +246,9 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
     {
       id: 'grid_inverter',
       coordinates: [
-        [150, -100],
-        [80, -100],
-        [80, -10],
+        [120, -80],
+        [60, -80],
+        [60, -10],
         [0, -10],
       ],
       flow: 'none',
@@ -252,9 +260,9 @@ const powerArchMap = new Map<tPowerArchID, tArch>([
     {
       id: 'load_inverter',
       coordinates: [
-        [150, 100],
-        [80, 100],
-        [80, 10],
+        [120, 80],
+        [60, 80],
+        [60, 10],
         [0, 10],
       ],
       flow: 'negative',

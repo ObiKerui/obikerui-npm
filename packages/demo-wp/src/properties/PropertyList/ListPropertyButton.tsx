@@ -1,19 +1,18 @@
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faList } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-type tSavePropertyButtonProps = {
+type tListPropertyButtonProps = {
   onClick: () => void;
 };
 
-function SavePropertyButton({ onClick }: tSavePropertyButtonProps) {
+function ListPropertyButton({ onClick }: tListPropertyButtonProps) {
   return (
     <div className="flex justify-end">
       <button type="button" className="btn btn-sm" onClick={onClick}>
-        <FontAwesomeIcon icon={faSave} />
-        Save
+        <FontAwesomeIcon icon={faList} />
       </button>
     </div>
   );
 }
 
-export { SavePropertyButton };
+export { ListPropertyButton };

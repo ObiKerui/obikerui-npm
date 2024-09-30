@@ -1,13 +1,11 @@
 import { useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
 import { PowerDiagram } from '../PowerDiagram/PowerDiagram';
 import { DNOMap } from '../DNOMap/DNOMap';
 import { Settings } from '../Settings/Settings';
+import { Details } from './Details';
 
 function SiteOptions() {
-  const [searchParams, setSearchParams] = useSearchParams({
-    tab: 'power-router',
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const currTab = searchParams.get('tab');
 
@@ -15,7 +13,7 @@ function SiteOptions() {
     <div role="tablist" className="tabs tabs-lifted">
       <input
         type="radio"
-        name="my_tabs_2"
+        name="dno_tab"
         role="tab"
         className="tab"
         aria-label="DNO Map"
@@ -34,14 +32,14 @@ function SiteOptions() {
       />
       <div
         role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        className="tab-content bg-base-100 rounded-box p-2 md:p-6"
       >
         <DNOMap />
       </div>
 
       <input
         type="radio"
-        name="my_tabs_2"
+        name="power_router_tab"
         role="tab"
         className="tab"
         aria-label="Power Router"
@@ -60,13 +58,16 @@ function SiteOptions() {
       />
       <div
         role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        className="tab-content bg-base-100 rounded-box p-2 md:p-6"
       >
-        <PowerDiagram />
+        <div className="flex min-h-[900px] min-w-[350px] max-w-[500px]">
+          <PowerDiagram />
+        </div>
       </div>
+
       <input
         type="radio"
-        name="my_tabs_2"
+        name="settings_tab"
         role="tab"
         className="tab"
         aria-label="Settings"
@@ -85,9 +86,9 @@ function SiteOptions() {
       />
       <div
         role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        className="tab-content bg-base-100 rounded-box p-2 md:p-6"
       >
-        <div className="flex w-full">
+        <div className="flex min-h-[900px] min-w-[350px] max-w-[500px]">
           <Settings />
         </div>
       </div>
@@ -95,28 +96,49 @@ function SiteOptions() {
   );
 }
 
-function Dashboard() {
-  const [, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSearchParams(
-      (prev) => {
-        prev.set('tab', 'power-router-b');
-        prev.set('detail', 'inverter');
-        prev.set('timeFrame', '48hours');
-        prev.set('visible', 'pv,load,grid,battery');
-        return prev;
-      },
-      {
-        replace: true,
-      }
-    );
-  }, []);
+function DetailOptions() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currTab = searchParams.get('detailstab');
 
   return (
-    <div className="flex min-w-full flex-row gap-1">
-      <div className="flex flex-grow">
+    <div role="tablist" className="tabs tabs-lifted">
+      <input
+        type="radio"
+        name="charts_tab"
+        role="tab"
+        className="tab"
+        aria-label="Charts"
+        onChange={() =>
+          setSearchParams(
+            (prev) => {
+              prev.set('detailtab', 'charts');
+              return prev;
+            },
+            {
+              replace: true,
+            }
+          )
+        }
+        checked={currTab === 'charts'}
+      />
+      <div
+        role="tabpanel"
+        className="tab-content bg-base-100 rounded-box p-2 md:p-6"
+      >
+        <div className="flex min-h-[900px] min-w-[350px] max-w-[500px]">
+          <Details />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard() {
+  return (
+    <div className="flex w-full min-w-full flex-row gap-1">
+      <div className="flex w-full flex-row gap-2">
         <SiteOptions />
+        <DetailOptions />
       </div>
     </div>
   );

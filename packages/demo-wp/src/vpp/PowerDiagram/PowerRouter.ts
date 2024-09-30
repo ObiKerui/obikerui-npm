@@ -59,8 +59,11 @@ class PowerRouter {
 
   update(newModel: tPowerRouter) {
     const { profile, nodes, arches } = newModel;
-    const width = 600;
-    const height = 400;
+
+    // const width = 400;
+    // const height = 400;
+    const width = 340;
+    const height = 350;
 
     if (!this.nodeMap) {
       this.nodeMap = this.createMap(newModel.nodes);

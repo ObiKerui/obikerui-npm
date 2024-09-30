@@ -8,9 +8,10 @@ import {
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import dayjs from 'dayjs';
 
-import { tProperty, useBoundStore, usePropertySelect } from '../Model/NewModel';
+import { useState } from 'react';
+import { useBoundStore, usePropertySelect } from '../Model/NewModel';
+import { cn } from '../../Utils/CSS';
 
 const formSchema = z.object({
   addressLine1: z.string(),
@@ -27,16 +28,18 @@ type tFormData = z.infer<typeof formSchema>;
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
 type tInputProps = {
+  value: string;
   id: keyof tFormData;
   placeholder?: string;
   register: UseFormRegister<tFormData>;
   errors: FieldErrors<FieldValues>;
 };
 
-function Input({ id, placeholder, register, errors }: tInputProps) {
+function Input({ value, id, placeholder, register, errors }: tInputProps) {
   return (
     <input
       type="text"
+      value={value}
       id={id}
       placeholder={placeholder}
       className="input input-sm w-full max-w-xs border-0 focus:outline-none focus:ring-0"
@@ -53,22 +56,6 @@ function Input({ id, placeholder, register, errors }: tInputProps) {
 Input.defaultProps = {
   placeholder: 'Enter Value',
 };
-
-// type tLabelProps = {
-//   id: string;
-//   children: React.ReactNode;
-// };
-
-// function Label({ id, children }: tLabelProps) {
-//   return (
-//     <label
-//       htmlFor={id}
-//       className="form-control flex w-full max-w-xs items-center justify-center"
-//     >
-//       {children}
-//     </label>
-//   );
-// }
 
 type tGridRowProps = {
   children: React.ReactNode;
@@ -99,52 +86,53 @@ function ErrorMessage({
   );
 }
 
-function NewPropertyForm() {
+function EditPropertyForm() {
+  const [requestConfirm] = useState<boolean>(false);
   const properties = useBoundStore((state) => state.properties);
-  const currProp = useBoundStore((state) => state.currentProperty);
-  const setCurrProp = useBoundStore((state) => state.setCurrentProperty);
   const setProperties = useBoundStore((state) => state.setProperties);
-  const setShowNewPropertyForm = usePropertySelect(
-    (state) => state.setShowNewPropertyForm
+  const propertySelected = useBoundStore((state) => state.currentProperty);
+  const currentProperty = propertySelected
+    ? properties.get(propertySelected) ?? null
+    : null;
+
+  const setShowEditPropertyForm = usePropertySelect(
+    (state) => state.setShowEditPropertyForm
   );
-  // const property = (currProp ? properties.get(currProp) : null) ?? null;
+
+  const selectedProperty = propertySelected
+    ? properties.get(propertySelected)
+    : null;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<tFormData>({
     resolver: zodResolver(formSchema),
   });
 
   const onSubmit: SubmitHandler<tFormData> = (data) => {
-    const propertyKey = `${data.addressLine1}-${data.addressLine2}`;
-    const propExisting = properties.get(propertyKey);
+    if (!currentProperty || !propertySelected) return;
 
-    let updatedProperty = {} as tProperty;
+    currentProperty.addressLine1 = data.addressLine1;
+    currentProperty.addressLine2 = data.addressLine2;
+    currentProperty.addressLine3 = data.addressLine3;
+    currentProperty.region = data.region;
+    currentProperty.postcode = data.postcode;
+    currentProperty.authority = 'unknown';
 
-    if (propExisting) {
-      updatedProperty = propExisting;
-    }
-
-    updatedProperty.addressLine1 = data.addressLine1;
-    updatedProperty.addressLine2 = data.addressLine2;
-    updatedProperty.addressLine3 = data.addressLine3;
-    updatedProperty.region = data.region;
-    updatedProperty.postcode = data.postcode;
-    updatedProperty.authority = 'unknown';
-    updatedProperty.dateAdded = dayjs().format('YYYY-MM-DD');
-
-    properties.set(propertyKey, updatedProperty);
+    properties.set(propertySelected, currentProperty);
     setProperties(properties);
-    console.log('set current property to key: ', propertyKey);
-    setCurrProp(propertyKey);
-    setShowNewPropertyForm(false);
-    setTimeout(() => {
-      reset();
-    }, 1000);
   };
+
+  const deleteProperty = () => {
+    if (!propertySelected) return;
+    properties.delete(propertySelected);
+  };
+
+  if (!selectedProperty) {
+    return <div>no property!</div>;
+  }
 
   return (
     <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
@@ -161,6 +149,7 @@ function NewPropertyForm() {
           </div>
           <div className="col-span-2">
             <Input
+              value={selectedProperty.addressLine1}
               id="addressLine1"
               placeholder="Enter property name / number"
               register={register}
@@ -177,6 +166,7 @@ function NewPropertyForm() {
           </div>
           <div className="col-span-2">
             <Input
+              value={selectedProperty.addressLine2}
               id="addressLine2"
               placeholder="Enter street"
               register={register}
@@ -193,6 +183,7 @@ function NewPropertyForm() {
           </div>
           <div className="col-span-2">
             <Input
+              value={selectedProperty.addressLine3}
               id="addressLine3"
               placeholder="Enter town"
               register={register}
@@ -208,6 +199,7 @@ function NewPropertyForm() {
           </div>
           <div className="col-span-2">
             <Input
+              value={selectedProperty.region}
               id="region"
               placeholder="Enter region"
               register={register}
@@ -223,6 +215,7 @@ function NewPropertyForm() {
           </div>
           <div className="col-span-2">
             <Input
+              value={selectedProperty.postcode}
               id="postcode"
               placeholder="Enter postcode"
               register={register}
@@ -231,71 +224,28 @@ function NewPropertyForm() {
           </div>
         </GridRow>
       </div>
-      <div className="flex justify-end gap-2">
-        <button type="submit" className="btn btn-sm" onClick={() => reset()}>
-          Reset
+      <div
+        className={cn('flex justify-end gap-2', {
+          hidden: requestConfirm === true,
+        })}
+      >
+        <button
+          type="submit"
+          className="btn btn-sm"
+          onClick={() => setShowEditPropertyForm(false)}
+        >
+          Cancel
         </button>
-        <button type="submit" className="btn btn-sm">
-          Save
+        <button
+          type="submit"
+          className="btn btn-sm"
+          onClick={() => setShowEditPropertyForm(false)}
+        >
+          Update
         </button>
       </div>
     </form>
   );
 }
 
-//   return (
-//   );
-// }
-
-// function Property() {
-//   const { register, handleSubmit } = useForm();
-
-//   return (
-//     <div className="flex flex-col gap-2">
-//       <GridPropertyForm register={register} />
-//       <FormControls onSubmit={handleSubmit} />
-//     </div>
-//   );
-// }
-
-// function LeftOver() {
-//   return (
-//     <div className="grid grid-cols-3 gap-y-1 divide-y pb-4">
-//       <div className="flex h-full items-center border-t">
-//         <label htmlFor="name_number" className="items-center">
-//           Name / No.
-//         </label>
-//       </div>
-//       <div className="col-span-2">
-//         <Input id="name_number" />
-//       </div>
-
-//       <div className="flex h-full items-center">
-//         <label htmlFor="street" className="items-center">
-//           Street
-//         </label>
-//       </div>
-//       <div className="col-span-2">
-//         <Input id="street" />
-//       </div>
-//       <div className="flex h-full items-center">
-//         <label htmlFor="town" className="items-center">
-//           Town
-//         </label>
-//       </div>
-//       <div className="col-span-2">
-//         <Input id="town" />
-//       </div>
-//       <div className="flex h-full items-center">
-//         <label htmlFor="town" className="items-center">
-//           Postcode
-//         </label>
-//       </div>
-//       <div className="col-span-2">
-//         <Input id="postcode" />
-//       </div>
-//     </div>
-//   );
-// }
-
-export default NewPropertyForm;
+export default EditPropertyForm;
