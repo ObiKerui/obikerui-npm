@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '../../Utils/CSS';
 import { useBoundStore, usePropertySelect } from '../Model/NewModel';
 
@@ -131,9 +131,7 @@ function PropertyList() {
   const propertySelected = usePropertySelect((state) => state.propertySelected);
 
   const onClickTableRow = (propertyKey: string) => {
-    const currentlySelected = selected === propertyKey;
-    const newKey = currentlySelected ? null : propertyKey;
-    setSelected(newKey);
+    setSelected(propertyKey);
   };
 
   return (
@@ -156,7 +154,7 @@ function PropertyList() {
           >
             <div className="col-span-2 flex h-full items-center py-1">
               <label htmlFor="street" className="items-center">
-                {elem.addressLine1} {elem.addressLine2}
+                {key}
               </label>
             </div>
             <div className="flex h-full items-center">

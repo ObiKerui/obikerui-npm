@@ -1,24 +1,19 @@
 import { ReactNode, useState } from 'react';
-import { cn } from '../../Utils/CSS';
-import { CurrencyInput } from './Inputs/Currency';
-import Property from './Icons/Property';
-// import {
-//   FieldCosts,
-//   FieldDesc,
-//   FieldOptions,
-//   FieldToggle,
-//   FieldWrapper,
-// } from './Field/FieldWrapper';
-import { useBoundStore } from '../Model/Store';
+import { cn } from '../../../Utils/CSS';
+import { CurrencyInput } from '../Inputs/Currency';
+import Property from '../Icons/Property';
+// import { useBoundStore } from '../Model/Store';
+import { tProperty } from '../../Model/NewModel';
 
-function PropertyChoice() {
-  const setIsAdditionalProperty = useBoundStore(
-    (state) => state.setIsAdditionalProperty
-  );
-  const isAdditionalProperty = useBoundStore(
-    (state) => state.isAdditionalProperty
-  );
+type tPropertyChoiceProps = {
+  isAdditionalProperty: boolean;
+  setIsAdditionalProperty: (newValue: boolean) => void;
+};
 
+function PropertyChoice({
+  isAdditionalProperty,
+  setIsAdditionalProperty,
+}: tPropertyChoiceProps) {
   return (
     <ul className="menu bg-base-200 rounded-box w-56">
       <li>
@@ -44,45 +39,6 @@ function PropertyChoice() {
     </ul>
   );
 }
-
-// function PropertyField() {
-//   const propertyValue = useBoundStore((state) => state.propertyValue);
-//   const setPropertyValue = useBoundStore((state) => state.setPropertyValue);
-
-//   return (
-//     <FieldWrapper>
-//       {(hovering, isOpen, toggleCollapse) => (
-//         <>
-//           <FieldDesc>Property Value</FieldDesc>
-
-//           <FieldCosts>
-//             <span className="flex h-[24px] items-center">
-//               <CurrencyInput
-//                 value={propertyValue}
-//                 placeholder="Enter Property Price"
-//                 onUpdate={(newPrice) => setPropertyValue(newPrice)}
-//               />
-//             </span>
-//             <FieldToggle hovering={hovering}>
-//               <button
-//                 type="button"
-//                 className="btn btn-xs m-0"
-//                 onClick={toggleCollapse}
-//               >
-//                 Options
-//               </button>
-//             </FieldToggle>
-//           </FieldCosts>
-
-//           <FieldOptions isVisible={isOpen}>
-//             <PropertyChoice />
-//           </FieldOptions>
-//         </>
-//       )}
-//     </FieldWrapper>
-//   );
-// }
-
 function Collapsable({
   children,
   isVisible = false,
@@ -104,9 +60,24 @@ Collapsable.defaultProps = {
   isVisible: true,
 };
 
-function PropertyField() {
-  const propertyValue = useBoundStore((state) => state.propertyValue);
-  const setPropertyValue = useBoundStore((state) => state.setPropertyValue);
+type tPropertyFieldProps = {
+  property: tProperty;
+  updateProperty: (property: tProperty) => void;
+};
+
+function PropertyField({ property, updateProperty }: tPropertyFieldProps) {
+  const propertyCopy = { ...property };
+
+  const setIsAdditionalProperty = (isAdditional: boolean) => {
+    propertyCopy.isAdditionalProperty = isAdditional;
+    updateProperty(propertyCopy);
+  };
+
+  const setPropertyValue = (newValue: number) => {
+    propertyCopy.propertyValue = newValue;
+    updateProperty(propertyCopy);
+  };
+
   const [hovering, setHovering] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -121,7 +92,7 @@ function PropertyField() {
       <div>
         <span className="flex h-[24px] items-center">
           <CurrencyInput
-            value={propertyValue}
+            value={propertyCopy.propertyValue}
             placeholder="Enter Property Price"
             onUpdate={(newPrice) => setPropertyValue(newPrice)}
           />
@@ -144,7 +115,10 @@ function PropertyField() {
 
       <div className="col-span-3">
         <Collapsable isVisible={isOpen}>
-          <PropertyChoice />
+          <PropertyChoice
+            isAdditionalProperty={propertyCopy.isAdditionalProperty}
+            setIsAdditionalProperty={setIsAdditionalProperty}
+          />
         </Collapsable>
       </div>
     </div>

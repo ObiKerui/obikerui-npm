@@ -1,6 +1,7 @@
+import { tProperty } from './NewModel';
 import { tBoundStore, useComputedState } from './Store';
 
-class IncomeCtrl {
+class IncomeCtrlOld {
   calculateIncome(model: tBoundStore) {
     const { rentalIncome } = model;
 
@@ -13,4 +14,17 @@ class IncomeCtrl {
   }
 }
 
-export { IncomeCtrl };
+class IncomeCtrl {
+  calculateIncome(model: tProperty) {
+    const { rentalIncome } = model;
+
+    return rentalIncome;
+  }
+
+  update(model: tProperty) {
+    const monthlyIncome = this.calculateIncome(model);
+    useComputedState.getState().setMonthlyIncome(monthlyIncome);
+  }
+}
+
+export { IncomeCtrl, IncomeCtrlOld };

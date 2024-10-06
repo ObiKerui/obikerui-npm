@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -64,6 +65,8 @@ type tProperty = tPropertyDetails &
 type tPropertyID = string;
 
 type tPropertyModel = {
+  defaultProperty: tProperty;
+  setDefaultProperty: (newValue: tProperty) => void;
   properties: Map<tPropertyID, tProperty>;
   setProperties: (newValue: Map<tPropertyID, tProperty>) => void;
   currentProperty: tPropertyID | null;
@@ -71,6 +74,8 @@ type tPropertyModel = {
 };
 
 type tPropertyEdit = {
+  changesMade: boolean;
+  setChangesMade: (newValue: boolean) => void;
   propertySelected: tPropertyID | null;
   setPropertySelected: (newValue: tPropertyID | null) => void;
   showPropertyList: boolean;
@@ -79,6 +84,8 @@ type tPropertyEdit = {
   setShowNewPropertyForm: (newValue: boolean) => void;
   showEditPropertyForm: boolean;
   setShowEditPropertyForm: (newValue: boolean) => void;
+  showSavePropertyForm: boolean;
+  setShowSavePropertyForm: (newValue: boolean) => void;
 };
 
 // const useBoundStore = create<tPropertyModel>()(
@@ -99,6 +106,8 @@ type tPropertyEdit = {
 // );
 
 const usePropertySelect = create<tPropertyEdit>((set) => ({
+  changesMade: false,
+  setChangesMade: (newValue) => set({ changesMade: newValue }),
   propertySelected: null,
   setPropertySelected: (newValue) => set({ propertySelected: newValue }),
   showPropertyList: false,
@@ -106,11 +115,65 @@ const usePropertySelect = create<tPropertyEdit>((set) => ({
   showEditPropertyForm: false,
   setShowEditPropertyForm: (newValue) =>
     set({ showEditPropertyForm: newValue }),
+  showSavePropertyForm: false,
+  setShowSavePropertyForm: (newValue) =>
+    set({ showSavePropertyForm: newValue }),
   showNewPropertyForm: false,
   setShowNewPropertyForm: (newValue) => set({ showNewPropertyForm: newValue }),
 }));
 
+const defaultProperty: tProperty = {
+  // property details
+  addressLine1: '',
+  addressLine2: '',
+  addressLine3: '',
+  authority: '',
+  postcode: '',
+  region: '',
+  latlong: [0, 0],
+  dateAdded: dayjs().format('dd-mm-yyyy'),
+
+  // total investment
+  propertyValue: 0,
+  deposit: 0,
+  isAdditionalProperty: false,
+  stampDuty: 0,
+
+  // fees
+  legalFees: 0,
+  renovationFees: 0,
+  interestRate: 0,
+  mortgageTerm: 0,
+  interestOnly: false,
+
+  // mortgage
+  mortgagePayment: 0,
+  bills: 0,
+  rentalVoids: 0,
+  managementFees: 0,
+  maintenanceFees: 0,
+
+  // rental income
+  rentalIncome: 0,
+
+  //
+  expenditurePeriod: 'monthly',
+  incomePeriod: 'monthly',
+
+  //
+  netYield: 0,
+  netROI: 0,
+};
+
+// getProperty: (propKey: tPropertyID | null) => {
+//   const propertiesMap = get().properties;
+//   const property = propKey ? propertiesMap.get(propKey) ?? null : null;
+//   return property ?? defaultProperty;
+// },
+
 const useBoundStore = create<tPropertyModel>()((set) => ({
+  defaultProperty: { ...defaultProperty },
+  setDefaultProperty: (newValue) => set({ defaultProperty: newValue }),
   properties: new Map<tPropertyID, tProperty>([]),
   setProperties: (newValue) => set({ properties: newValue }),
   currentProperty: null,
@@ -156,5 +219,5 @@ const useComputedState = create<tComputedState>((set) => ({
   setROI: (newValue) => set({ roi: newValue }),
 }));
 
-export { useBoundStore, useComputedState, usePropertySelect };
+export { useBoundStore, useComputedState, usePropertySelect, defaultProperty };
 export type { tProperty, tComputedState, tPropertyEdit };

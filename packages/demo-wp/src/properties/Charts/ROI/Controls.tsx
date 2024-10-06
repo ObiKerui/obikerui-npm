@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 import { useChartData } from '../Provider/Provider';
-import { CurrencyInput } from '../../PropertyCalculator/Inputs/Currency';
+import { CurrencyInput } from '../../Calculator/Inputs/Currency';
 
 function Controls() {
   const { model, controller } = useChartData();

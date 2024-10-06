@@ -189,4 +189,4 @@ const useComputedState = create<tComputedState>((set) => ({
 }));
 
 export { useBoundStore, useComputedState };
-export type { tBoundStore, tComputedState };
+export type { tBoundStore, tComputedState, tPeriod };

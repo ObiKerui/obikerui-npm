@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from 'react';
 import { cn } from '../../../Utils/CSS';
-import { FieldDesc } from '../../PropertyCalculator/Field/FieldWrapper';
+import { FieldDesc } from '../../Calculator/Field/FieldWrapper';
 
 function ChartDesc({ children }: { children: ReactNode }) {
   return (

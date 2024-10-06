@@ -14,14 +14,7 @@ import { useBoundStore, usePropertySelect } from '../Model/NewModel';
 import { cn } from '../../Utils/CSS';
 
 const formSchema = z.object({
-  addressLine1: z.string(),
-  addressLine2: z.string(),
-  addressLine3: z.string(),
-  region: z.string(),
-  postcode: z.string(),
-  authority: z.string().optional(),
-  latlong: z.tuple([z.number(), z.number()]).optional(),
-  dateAdded: z.date().optional(),
+  propertyID: z.string(),
 });
 
 type tFormData = z.infer<typeof formSchema>;
@@ -88,7 +81,7 @@ function ErrorMessage({
   );
 }
 
-function EditPropertyForm() {
+function SavePropertyForm() {
   const [requestConfirm] = useState<boolean>(false);
   const properties = useBoundStore((state) => state.properties);
   const propertyKey = useBoundStore((state) => state.currentProperty);
@@ -96,25 +89,18 @@ function EditPropertyForm() {
   const setProperties = useBoundStore((state) => state.setProperties);
   const setChangesMade = usePropertySelect((state) => state.setChangesMade);
   const defaultProperty = useBoundStore((state) => state.defaultProperty);
-  const setDefaultProperty = useBoundStore((state) => state.setDefaultProperty);
+  // const setDefaultProperty = useBoundStore((state) => state.setDefaultProperty);
 
   const property = propertyKey
     ? properties.get(propertyKey) ?? defaultProperty
     : defaultProperty;
 
   const defaultValues = {
-    addressLine1: property.addressLine1,
-    addressLine2: property.addressLine2,
-    addressLine3: property.addressLine3,
-    postcode: property.postcode,
-    region: property.region,
-    authority: property.authority,
-    dateAdded: new Date(),
-    latlong: [0, 0],
+    propertyID: propertyKey,
   } as tFormData;
 
-  const setShowEditPropertyForm = usePropertySelect(
-    (state) => state.setShowEditPropertyForm
+  const setShowSavePropertyForm = usePropertySelect(
+    (state) => state.setShowSavePropertyForm
   );
 
   const {
@@ -132,23 +118,26 @@ function EditPropertyForm() {
   }, [property]);
 
   const onSubmit: SubmitHandler<tFormData> = (data) => {
-    let newPropertyKey = propertyKey;
-    if (!newPropertyKey) {
-      newPropertyKey = `${data.addressLine1}-${data.addressLine2}`;
-    }
+    const newPropertyKey = data.propertyID;
 
-    property.addressLine1 = data.addressLine1;
-    property.addressLine2 = data.addressLine2;
-    property.addressLine3 = data.addressLine3;
-    property.region = data.region;
-    property.postcode = data.postcode;
-    property.authority = 'unknown';
+    console.log('subit it and the data is? ', data);
+
+    // if (!newPropertyKey) {
+    //   newPropertyKey = `${data.addressLine1}-${data.addressLine2}`;
+    // }
+
+    // property.addressLine1 = data.addressLine1;
+    // property.addressLine2 = data.addressLine2;
+    // property.addressLine3 = data.addressLine3;
+    // property.region = data.region;
+    // property.postcode = data.postcode;
+    // property.authority = 'unknown';
 
     properties.set(newPropertyKey, { ...property });
     setProperties(properties);
 
     setCurrProp(newPropertyKey);
-    setShowEditPropertyForm(false);
+    setShowSavePropertyForm(false);
     setChangesMade(false);
     setTimeout(() => {
       reset();
@@ -170,83 +159,18 @@ function EditPropertyForm() {
               htmlFor="name_number"
               className="items-center hover:cursor-pointer"
             >
-              Name / No.
+              Save As:
             </label>
           </div>
           <div className="col-span-2">
             <Input
               // value={property.addressLine1}
-              id="addressLine1"
-              placeholder="Enter property name / number"
+              id="propertyID"
+              placeholder="Enter property save name"
               register={register}
               errors={errors}
             />
-            <ErrorMessage errors={errors} id="name_number" />
-          </div>
-        </GridRow>
-        <GridRow>
-          <div className="flex h-full items-center">
-            <label htmlFor="street" className="items-center">
-              Street
-            </label>
-          </div>
-          <div className="col-span-2">
-            <Input
-              value={property.addressLine2}
-              id="addressLine2"
-              placeholder="Enter street"
-              register={register}
-              errors={errors}
-            />
-            <ErrorMessage errors={errors} id="street" />
-          </div>
-        </GridRow>
-        <GridRow>
-          <div className="flex h-full items-center">
-            <label htmlFor="town" className="items-center">
-              Town
-            </label>
-          </div>
-          <div className="col-span-2">
-            <Input
-              value={property.addressLine3}
-              id="addressLine3"
-              placeholder="Enter town"
-              register={register}
-              errors={errors}
-            />
-          </div>
-        </GridRow>
-        <GridRow>
-          <div className="flex h-full items-center">
-            <label htmlFor="region" className="items-center">
-              Region
-            </label>
-          </div>
-          <div className="col-span-2">
-            <Input
-              value={property.region}
-              id="region"
-              placeholder="Enter region"
-              register={register}
-              errors={errors}
-            />
-          </div>
-        </GridRow>
-        <GridRow>
-          <div className="flex h-full items-center">
-            <label htmlFor="postcode" className="items-center">
-              Postcode
-            </label>
-          </div>
-          <div className="col-span-2">
-            <Input
-              value={property.postcode}
-              id="postcode"
-              placeholder="Enter postcode"
-              register={register}
-              errors={errors}
-            />
+            <ErrorMessage errors={errors} id="propertyID" />
           </div>
         </GridRow>
       </div>
@@ -258,14 +182,14 @@ function EditPropertyForm() {
         <button
           type="submit"
           className="btn btn-sm"
-          onClick={() => setShowEditPropertyForm(false)}
+          onClick={() => setShowSavePropertyForm(false)}
         >
           Cancel
         </button>
         <button
           type="submit"
           className="btn btn-sm"
-          onClick={() => setShowEditPropertyForm(false)}
+          onClick={() => setShowSavePropertyForm(false)}
         >
           Update
         </button>
@@ -274,4 +198,4 @@ function EditPropertyForm() {
   );
 }
 
-export default EditPropertyForm;
+export default SavePropertyForm;

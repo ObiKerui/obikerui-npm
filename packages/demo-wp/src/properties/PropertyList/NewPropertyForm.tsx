@@ -101,12 +101,13 @@ function ErrorMessage({
 
 function NewPropertyForm() {
   const properties = useBoundStore((state) => state.properties);
-  const currProp = useBoundStore((state) => state.currentProperty);
+  const setChangesMade = usePropertySelect((state) => state.setChangesMade);
   const setCurrProp = useBoundStore((state) => state.setCurrentProperty);
   const setProperties = useBoundStore((state) => state.setProperties);
   const setShowNewPropertyForm = usePropertySelect(
     (state) => state.setShowNewPropertyForm
   );
+  const defaultProp = useBoundStore((state) => state.defaultProperty);
   // const property = (currProp ? properties.get(currProp) : null) ?? null;
 
   const {
@@ -120,9 +121,13 @@ function NewPropertyForm() {
 
   const onSubmit: SubmitHandler<tFormData> = (data) => {
     const propertyKey = `${data.addressLine1}-${data.addressLine2}`;
-    const propExisting = properties.get(propertyKey);
+    let propExisting = properties.get(propertyKey);
 
-    let updatedProperty = {} as tProperty;
+    if (!propExisting) {
+      propExisting = { ...defaultProp };
+    }
+
+    let updatedProperty = { ...propExisting } as tProperty;
 
     if (propExisting) {
       updatedProperty = propExisting;
@@ -141,6 +146,7 @@ function NewPropertyForm() {
     console.log('set current property to key: ', propertyKey);
     setCurrProp(propertyKey);
     setShowNewPropertyForm(false);
+    setChangesMade(false);
     setTimeout(() => {
       reset();
     }, 1000);
