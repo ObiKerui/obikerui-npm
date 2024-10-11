@@ -2,8 +2,6 @@ import { useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faList,
-  faMinus,
-  faNoteSticky,
   faPenToSquare,
   faPlus,
   faSave,
@@ -17,7 +15,8 @@ import Calculator from '../Calculator/Calculator';
 import {
   useBoundStore,
   usePropertySelect,
-  defaultProperty,
+  defaultProperty as blankProperty,
+  tProperty,
 } from '../Model/NewModel';
 import { cn } from '../../Utils/CSS';
 import SavePropertyForm from '../PropertyList/SavePropertyForm';
@@ -25,10 +24,10 @@ import SavePropertyForm from '../PropertyList/SavePropertyForm';
 function PropertyCollectionControls() {
   const selectedKey = useBoundStore((state) => state.currentProperty);
   const setSelectedKey = useBoundStore((state) => state.setCurrentProperty);
+  const defaultProperty = useBoundStore((state) => state.defaultProperty);
 
   const properties = useBoundStore((state) => state.properties);
-  console.log('show what the properties are now? ', properties);
-  const currProp = selectedKey ? properties.get(selectedKey) ?? null : null;
+  // const currProp = selectedKey ? properties.get(selectedKey) ?? null : null;
 
   const changeMade = usePropertySelect((state) => state.changesMade);
 
@@ -57,11 +56,11 @@ function PropertyCollectionControls() {
   const setDefaultProperty = useBoundStore((state) => state.setDefaultProperty);
 
   const resetProperty = () => {
-    if (changeMade) {
-      // ask if save the current property
-      console.log('ask do you want to save changes..');
-    }
-    setDefaultProperty({ ...defaultProperty });
+    // if (changeMade) {
+    //   // ask if save the current property
+    //   console.log('ask do you want to save changes..');
+    // }
+    setDefaultProperty({ ...blankProperty });
     setSelectedKey(null);
   };
 
@@ -83,7 +82,7 @@ function PropertyCollectionControls() {
           <button
             type="button"
             className={cn('btn btn-sm', {
-              'btn-disabled': currProp === null,
+              'btn-disabled': changeMade === false,
             })}
             onClick={() => resetProperty()}
           >
@@ -134,25 +133,6 @@ function PropertyCollectionControls() {
   );
 }
 
-// function PropertyCollectionBody() {
-//   const showPropertyList = usePropertySelect((state) => state.showPropertyList);
-//   const showEditPropertyForm = usePropertySelect(
-//     (state) => state.showEditPropertyForm
-//   );
-
-//   return (
-//     <div>
-//       <Collapsable isOpen={showEditPropertyForm}>
-//         <div className="pb-4 font-semibold">Property Details</div>
-//         <EditPropertyForm />
-//       </Collapsable>
-//       <Collapsable isOpen={showPropertyList}>
-//         <PropertyList />
-//       </Collapsable>
-//     </div>
-//   );
-// }
-
 function PropertyOptions() {
   const [searchParams, setSearchParams] = useSearchParams({
     tab: 'calculator',
@@ -187,7 +167,6 @@ function PropertyOptions() {
       >
         <div className="flex min-h-[900px] min-w-[350px] max-w-[500px] flex-col gap-2">
           <PropertyCollectionControls />
-          {/* <PropertyCollectionBody /> */}
           <Calculator />
         </div>
       </div>

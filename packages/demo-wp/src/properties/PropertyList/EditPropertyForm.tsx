@@ -149,7 +149,7 @@ function EditPropertyForm() {
 
     setCurrProp(newPropertyKey);
     setShowEditPropertyForm(false);
-    setChangesMade(false);
+    // setChangesMade(false);
     setTimeout(() => {
       reset();
     }, 1000);

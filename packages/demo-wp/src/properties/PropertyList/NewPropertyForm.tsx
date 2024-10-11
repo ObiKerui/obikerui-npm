@@ -146,7 +146,7 @@ function NewPropertyForm() {
     console.log('set current property to key: ', propertyKey);
     setCurrProp(propertyKey);
     setShowNewPropertyForm(false);
-    setChangesMade(false);
+    // setChangesMade(false);
     setTimeout(() => {
       reset();
     }, 1000);

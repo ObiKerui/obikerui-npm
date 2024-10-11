@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+// import { persist, createJSONStorage } from 'zustand/middleware';
 
 type tPropertyDetails = {
   addressLine1: string;
@@ -87,23 +87,6 @@ type tPropertyEdit = {
   showSavePropertyForm: boolean;
   setShowSavePropertyForm: (newValue: boolean) => void;
 };
-
-// const useBoundStore = create<tPropertyModel>()(
-//   persist(
-//     (set) => ({
-//       properties: new Map<tPropertyID, tProperty>([
-//         ['default', {} as tProperty],
-//       ]),
-//       setProperties: (newValue) => set({ properties: newValue }),
-//       currentProperty: null,
-//       setCurrentProperty: (newValue) => set({ currentProperty: newValue }),
-//     }),
-//     {
-//       name: 'properties-storage',
-//       storage: createJSONStorage(() => sessionStorage),
-//     }
-//   )
-// );
 
 const usePropertySelect = create<tPropertyEdit>((set) => ({
   changesMade: false,

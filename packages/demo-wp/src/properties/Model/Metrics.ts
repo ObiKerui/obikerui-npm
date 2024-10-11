@@ -53,7 +53,7 @@ class MetricsCtrlOld {
 
 class MetricsCtrl {
   calculate(yearRent: number, yearCost: number, propertyValue: number) {
-    return ((yearRent - yearCost) / propertyValue) * 100.0;
+    return propertyValue ? ((yearRent - yearCost) / propertyValue) * 100.0 : 0;
   }
 
   calculateGrossYield(model: tProperty) {

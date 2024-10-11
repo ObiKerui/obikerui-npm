@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable class-methods-use-this */
+import { tProperty } from '../../Model/NewModel';
 import { tROIModel } from '../sharedTypes';
 
 class YieldCalculator {
@@ -65,6 +66,68 @@ type tYield = {
   yieldValue: number;
 };
 
+class NewYieldCalculator {
+  // eslint-disable-next-line class-methods-use-this
+  calculate(yearRent: number, yearCost: number, propertyValue: number) {
+    return ((yearRent - yearCost) / propertyValue) * 100.0;
+  }
+
+  calculateTotalMonthProfit(property: tProperty) {
+    return property.rentalIncome;
+  }
+
+  calculateTotalMonthCost(property: tProperty) {
+    const {
+      bills,
+      maintenanceFees,
+      managementFees,
+      mortgagePayment,
+      rentalVoids,
+    } = property;
+
+    const totalMonthCost =
+      (bills ?? 0) +
+      (maintenanceFees ?? 0) +
+      (managementFees ?? 0) +
+      (mortgagePayment ?? 0) +
+      (rentalVoids ?? 0);
+
+    return totalMonthCost;
+  }
+
+  calculateGrossYield(property: tProperty) {
+    const propVal = property.propertyValue;
+
+    // ((Monthly Rental Income × 12) ÷ Property Value) × 100 = Gross Rental Yield
+    const yearsProfit = this.calculateTotalMonthProfit(property) * 12;
+    const yearsCost = this.calculateTotalMonthCost(property) * 12;
+
+    const grossYield = this.calculate(yearsProfit, yearsCost, propVal);
+    return grossYield;
+  }
+
+  calculatorNetYield(property: tProperty) {
+    const propVal = property.propertyValue;
+
+    // (((Monthly Rental Income × 12) 󠀭– Costs) ÷ Property Value) × 100 = Net Rental Yield
+    // const costs = model.maintenanceCosts + model.managementFees;
+    const yearsProfit = this.calculateTotalMonthProfit(property) * 12;
+    const yearsCost = this.calculateTotalMonthCost(property) * 12;
+    const netYield = this.calculate(yearsProfit, yearsCost, propVal);
+    return netYield;
+  }
+
+  calculateBalance(property: tProperty) {
+    const yearsProfit = this.calculateTotalMonthProfit(property) * 12;
+    const yearsCost = this.calculateTotalMonthCost(property) * 12;
+    return yearsProfit - yearsCost;
+  }
+
+  calculateInvestment(property: tProperty) {
+    return property.propertyValue;
+  }
+}
+
 class YieldRangeCalculator {
   calculate(yearRent: number, yearCost: number, propertyValue: number) {
     return ((yearRent - yearCost) / propertyValue) * 100.0;
@@ -109,5 +172,5 @@ class YieldRangeCalculator {
 //   }
 // }
 
-export { YieldCalculator, YieldRangeCalculator };
+export { YieldCalculator, YieldRangeCalculator, NewYieldCalculator };
 export type { tYieldRangeParams, tYield };

@@ -89,11 +89,19 @@ function SavePropertyForm() {
   const setProperties = useBoundStore((state) => state.setProperties);
   const setChangesMade = usePropertySelect((state) => state.setChangesMade);
   const defaultProperty = useBoundStore((state) => state.defaultProperty);
+  const showSavePropertyForm = usePropertySelect(
+    (state) => state.showSavePropertyForm
+  );
+
   // const setDefaultProperty = useBoundStore((state) => state.setDefaultProperty);
 
-  const property = propertyKey
-    ? properties.get(propertyKey) ?? defaultProperty
-    : defaultProperty;
+  // const property = propertyKey
+  //   ? properties.get(propertyKey) ?? defaultProperty
+  //   : defaultProperty;
+
+  const property = defaultProperty;
+
+  console.log('property key in save form: ', propertyKey, property);
 
   const defaultValues = {
     propertyID: propertyKey,
@@ -114,31 +122,18 @@ function SavePropertyForm() {
   });
 
   useEffect(() => {
-    reset(defaultValues);
-  }, [property]);
+    if (showSavePropertyForm) {
+      reset(defaultValues);
+    }
+  }, [showSavePropertyForm]);
 
   const onSubmit: SubmitHandler<tFormData> = (data) => {
     const newPropertyKey = data.propertyID;
 
-    console.log('subit it and the data is? ', data);
-
-    // if (!newPropertyKey) {
-    //   newPropertyKey = `${data.addressLine1}-${data.addressLine2}`;
-    // }
-
-    // property.addressLine1 = data.addressLine1;
-    // property.addressLine2 = data.addressLine2;
-    // property.addressLine3 = data.addressLine3;
-    // property.region = data.region;
-    // property.postcode = data.postcode;
-    // property.authority = 'unknown';
-
     properties.set(newPropertyKey, { ...property });
-    setProperties(properties);
-
+    setProperties(new Map(properties));
     setCurrProp(newPropertyKey);
     setShowSavePropertyForm(false);
-    setChangesMade(false);
     setTimeout(() => {
       reset();
     }, 1000);

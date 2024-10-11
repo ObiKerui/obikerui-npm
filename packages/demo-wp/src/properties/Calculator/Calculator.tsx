@@ -41,16 +41,12 @@ useBoundStore.subscribe((state) => {
 });
 
 useNewBoundStore.subscribe((state) => {
-  const { currentProperty, properties, defaultProperty } = state;
+  const { defaultProperty } = state;
 
-  const property = currentProperty
-    ? properties.get(currentProperty) ?? defaultProperty
-    : defaultProperty;
-
-  investmentCtrl.update(property);
-  expenditureCtrl.update(property);
-  incomeCtrl.update(property);
-  metricsCtrl.update(property);
+  investmentCtrl.update(defaultProperty);
+  expenditureCtrl.update(defaultProperty);
+  incomeCtrl.update(defaultProperty);
+  metricsCtrl.update(defaultProperty);
 });
 
 function Header() {
@@ -105,9 +101,9 @@ function Calculator() {
   const netROI = useBoundStore((state) => state.netROI);
 
   // adding the new property model
-  const properties = useNewBoundStore((state) => state.properties);
-  const propertyKey = useNewBoundStore((state) => state.currentProperty);
-  const setProperties = useNewBoundStore((state) => state.setProperties);
+  // const properties = useNewBoundStore((state) => state.properties);
+  // const propertyKey = useNewBoundStore((state) => state.currentProperty);
+  // const setProperties = useNewBoundStore((state) => state.setProperties);
   const defaultProperty = useNewBoundStore((state) => state.defaultProperty);
   const setDefaultProperty = useNewBoundStore(
     (state) => state.setDefaultProperty
@@ -115,9 +111,7 @@ function Calculator() {
 
   const setChangesMade = usePropertySelect((state) => state.setChangesMade);
 
-  const property = propertyKey
-    ? properties.get(propertyKey) ?? defaultProperty
-    : defaultProperty;
+  const property = defaultProperty;
 
   const income =
     property.incomePeriod === 'monthly' ? monthlyIncome : monthlyIncome * 12;
@@ -128,25 +122,9 @@ function Calculator() {
       : monthlyExpenditure * 12;
 
   const updateProperty = (prop: tProperty) => {
-    console.log('update property: ', prop, propertyKey);
-
     setChangesMade(true);
-
-    // we made a change to the property model
-    // we need to show the save button so user can create a new snapshot
-
-    // we either made the change to an existing snapshot (propertyKey !== null)
-    // or we made a change to the default-snapshot
-
-    // if we made a change to an existing snapshot - ?
-    // if we made a change to the default-snapshot - ?
-
-    if (propertyKey) {
-      properties.set(propertyKey, prop);
-      setProperties(properties);
-    } else {
-      setDefaultProperty(prop);
-    }
+    setDefaultProperty({ ...prop });
+    console.log('set default property to this: ', prop);
   };
 
   const updateIncomePeriod = (period: tPeriod) => {
