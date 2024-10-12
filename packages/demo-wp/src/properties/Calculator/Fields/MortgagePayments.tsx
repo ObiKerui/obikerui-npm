@@ -6,6 +6,11 @@ function MortgagePayments() {
     (state) => state.monthlyMortgagePayment
   );
 
+  console.log(
+    'what is the mortgage payment in calculator? ',
+    monthlyMortgagePayment
+  );
+
   return (
     <div className="grid grid-cols-3 py-2">
       <div>Mortgage Payment</div>

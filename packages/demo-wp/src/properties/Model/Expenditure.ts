@@ -43,14 +43,14 @@ class ExpenditureCtrlOld {
 
 class ExpenditureCtrl {
   calculateMortgageMonthly(model: tProperty) {
-    const { mortgageAmount } = useComputedState.getState();
-    const { mortgageTerm, interestRate } = model;
+    // const { mortgageAmount } = useComputedState.getState();
+    const { mortgageTerm, interestRate, propertyValue, deposit } = model;
 
     const checkedMortgageTerm = mortgageTerm !== 0 ? mortgageTerm : defaultTerm;
     const checkedInterestRate = interestRate !== 0 ? interestRate : defaultRate;
 
     // const principle = (mortgageAmount ?? 0) - (depositAmount ?? 0);
-    const principle = mortgageAmount ?? 0;
+    const principle = propertyValue - deposit ?? 0;
     const monthlyInterest = (checkedInterestRate ?? 0) / 100 / 12.0;
     const totalMonthsBorrowed = checkedMortgageTerm * 12;
 

@@ -66,24 +66,37 @@ type tYield = {
   yieldValue: number;
 };
 
+type tBalanceParams = {
+  bills: number;
+  maintenanceFees: number;
+  managementFees: number;
+  mortgagePayment: number;
+  rentalVoids: number;
+  rentalIncome: number;
+};
+
+type tYieldParams = tBalanceParams & {
+  propertyValue: number;
+};
+
 class NewYieldCalculator {
   // eslint-disable-next-line class-methods-use-this
   calculate(yearRent: number, yearCost: number, propertyValue: number) {
     return ((yearRent - yearCost) / propertyValue) * 100.0;
   }
 
-  calculateTotalMonthProfit(property: tProperty) {
-    return property.rentalIncome;
+  calculateTotalMonthProfit(params: tBalanceParams) {
+    return params.rentalIncome;
   }
 
-  calculateTotalMonthCost(property: tProperty) {
+  calculateTotalMonthCost(params: tBalanceParams) {
     const {
       bills,
       maintenanceFees,
       managementFees,
       mortgagePayment,
       rentalVoids,
-    } = property;
+    } = params;
 
     const totalMonthCost =
       (bills ?? 0) +
@@ -95,36 +108,36 @@ class NewYieldCalculator {
     return totalMonthCost;
   }
 
-  calculateGrossYield(property: tProperty) {
-    const propVal = property.propertyValue;
+  calculateGrossYield(params: tYieldParams) {
+    const propVal = params.propertyValue;
 
     // ((Monthly Rental Income × 12) ÷ Property Value) × 100 = Gross Rental Yield
-    const yearsProfit = this.calculateTotalMonthProfit(property) * 12;
-    const yearsCost = this.calculateTotalMonthCost(property) * 12;
+    const yearsProfit = this.calculateTotalMonthProfit(params) * 12;
+    const yearsCost = this.calculateTotalMonthCost(params) * 12;
 
     const grossYield = this.calculate(yearsProfit, yearsCost, propVal);
     return grossYield;
   }
 
-  calculatorNetYield(property: tProperty) {
-    const propVal = property.propertyValue;
+  calculatorNetYield(params: tYieldParams) {
+    const propVal = params.propertyValue;
 
     // (((Monthly Rental Income × 12) 󠀭– Costs) ÷ Property Value) × 100 = Net Rental Yield
     // const costs = model.maintenanceCosts + model.managementFees;
-    const yearsProfit = this.calculateTotalMonthProfit(property) * 12;
-    const yearsCost = this.calculateTotalMonthCost(property) * 12;
+    const yearsProfit = this.calculateTotalMonthProfit(params) * 12;
+    const yearsCost = this.calculateTotalMonthCost(params) * 12;
     const netYield = this.calculate(yearsProfit, yearsCost, propVal);
     return netYield;
   }
 
-  calculateBalance(property: tProperty) {
-    const yearsProfit = this.calculateTotalMonthProfit(property) * 12;
-    const yearsCost = this.calculateTotalMonthCost(property) * 12;
+  calculateBalance(params: tBalanceParams) {
+    const yearsProfit = this.calculateTotalMonthProfit(params) * 12;
+    const yearsCost = this.calculateTotalMonthCost(params) * 12;
     return yearsProfit - yearsCost;
   }
 
-  calculateInvestment(property: tProperty) {
-    return property.propertyValue;
+  calculateInvestment(params: tYieldParams) {
+    return params.propertyValue;
   }
 }
 

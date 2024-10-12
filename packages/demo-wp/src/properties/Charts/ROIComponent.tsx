@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
 import StackedPlotObj from './Plot';
 import { useROIModel } from './Model';
 import {
@@ -6,12 +7,12 @@ import {
   YieldRangeCalculator,
 } from '../Lib/Controllers/YieldCalculator';
 import { useBoundStore } from '../Model/NewModel';
+import { ExpenditureCtrl } from '../Model/Expenditure';
 
 const stackedPlotInst = new StackedPlotObj();
 const yieldRangeCalculator = new YieldRangeCalculator();
 const yieldCalculator = new NewYieldCalculator();
-// const grouper = new DataGrouper();
-// const lineData = new LineData();
+const expenditureCtrl = new ExpenditureCtrl();
 
 useROIModel.subscribe((newState) => {
   stackedPlotInst.update(newState);
@@ -49,6 +50,50 @@ function Component() {
   }, []);
 
   useEffect(() => {
+    const propertyYields = Array.from(properties.values()).map((property) => {
+      const monthlyMortgagePayment =
+        expenditureCtrl.calculateMortgageMonthly(property);
+      const params = {
+        bills: property.bills,
+        maintenanceFees: property.maintenanceFees,
+        managementFees: property.managementFees,
+        rentalVoids: property.rentalVoids,
+        mortgagePayment: monthlyMortgagePayment,
+        rentalIncome: property.rentalIncome,
+      };
+      const balance = yieldCalculator.calculateBalance(params) / 12.0;
+
+      const yieldValue = yieldCalculator.calculateGrossYield({
+        ...params,
+        propertyValue: property.propertyValue,
+      });
+      const investment = yieldCalculator.calculateInvestment({
+        ...params,
+        propertyValue: property.propertyValue,
+      });
+
+      console.log(
+        'balance / params: ',
+        balance,
+        params,
+        property,
+        monthlyMortgagePayment
+      );
+
+      return {
+        balance,
+        investment,
+        yieldValue,
+      };
+    });
+
+    const minMaxBalance = d3.extent(
+      propertyYields,
+      (property) => property.balance
+    );
+
+    console.log('min / max balance: ', minMaxBalance);
+
     const yields = yieldRangeCalculator.calculateRange({
       startBalance: 0,
       endBalance: 2000,
@@ -56,18 +101,6 @@ function Component() {
       startInvest: 50000,
       endInvest: 200000,
       investInc: 10000,
-    });
-
-    const propertyYields = Array.from(properties.values()).map((property) => {
-      const yieldValue = yieldCalculator.calculateGrossYield(property);
-      const balance = yieldCalculator.calculateBalance(property);
-      const investment = yieldCalculator.calculateInvestment(property);
-
-      return {
-        balance,
-        investment,
-        yieldValue,
-      };
     });
 
     setProperties(propertyYields);

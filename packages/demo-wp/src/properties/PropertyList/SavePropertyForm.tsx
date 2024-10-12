@@ -101,7 +101,7 @@ function SavePropertyForm() {
 
   const property = defaultProperty;
 
-  console.log('property key in save form: ', propertyKey, property);
+  // console.log('property key in save form: ', propertyKey, property);
 
   const defaultValues = {
     propertyID: propertyKey,

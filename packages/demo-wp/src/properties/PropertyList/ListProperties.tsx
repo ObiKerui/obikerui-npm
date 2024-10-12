@@ -129,9 +129,15 @@ function PropertyList() {
   const selected = useBoundStore((state) => state.currentProperty);
   const setSelected = useBoundStore((state) => state.setCurrentProperty);
   const propertySelected = usePropertySelect((state) => state.propertySelected);
+  const setDefaultProperty = useBoundStore((state) => state.setDefaultProperty);
 
   const onClickTableRow = (propertyKey: string) => {
     setSelected(propertyKey);
+    const property = properties.get(propertyKey);
+    if (!property) {
+      return;
+    }
+    setDefaultProperty({ ...property });
   };
 
   return (

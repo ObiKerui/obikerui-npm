@@ -1,5 +1,14 @@
 import { Axis, AxisDomain, AxisScale } from 'd3';
 
+type tYAxisLabelProps = {
+  offset: [number, number];
+  textAnchor: 'middle' | 'left';
+  rotation: number;
+  text: string;
+  visible: boolean;
+  onRender: ((d: unknown, ith: number) => unknown) | null;
+};
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ContainerAttrs = {
   html: null as HTMLElement | null,
@@ -51,3 +60,4 @@ const ContainerAttrs = {
 };
 
 export { ContainerAttrs };
+export type { tYAxisLabelProps };

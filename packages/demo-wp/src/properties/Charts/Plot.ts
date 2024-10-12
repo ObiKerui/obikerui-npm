@@ -50,9 +50,6 @@ class Plot {
     const xTestMarkers = [testRentalIncome - testRentalCost];
     const yTestMarkers = [testInvestment];
 
-    // xMarkers.push(testRentalIncome - testRentalCost);
-    // yMarkers.push(testInvestment);
-
     type tCoord = {
       x: number;
       y: number;
@@ -76,16 +73,23 @@ class Plot {
       },
     ];
 
-    console.log(
-      'updated roi plot model: ',
-      properties,
-      xMarkers,
-      yMarkers,
-      textCoords
-    );
+    // console.log(
+    //   'updated roi plot model: ',
+    //   properties,
+    //   xMarkers,
+    //   yMarkers,
+    //   textCoords
+    // );
 
     container.attrs = {
       ...container.attrs,
+      showMargins: true,
+      margins: {
+        top: 50,
+        left: 80,
+        right: 10,
+        bottom: 80,
+      },
       chartWidth: 100,
       html: roiContainer,
       xAxisLabel: 'cashflow',
