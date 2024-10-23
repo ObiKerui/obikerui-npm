@@ -12,7 +12,7 @@ function createChart() {
   container.attrs = {
     ...container.attrs,
     xAxisLabel: 'category',
-    yAxisLabel: 'quantity',
+    yAxisProperties: container.axisLayout.middleYAxisLabel('y values'),
     onGetXScale(chartWidth) {
       const xScale = d3.scaleBand().domain([]).rangeRound([0, chartWidth]);
       return xScale;

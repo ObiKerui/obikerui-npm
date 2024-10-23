@@ -28,7 +28,10 @@ class Chart {
       html: profitLossContainer,
       width: 500,
       height: 200,
-      yAxisLabel: categories[0] ?? '£',
+      yAxisProperties: {
+        ...this.container.attrs.yAxisProperties,
+        text: categories[0] ?? '£',
+      },
       xAxisText: {
         rotation: 0,
       },

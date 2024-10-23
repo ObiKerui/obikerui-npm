@@ -70,9 +70,16 @@ class Chart {
       ...this.container.attrs,
       html: batContainer,
       display,
-      width: 500,
+      width: 450,
       height: showBothCharts ? 200 : 400,
-      yAxisLabel: 'Battery % (soc)',
+      margins: {
+        ...this.container.attrs.margins,
+        left: 40,
+        top: 40,
+      },
+      yAxisProperties:
+        this.container.axisLayout.topYAxisLabel('Battery % (soc)'),
+      // yAxisLabel: 'Battery % (soc)',
       xAxisText: {
         rotation: 45,
         onRender: (d: string) => dayjs(d).format('HH:MM'),

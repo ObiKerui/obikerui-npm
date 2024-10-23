@@ -1,42 +1,8 @@
 /* eslint-disable class-methods-use-this */
-import { tYAxisLabelProps } from './Attrs';
 import { CContainer } from './Container';
 
 class LabelGenerator {
   container: CContainer;
-
-  topYAxisLabel(text: string, _attrs: CContainer['attrs']): tYAxisLabelProps {
-    return {
-      offset: [0, -10],
-      textAnchor: 'middle',
-      rotation: 0,
-      text,
-      visible: true,
-      onRender: null,
-    };
-  }
-
-  middleYAxisLabel(text: string, attrs: CContainer['attrs']): tYAxisLabelProps {
-    return {
-      offset: [-attrs.chartHeight / 2, -50],
-      textAnchor: 'middle',
-      rotation: 270,
-      text,
-      visible: true,
-      onRender: null,
-    };
-  }
-
-  bottomYAxisLabel(text: string, attrs: CContainer['attrs']): tYAxisLabelProps {
-    return {
-      offset: [-attrs.chartHeight, 0],
-      textAnchor: 'middle',
-      rotation: 270,
-      text,
-      visible: true,
-      onRender: null,
-    };
-  }
 
   constructor(container: CContainer) {
     this.container = container;
@@ -56,32 +22,34 @@ class LabelGenerator {
     // .style("fill", "black")
     // .text("hello")
 
-    let yAxisShift = 0;
+    const yAxisShift = 0;
     if (attrs.yAxisPosition === 'right') {
-      yAxisShift = attrs.chartWidth + 80;
+      // TODO implement this!
+      // yAxisShift = attrs.chartWidth + 80;
     }
 
-    if (attrs.yAxisLabel && attrs.yAxisShow) {
-      if (attrs.yAxisLabelEl) {
-        attrs.yAxisLabelEl.remove();
-      }
-
-      const yLabel = this.middleYAxisLabel(attrs.yAxisLabel, attrs);
-      const [xOffset, yOffset] = yLabel.offset;
-
-      attrs.yAxisLabelEl = attrs.svg
-        .select('.y-axis-label')
-        .attr('transform', `translate(${0}, ${0})`)
-        .append('text')
-        .classed('y-axis-label-text', true)
-        .attr('x', xOffset)
-        .attr('y', yOffset)
-        .attr('text-anchor', yLabel.textAnchor)
-        .attr('transform', `rotate(${yLabel.rotation} 0 0)`)
-        .style('fill', 'currentColor')
-        .style('font', '10px Arial, sans-serif')
-        .text(yLabel.text);
+    // if (attrs.yAxisLabel && attrs.yAxisShow) {
+    if (attrs.yAxisLabelEl) {
+      attrs.yAxisLabelEl.remove();
     }
+
+    // const yLabel = this.middleYAxisLabel(attrs.yAxisLabel, attrs);
+    const yLabel = attrs.yAxisProperties;
+    const [xOffset, yOffset] = yLabel.offset;
+
+    attrs.yAxisLabelEl = attrs.svg
+      .select('.y-axis-label')
+      .attr('transform', `translate(${0}, ${0})`)
+      .append('text')
+      .classed('y-axis-label-text', true)
+      .attr('x', xOffset)
+      .attr('y', yOffset)
+      .attr('text-anchor', yLabel.textAnchor)
+      .attr('transform', `rotate(${yLabel.rotation} 0 0)`)
+      .style('fill', 'currentColor')
+      .style('font', '10px Arial, sans-serif')
+      .text(yLabel.text);
+    // }
 
     //   attrs.yAxisLabelEl = attrs.svg
     //     .select('.y-axis-label')

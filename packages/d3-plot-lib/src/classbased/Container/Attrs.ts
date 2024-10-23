@@ -2,8 +2,9 @@ import { Axis, AxisDomain, AxisScale } from 'd3';
 
 type tYAxisLabelProps = {
   offset: [number, number];
-  textAnchor: 'middle' | 'left';
+  textAnchor: 'start' | 'middle' | 'end';
   rotation: number;
+  yValuesRotation: number;
   text: string;
   visible: boolean;
   onRender: ((d: unknown, ith: number) => unknown) | null;
@@ -39,12 +40,15 @@ const ContainerAttrs = {
   xGridShow: false,
 
   yAxis: null as Axis<AxisDomain> | null,
-  yAxisShow: true,
-  yAxisText: {
-    rotation: 0 as number,
-  },
-  yAxisLabelOffset: -50,
-  yAxisLabel: 'y axis',
+  yAxisProperties: {
+    offset: [0, 0],
+    visible: true,
+    textAnchor: 'middle',
+    rotation: 0,
+    yValuesRotation: 0,
+    text: 'Y Axis',
+    onRender: null,
+  } as tYAxisLabelProps,
   yAxisPosition: 'left',
   yScale: null as AxisScale<AxisDomain> | null,
   yAxisLabelEl: null as any,

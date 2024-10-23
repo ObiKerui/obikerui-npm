@@ -83,17 +83,16 @@ class Plot {
 
     container.attrs = {
       ...container.attrs,
-      showMargins: true,
       margins: {
         top: 50,
-        left: 80,
+        left: 40,
         right: 10,
         bottom: 80,
       },
       chartWidth: 100,
       html: roiContainer,
       xAxisLabel: 'cashflow',
-      yAxisLabel: 'property value',
+      yAxisProperties: container.axisLayout.topYAxisLabel('property value'),
       onGetXScale: (chartWidth: number) =>
         d3.scaleBand().domain(xElements).rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>

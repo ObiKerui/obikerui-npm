@@ -1,6 +1,11 @@
 import { useSearchParams } from 'react-router-dom';
 import { cn } from '../../../Utils/CSS';
 
+import pvIcon from '../../../assets/PowerRouter/Light/newpv.svg';
+import gridIcon from '../../../assets/PowerRouter/Light/newgrid.svg';
+import loadIcon from '../../../assets/PowerRouter/Light/heatpump.svg';
+import battIcon from '../../../assets/PowerRouter/Light/newbattery.svg';
+
 function VisibilityControls() {
   //   visible: 'pv,battery,load,grid',
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +38,7 @@ function VisibilityControls() {
     <div className="flex flex-col gap-2">
       <button
         type="button"
-        className={cn('btn btn-sm', {
+        className={cn('btn btn-square p-1', {
           'btn-active pv-light':
             visibleArray.includes('pv') && profile === 'light',
           'btn-active pv-dark':
@@ -41,11 +46,11 @@ function VisibilityControls() {
         })}
         onClick={() => setVisibility('pv')}
       >
-        PV
+        <img src={pvIcon} alt="pv" />
       </button>
       <button
         type="button"
-        className={cn('btn btn-sm', {
+        className={cn('btn btn-square', {
           'btn-active grid-light':
             visibleArray.includes('grid') && profile === 'light',
           'btn-active grid-dark':
@@ -53,11 +58,11 @@ function VisibilityControls() {
         })}
         onClick={() => setVisibility('grid')}
       >
-        Grid
+        <img src={gridIcon} alt="grid" />
       </button>
       <button
         type="button"
-        className={cn('btn btn-sm', {
+        className={cn('btn btn-square', {
           'btn-active load-light':
             visibleArray.includes('load') && profile === 'light',
           'btn-active load-dark':
@@ -65,14 +70,14 @@ function VisibilityControls() {
         })}
         onClick={() => setVisibility('load')}
       >
-        Load
+        <img src={loadIcon} alt="load" />
       </button>
 
       <hr className="mx-auto w-full border border-gray-300" />
 
       <button
         type="button"
-        className={cn('btn btn-sm', {
+        className={cn('btn btn-square', {
           'btn-active battery-light':
             visibleArray.includes('battery') && profile === 'light',
           'btn-active battery-dark':
@@ -80,7 +85,7 @@ function VisibilityControls() {
         })}
         onClick={() => setVisibility('battery')}
       >
-        Battery
+        <img src={battIcon} alt="battery" />
       </button>
     </div>
   );

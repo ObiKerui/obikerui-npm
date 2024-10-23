@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import rfdc from 'rfdc';
 import * as d3 from 'd3';
 import { ContainerAttrs } from './Attrs';
@@ -6,6 +7,7 @@ import { LabelGenerator } from './LabelGenerator';
 import { GridGenerator } from './GridGenerator';
 import { tContainerAttrs, tMetadata, tPlot } from '../sharedTypes';
 import { ClipPathGenerator } from './ClipPathGenerator';
+import AxisLayout from './AxisLayout';
 
 class CContainer {
   attrs: tContainerAttrs;
@@ -17,6 +19,8 @@ class CContainer {
   labelGenerator: LabelGenerator;
 
   clipPathGenerator: ClipPathGenerator;
+
+  axisLayout: AxisLayout;
 
   plots: tPlot[];
 
@@ -30,6 +34,7 @@ class CContainer {
     this.gridGenerator = new GridGenerator(this);
     this.labelGenerator = new LabelGenerator(this);
     this.clipPathGenerator = new ClipPathGenerator();
+    this.axisLayout = new AxisLayout(this);
   }
 
   // Building Blocks

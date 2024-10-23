@@ -246,9 +246,16 @@ class Chart {
     this.container.attrs = {
       ...this.container.attrs,
       html: sunPathContainer,
-      width: 500,
-      height: 400,
-      yAxisLabel: 'Altitude (Radians)',
+      margins: {
+        ...this.container.attrs.margins,
+        top: 40,
+        left: 30,
+      },
+      width: 400,
+      height: 350,
+      // yAxisLabel: 'Altitude (Radians)',
+      yAxisProperties:
+        this.container.axisLayout.topYAxisLabel('Altitude (Radians)'),
       xAxisLabel: 'Azimuth (Degrees)',
       onGetXScale: (chartWidth: number) =>
         d3.scaleLinear().domain([0, 350]).rangeRound([0, chartWidth]),

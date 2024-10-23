@@ -64,7 +64,8 @@ class Chart {
       html: lineContainer,
       width: 500,
       height: 400,
-      yAxisLabel: 'Battery % (soc)',
+      yAxisProperties:
+        this.container.axisLayout.topYAxisLabel('Battery % (soc)'),
       xAxisText: {
         rotation: 45,
         onRender: (d: string) => dayjs(d).format('HH:MM'),

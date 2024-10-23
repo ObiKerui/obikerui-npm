@@ -60,7 +60,10 @@ function SiteOptions() {
         role="tabpanel"
         className="tab-content bg-base-100 rounded-box p-2 md:p-6"
       >
-        <div className="flex min-h-[900px] min-w-[350px] max-w-[500px]">
+        {/* <div className="flex min-h-[900px] min-w-[350px] max-w-[500px]">
+          <PowerDiagram />
+        </div> */}
+        <div className="flex min-h-[900px] min-w-[320px] max-w-[320px]">
           <PowerDiagram />
         </div>
       </div>
@@ -88,7 +91,7 @@ function SiteOptions() {
         role="tabpanel"
         className="tab-content bg-base-100 rounded-box p-2 md:p-6"
       >
-        <div className="flex min-h-[900px] min-w-[350px] max-w-[500px]">
+        <div className="flex min-h-[900px] min-w-[320px] max-w-[320px]">
           <Settings />
         </div>
       </div>
@@ -135,7 +138,7 @@ function DetailOptions() {
 
 function Dashboard() {
   return (
-    <div className="flex w-full min-w-full flex-row gap-1">
+    <div className="flex w-full min-w-full flex-row gap-1 text-xs md:text-sm">
       <div className="flex w-full flex-row gap-2">
         <SiteOptions />
         <DetailOptions />

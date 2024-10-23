@@ -27,7 +27,10 @@ class Chart {
       html: barContainer,
       width: 500,
       height: 200,
-      yAxisLabel: categories[0] ?? 'KWs',
+      yAxisProperties: {
+        ...this.container.attrs.yAxisProperties,
+        text: categories[0] ?? 'KWs',
+      },
       xAxisLabel: '',
       xAxisText: {
         rotation: 0,

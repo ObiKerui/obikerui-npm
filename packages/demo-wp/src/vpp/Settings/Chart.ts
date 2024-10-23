@@ -48,9 +48,15 @@ class Chart {
     this.container.attrs = {
       ...this.container.attrs,
       html: lineContainer,
-      width: 500,
-      height: 400,
-      yAxisLabel: 'P per Kwh',
+      width: 380,
+      height: 350,
+      margins: {
+        ...this.container.attrs.margins,
+        left: 20,
+        top: 20,
+      },
+      // yAxisLabel: 'P per Kwh',
+      yAxisProperties: this.container.axisLayout.topYAxisLabel('P / Kwh'),
       xAxisText: {
         rotation: 0,
         onRender: (d: string) => dayjs(d).format('HH:MM'),

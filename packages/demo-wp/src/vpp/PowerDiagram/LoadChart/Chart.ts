@@ -64,7 +64,10 @@ class Chart {
       html: lineContainer,
       width: 500,
       height: 400,
-      yAxisLabel: categories[0] ?? '',
+      // yAxisLabel: categories[0] ?? '',
+      yAxisProperties: this.container.axisLayout.topYAxisLabel(
+        categories[0] ?? ''
+      ),
       xAxisText: {
         rotation: 45,
         onRender: () => '',

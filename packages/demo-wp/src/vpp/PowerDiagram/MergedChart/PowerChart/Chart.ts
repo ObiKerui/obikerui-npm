@@ -84,9 +84,14 @@ class Chart {
       ...this.container.attrs,
       display: isShown ? 'block' : 'none',
       html: lineContainer,
-      width: 500,
+      width: 450,
       height: 400,
-      yAxisLabel: 'Power Watts',
+      margins: {
+        ...this.container.attrs.margins,
+        left: 30,
+        top: 40,
+      },
+      yAxisProperties: this.container.axisLayout.topYAxisLabel('Power Watts'),
       xAxisText: {
         rotation: 45,
         onRender: (d: string) => dayjs(d).format('HH:MM'),

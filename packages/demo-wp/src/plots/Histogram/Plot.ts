@@ -159,6 +159,7 @@ class Histogram {
         rotation: 0,
         onRender: (d) => d,
       },
+      yAxisProperties: this.container.axisLayout.middleYAxisLabel('y values'),
       onGetXScale: (chartWidth: number) =>
         d3
           .scaleLinear()

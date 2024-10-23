@@ -47,6 +47,8 @@ class Plot {
         rotation: 45,
         onRender: (d) => dayjs(d as number).format('YY-MM'),
       },
+      yAxisProperties:
+        containerOverview.axisLayout.middleYAxisLabel('y values'),
       onGetXScale: (chartWidth: number) =>
         d3.scaleTime().domain(validExtent).rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>
@@ -69,6 +71,7 @@ class Plot {
         rotation: 45,
         onRender: (d) => dayjs(d as number).format('YY-MM-DD'),
       },
+      yAxisProperties: containerDetail.axisLayout.middleYAxisLabel('y values'),
       onGetXScale: (chartWidth: number) =>
         d3.scaleTime().domain(detailDomain).rangeRound([0, chartWidth]),
       onGetYScale: (chartHeight: number) =>

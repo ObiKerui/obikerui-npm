@@ -27,7 +27,7 @@ function ChartContainer() {
   // }, [currDataIdx]);
 
   return (
-    <div className="border-base-300 border">
+    <div>
       <div ref={sunChartRef} />
     </div>
   );

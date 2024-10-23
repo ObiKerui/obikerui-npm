@@ -32,6 +32,7 @@ class Plot {
         rotation: 45,
         onRender: (d) => d,
       },
+      yAxisProperties: container.axisLayout.middleYAxisLabel('y values'),
       onGetXScale: (chartWidth: number) =>
         d3
           .scaleBand()

@@ -5,16 +5,9 @@ import { useSearchParams } from 'react-router-dom';
 import { usePowerRouter } from '../Solax/Store';
 import { tSolaxData } from '../Solax/Types';
 import { PowerRouter } from './PowerRouter';
-import { ChartContainer as BatteryChart } from './BatteryChart/ChartContainer';
-import TimeControls from './Controls/Time';
-import { ChartContainer as GridChart } from './GridChart/ChartContainer';
-import { ChartContainer as MergeChart } from './MergedChart/ChartContainer';
 import { ChartContainer as SunChart } from './SunChart/ChartContainer';
-import VisibilityControls from './Controls/Visibility';
 import { DataTest } from './DataTest/DataTest';
-import { Inverter } from './InverterData/Inverter';
 import WeatherInfo from './WeatherInfo';
-import GridSummary from './GridChart/GridSummary';
 
 const powerRouterObj = new PowerRouter();
 
@@ -87,35 +80,10 @@ function PowerDiagram() {
         <WeatherInfo />
         <div ref={diagramRef} />
         <div className="flex flex-col gap-2">
-          <DataTest />
           <SunChart />
+          <DataTest />
         </div>
       </div>
-      {/* <div className="flex flex-col gap-2">
-        <div>
-          <TimeControls />
-        </div>
-        <div className="flex flex-row gap-2">
-          <MergeChart />
-          <VisibilityControls />
-        </div>
-        {focus === 'battery' && (
-          <div>
-            <BatteryChart />
-          </div>
-        )}
-        {focus === 'grid' && (
-          <div>
-            <GridChart />
-            <GridSummary />
-          </div>
-        )}
-        {focus === 'inverter' && (
-          <div>
-            <Inverter />
-          </div>
-        )}
-      </div> */}
     </div>
   );
 }

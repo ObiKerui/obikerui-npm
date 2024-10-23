@@ -27,7 +27,11 @@ class Chart {
       html: barContainer,
       width: 500,
       height: 200,
-      yAxisLabel: 'Battery % (soc)',
+      // yAxisLabel: 'Battery % (soc)',
+      yAxisProperties: {
+        ...this.container.attrs.yAxisProperties,
+        text: 'Battery % (soc)',
+      },
       xAxisText: {
         rotation: 0,
       },

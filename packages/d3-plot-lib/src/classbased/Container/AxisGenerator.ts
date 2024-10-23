@@ -55,7 +55,7 @@ class AxisGenerator {
       xAxisTextDY = '.15em';
     }
 
-    const yAxisTextRotation = attrs.yAxisText.rotation ?? 0;
+    const yAxisTextRotation = attrs.yAxisProperties.yValuesRotation ?? 0;
     // const yAxisTextAnchor = 'end'
     // const yAxisTextDX = '0em'
     // let yAxisTextDY = '0em'
@@ -90,7 +90,7 @@ class AxisGenerator {
         .attr('transform', `rotate(${xAxisTextRotation})`);
     }
 
-    if (attrs.yAxisShow && attrs.yAxis) {
+    if (attrs.yAxis) {
       attrs.svg
         .select('.y-axis-group.axis')
         .attr('transform', `translate(${yAxisShift}, 0)`)

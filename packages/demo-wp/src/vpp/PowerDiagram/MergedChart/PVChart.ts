@@ -50,9 +50,14 @@ class Chart {
       ...this.container.attrs,
       html: pvContainer,
       display,
-      width: 500,
+      width: 450,
       height: 200,
-      yAxisLabel: 'PV Efficiency',
+      margins: {
+        ...this.container.attrs.margins,
+        left: 30,
+        top: 40,
+      },
+      yAxisProperties: this.container.axisLayout.topYAxisLabel('PV Efficiency'),
       xAxisText: {
         rotation: 45,
         onRender: (d: string) => dayjs(d).format('HH:MM'),

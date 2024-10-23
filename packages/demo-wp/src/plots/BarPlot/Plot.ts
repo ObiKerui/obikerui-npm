@@ -40,6 +40,7 @@ class BarPlot {
         rotation: 45,
         onRender: (d) => d,
       },
+      yAxisProperties: this.container.axisLayout.middleYAxisLabel('y axis'),
       onGetXScale: (chartWidth: number) =>
         d3
           .scaleBand()
