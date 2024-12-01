@@ -8,6 +8,8 @@ import { PowerRouter } from './PowerRouter';
 import { ChartContainer as SunChart } from './SunChart/ChartContainer';
 import { DataTest } from './DataTest/DataTest';
 import WeatherInfo from './WeatherInfo';
+import { Summary } from './Summary/Summary';
+import Radar from './Radar/Radar';
 
 const powerRouterObj = new PowerRouter();
 
@@ -80,8 +82,10 @@ function PowerDiagram() {
         <WeatherInfo />
         <div ref={diagramRef} />
         <div className="flex flex-col gap-2">
+          <Summary />
           <SunChart />
           <DataTest />
+          <Radar />
         </div>
       </div>
     </div>

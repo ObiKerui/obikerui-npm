@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 import dayjs from 'dayjs';
 import { tChart } from './Model';
 import { powerNodeMap } from '../../Solax/Model';
+import { tSolaxData } from '../../Solax/Types';
+import { tShowing } from './SharedTypes';
 
 class Chart {
   container;
@@ -11,8 +13,21 @@ class Chart {
     this.container.addPlot(new d3PlotLib.CLines());
   }
 
+  getData(elem: tSolaxData, showingOption: tShowing) {
+    switch (showingOption) {
+      case 'yield':
+        return elem.yieldtoday;
+      case 'earnings':
+        return elem.feedinpower;
+      case 'battery':
+        return elem.batPower;
+      default:
+        return 0;
+    }
+  }
+
   update(newModel: tChart) {
-    const { pvContainer, rangedData, visibility } = newModel;
+    const { lineContainer, rangedData, showingOption } = newModel;
 
     const extent = d3.extent(
       rangedData,
@@ -25,10 +40,12 @@ class Chart {
     ];
 
     const max = 8000;
-    const ys = rangedData.map((elem) => {
-      const percentage = (elem.yieldtoday / max) * 100;
-      return percentage;
-    });
+    const ys = rangedData.map(
+      (elem) =>
+        // const percentage = (elem.yieldtoday / max) * 100;
+        this.getData(elem, showingOption)
+      // return percentage;
+    );
     const xs = rangedData.map((elem) => dayjs(elem.uploadTime).toDate());
 
     // push extra values on to arrays to create bottom right and bottom left points for fill
@@ -42,15 +59,12 @@ class Chart {
 
     // colour
     const colour = powerNodeMap.get('pv')?.colour ?? 'default';
-    const showChart = visibility.includes('pv') ?? false;
-
-    const display = showChart ? 'block' : 'none';
 
     this.container.attrs = {
       ...this.container.attrs,
-      html: pvContainer,
-      display,
-      width: 450,
+      html: lineContainer,
+      //   display,
+      width: 340,
       height: 200,
       margins: {
         ...this.container.attrs.margins,
