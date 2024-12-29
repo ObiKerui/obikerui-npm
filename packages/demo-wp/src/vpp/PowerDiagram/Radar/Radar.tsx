@@ -16,5 +16,9 @@ export default function Radar() {
     setContainer(container.current);
   }, []);
 
-  return <div ref={container}>radar</div>;
+  return (
+    <div>
+      <div ref={container}>radar</div>
+    </div>
+  );
 }
